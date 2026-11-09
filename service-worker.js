@@ -1,7 +1,7 @@
 // Version is stamped automatically by publish.ps1 (hash of all app files).
-const VERSION = 'f3141158f53b';
+const VERSION = '2db982a178ad';
 const CACHE = 'brainfarts-' + VERSION;
-const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
+const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png', './favicon.svg', './favicon-32.png'];
 
 self.addEventListener('install', event => {
   event.waitUntil(

@@ -4,7 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-title" content="Brainfarts">
   <meta name="theme-color" content="#ffffff">
   <meta name="description" content="Brainfarts: fresh Sudoku, Minesweeper, Nonogram, Wordle, Lights Out and 2048 made for your pocket. Offline, no distractions.">
   <meta name="color-scheme" content="light dark">
@@ -13,13 +16,13 @@
   <meta name="apple-mobile-web-app-title" content="Brainfarts">
   <style>
 /* BRAINFARTS — uncluttered, thumb-first design system inspired by classic puzzle UIs. */
-:root{color-scheme:light;--page:#fff;--panel:#fff;--ink:#1b2b43;--muted:#858e9f;--blue:#345fb4;--blue-dark:#214b9d;--blue-faint:#e4edf6;--blue-select:#b0dafa;--blue-match:#d6eaff;--line:#e4e9f1;--shadow:0 16px 60px #29436118;--tile:#c4d1df;--board-line:#b6c3d2;--board-bold:#3e4552;--mine-covered:#dfeaf6;--mine-open:#f5f8fc;--mine-outline:#b8c9dc;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif}
-:root[data-theme="dark"]{color-scheme:dark;--page:#17202e;--panel:#202c3c;--ink:#f4f6fb;--muted:#a4b2c4;--blue:#83acfc;--blue-dark:#a8c7ff;--blue-faint:#2d4057;--blue-select:#345f94;--blue-match:#2a425e;--line:#33475d;--shadow:0 20px 65px #0003;--tile:#354a61;--board-line:#566b84;--board-bold:#b3c5db;--mine-covered:#33475f;--mine-open:#223246;--mine-outline:#586e88}
+:root{color-scheme:light;--page:#fff;--panel:#fff;--ink:#1b2b43;--muted:#858e9f;--blue:#2e56af;--blue-dark:#214b9d;--blue-faint:#e4edf6;--blue-select:#b0dafa;--blue-match:#d6eaff;--line:#e4e9f1;--shadow:0 16px 60px #29436118;--tile:#c4d1df;--board-line:#b6c3d2;--board-bold:#3e4552;--mine-covered:#dfeaf6;--mine-open:#f5f8fc;--mine-outline:#b8c9dc;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif}
+:root[data-theme="dark"]{color-scheme:dark;--page:#1b2737;--panel:#202c3c;--ink:#f4f6fb;--muted:#a4b2c4;--blue:#83acfc;--blue-dark:#a8c7ff;--blue-faint:#2d4057;--blue-select:#345f94;--blue-match:#2a425e;--line:#33475d;--shadow:0 20px 65px #0003;--tile:#354a61;--board-line:#566b84;--board-bold:#b3c5db;--mine-covered:#33475f;--mine-open:#223246;--mine-outline:#586e88}
 *{box-sizing:border-box}html{background:var(--page);-webkit-text-size-adjust:100%;overscroll-behavior:none}body{margin:0;min-height:100%;font:16px/1.4 var(--font);color:var(--ink);background:var(--page);-webkit-font-smoothing:antialiased}body[data-screen="sudoku"],body[data-screen="mines"],body[data-screen="nonogram"],body[data-screen="wordle"],body[data-screen="lights"],body[data-screen="2048"]{height:100dvh;overflow:hidden}button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}button:disabled{opacity:.4;cursor:not-allowed}button:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:3px}svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;stroke-linecap:round;flex-shrink:0}.svg-sprite{position:absolute;width:0;height:0;overflow:hidden}#main{min-height:100dvh}.page[hidden],.settings-backdrop[hidden],.modal-backdrop[hidden],.pause-overlay[hidden],.setup-page[hidden],.settings-section[hidden],.settings-info[hidden],[hidden]{display:none!important}.visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;pointer-events:none}
 /* Navigation — only the back and settings actions frame each game. */
 .screen-header{height:clamp(65px,10dvh,88px);padding:8px max(16px,env(safe-area-inset-right)) 0 max(16px,env(safe-area-inset-left));display:grid;grid-template-columns:56px minmax(0,1fr) 56px;align-items:center;gap:8px;flex-shrink:0;width:100%;max-width:640px;margin:0 auto}.screen-title{text-align:center;font-size:clamp(19px,5.1vw,25px);font-weight:780;letter-spacing:-.6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bare-icon{width:50px;height:50px;display:inline-grid;place-items:center;background:transparent;color:var(--blue);border-radius:15px;transition:background 160ms,transform 160ms}.bare-icon:active{background:var(--blue-faint);transform:scale(.91)}.bare-icon svg{width:30px;height:30px;stroke-width:2.5}.screen-header>.bare-icon:last-child{justify-self:end}
 /* Home/selection screen, designed to scroll only if content actually requires it. */
-.home-page{max-width:1000px;margin:0 auto;padding:env(safe-area-inset-top) clamp(20px,5vw,54px) max(24px,env(safe-area-inset-bottom))}.home-topline{height:75px;display:flex;justify-content:space-between;align-items:center}.home-mark{color:var(--blue);font-size:34px}.home-hero{text-align:center;margin:12px 0 42px}.home-eyebrow{font-size:11px;letter-spacing:2.6px;font-weight:800;color:var(--blue)}.home-hero h1{font-size:clamp(51px,11vw,90px);line-height:1;letter-spacing:-5px;margin:15px 0 8px;font-weight:850}.home-hero h1 span{color:var(--blue)}.home-hero p{font-size:clamp(16px,3.5vw,21px);color:var(--muted);margin:12px 0 0}.home-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.home-game-card{color:var(--ink);background:var(--panel);padding:18px;min-width:0;border:1px solid var(--line);border-radius:25px;box-shadow:var(--shadow);text-align:left;transition:transform 230ms,box-shadow 230ms}.home-game-card:hover{transform:translateY(-4px);box-shadow:0 20px 56px #29436122}.home-game-card:active{transform:scale(.985)}.game-card-number{display:block;font-size:11px;font-weight:750;letter-spacing:1.35px;color:var(--muted);padding:0 3px 14px}.home-art{height:clamp(165px,23vw,250px);border-radius:17px;display:grid;place-items:center;overflow:hidden}.sudoku-art{background:linear-gradient(145deg,#e4edff,#b7d3ff)}.mines-art{background:linear-gradient(135deg,#d7e7fb,#a9c7ee)}.home-art-grid,.home-mine-preview{width:155px;height:155px;display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding:7px;border-radius:12px;box-shadow:0 16px 22px #193a6b2d;transform:rotate(-8deg);background:#fff}.home-art-grid i,.home-mine-preview i{display:grid;place-items:center;font-size:25px;font-weight:600;color:#142b47;font-style:normal;background:#e9f0f9;border-radius:3px}.home-art-grid i:nth-child(3n),.home-mine-preview i:nth-child(4n){background:#b7dafa}.home-mine-preview{transform:rotate(8deg)}.home-mine-preview i{font-size:21px}.home-mine-preview i:nth-child(3),.home-mine-preview i:nth-child(8){color:#2c5ebc}.home-card-text{display:flex;align-items:center;justify-content:space-between;padding:20px 4px 4px;gap:10px}.home-card-text strong{font-size:clamp(22px,3vw,31px);font-weight:790;letter-spacing:-.9px;display:block}.home-card-text small{font-size:13px;color:var(--muted);display:block;margin-top:3px}.card-next{background:var(--blue-faint);color:var(--blue);border-radius:50%;width:40px;height:40px;display:grid;place-items:center}.home-foot{text-align:center;margin:30px 0;color:var(--muted);font-size:12px}
+.home-page{max-width:1000px;margin:0 auto;padding:env(safe-area-inset-top) clamp(20px,5vw,54px) max(24px,env(safe-area-inset-bottom))}.home-topline{height:75px;display:flex;justify-content:space-between;align-items:center}.brand-symbol{width:42px;height:auto;aspect-ratio:165/142;fill:none;stroke:none;flex-shrink:0;color:#2e56af}.home-mark{width:42px}.splash-logo .brand-symbol{width:clamp(42px,12vw,70px);animation:none}.install-brand{display:flex;justify-content:center;margin:0 0 18px}.install-brand .brand-symbol{width:72px}:root[data-theme="dark"] .brand-symbol{color:#fff}.home-hero{text-align:center;margin:12px 0 42px}.home-eyebrow{font-size:11px;letter-spacing:2.6px;font-weight:800;color:var(--blue)}.home-hero h1{font-size:clamp(51px,11vw,90px);line-height:1;letter-spacing:-5px;margin:15px 0 8px;font-weight:850}.home-hero h1 span{color:var(--blue)}.home-hero p{font-size:clamp(16px,3.5vw,21px);color:var(--muted);margin:12px 0 0}.home-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.home-game-card{color:var(--ink);background:var(--panel);padding:18px;min-width:0;border:1px solid var(--line);border-radius:25px;box-shadow:var(--shadow);text-align:left;transition:transform 230ms,box-shadow 230ms}.home-game-card:hover{transform:translateY(-4px);box-shadow:0 20px 56px #29436122}.home-game-card:active{transform:scale(.985)}.game-card-number{display:block;font-size:11px;font-weight:750;letter-spacing:1.35px;color:var(--muted);padding:0 3px 14px}.home-art{height:clamp(165px,23vw,250px);border-radius:17px;display:grid;place-items:center;overflow:hidden}.sudoku-art{background:linear-gradient(145deg,#e4edff,#b7d3ff)}.mines-art{background:linear-gradient(135deg,#d7e7fb,#a9c7ee)}.home-art-grid,.home-mine-preview{width:155px;height:155px;display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding:7px;border-radius:12px;box-shadow:0 16px 22px #193a6b2d;transform:rotate(-8deg);background:#fff}.home-art-grid i,.home-mine-preview i{display:grid;place-items:center;font-size:25px;font-weight:600;color:#142b47;font-style:normal;background:#e9f0f9;border-radius:3px}.home-art-grid i:nth-child(3n),.home-mine-preview i:nth-child(4n){background:#b7dafa}.home-mine-preview{transform:rotate(8deg)}.home-mine-preview i{font-size:21px}.home-mine-preview i:nth-child(3),.home-mine-preview i:nth-child(8){color:#2c5ebc}.home-card-text{display:flex;align-items:center;justify-content:space-between;padding:20px 4px 4px;gap:10px}.home-card-text strong{font-size:clamp(22px,3vw,31px);font-weight:790;letter-spacing:-.9px;display:block}.home-card-text small{font-size:13px;color:var(--muted);display:block;margin-top:3px}.card-next{background:var(--blue-faint);color:var(--blue);border-radius:50%;width:40px;height:40px;display:grid;place-items:center}.home-foot{text-align:center;margin:30px 0;color:var(--muted);font-size:12px}
 /* Setup is where difficulty and mine sizes belong. */
 .setup-page{max-width:640px;margin:auto;padding-bottom:max(35px,env(safe-area-inset-bottom));min-height:100dvh}.setup-body{padding:clamp(26px,7dvh,58px) clamp(24px,6vw,46px)}.setup-badge{color:var(--blue);letter-spacing:1.7px;font-size:11px;font-weight:800}.setup-body h1{font-size:clamp(37px,9vw,49px);letter-spacing:-2.2px;line-height:1.06;margin:14px 0 10px}.setup-body>p{font-size:16px;color:var(--muted);line-height:1.65;max-width:470px;margin:0 0 39px}.setup-section-label{font-size:12px;color:var(--muted);font-weight:750;letter-spacing:1.2px;margin-bottom:13px}.setup-options{border:1px solid var(--line);border-radius:20px;overflow:hidden}.setup-option{display:flex;align-items:center;justify-content:space-between;min-height:84px;padding:16px 19px;cursor:pointer;position:relative;background:var(--panel);transition:background 180ms}.setup-option:not(:last-child){border-bottom:1px solid var(--line)}.setup-option:has(input:checked){background:var(--blue-faint)}.setup-option input{opacity:0;position:absolute;inset:0;cursor:pointer}.setup-option strong{font-size:19px;display:block;font-weight:730}.setup-option small{font-size:13px;color:var(--muted)}.radio-dot{width:22px;height:22px;border:2px solid #b6c1d2;border-radius:50%;flex-shrink:0}.setup-option:has(input:checked) .radio-dot{border-color:var(--blue);box-shadow:inset 0 0 0 5px var(--panel);background:var(--blue)}.setup-option:focus-within{outline:3px solid var(--blue);outline-offset:-3px}.start-button{background:var(--blue);color:white;width:100%;min-height:57px;padding:13px 20px;border-radius:15px;font-weight:750;font-size:17px;display:flex;align-items:center;justify-content:center;gap:12px;transition:background 180ms,transform 180ms}.start-button:hover{background:var(--blue-dark)}.start-button:active{transform:scale(.985)}.setup-body>.start-button{margin-top:24px}.resume-link{display:block;background:none;color:var(--blue);font-size:15px;font-weight:720;padding:18px 12px;margin:0 auto}
 /* Gameplay — the document never scrolls, the board has an explicit fixed ratio. */
@@ -31,7 +34,7 @@
 /* Results and help dialog. */
 .modal-backdrop{position:fixed;inset:0;z-index:210;background:#14213799;display:grid;place-items:center;padding:18px;backdrop-filter:blur(3px)}.dialog{position:relative;width:min(100%,450px);max-height:85dvh;overflow-y:auto;border-radius:23px;padding:36px 24px 25px;background:var(--panel);box-shadow:0 25px 80px #14213740;animation:dialog-in 240ms ease-out}.dialog-close{position:absolute;right:11px;top:10px;width:41px;height:41px}.dialog-kicker{font-size:11px;color:var(--blue);font-weight:850;letter-spacing:1.5px;margin:5px 0 12px}.dialog h2{font-size:clamp(27px,7vw,35px);line-height:1.08;letter-spacing:-1.1px;margin:0 0 12px}.dialog p{font-size:14px;color:var(--muted);line-height:1.65}.dialog-hero-icon{font-size:44px;color:var(--blue);display:block}.dialog-list{list-style:none;padding:0}.dialog-list li{display:flex;align-items:flex-start;gap:12px;font-size:14px;line-height:1.5;margin:15px 0}.dialog-list li span{flex-shrink:0;width:28px;height:28px;border-radius:9px;background:var(--blue-faint);color:var(--blue);font-size:13px;display:grid;place-items:center;font-weight:800}.dialog-actions{margin-top:23px;display:flex;gap:9px}.dialog-actions>button{flex:1}.secondary-button{border-radius:13px;background:var(--blue-faint);color:var(--blue-dark);font-weight:730;padding:12px}.primary-button{background:var(--blue);color:white;font-weight:730;padding:12px;border-radius:13px;display:flex;align-items:center;justify-content:center;gap:8px}.primary-button svg{width:19px}.result-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:18px 0}.result-stat{background:var(--blue-faint);border-radius:12px;text-align:center;padding:13px 3px}.result-stat strong{display:block;font-size:21px}.result-stat small{font-size:10px;font-weight:720;color:var(--muted)}.toast-region{position:fixed;bottom:max(20px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);max-width:calc(100vw - 24px);z-index:250;pointer-events:none}.toast{background:var(--ink);color:var(--page);font-size:13px;font-weight:680;display:flex;gap:9px;align-items:center;border-radius:14px;padding:12px 16px;box-shadow:0 15px 30px #0003;animation:fade-in 160ms;white-space:nowrap}.toast svg{width:18px;height:18px}.toast.out{animation:fade-out 180ms forwards}.confetti-piece{position:fixed;top:-20px;left:var(--x);width:8px;height:13px;border-radius:2px;background:var(--color);z-index:255;pointer-events:none;animation:confetti-fall var(--duration) ease-in var(--delay) forwards;transform:rotate(var(--rotation))}
 /* Splash appears briefly without blocking game initialization. */
-.splash{position:fixed;z-index:999;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:17px;background:var(--page);pointer-events:none;transition:opacity 360ms,visibility 360ms}.splash.dismissed{opacity:0;visibility:hidden}.splash-logo{display:flex;align-items:center;gap:11px;font-size:clamp(35px,9vw,55px);font-weight:860;letter-spacing:-3px;animation:splash-scale 520ms cubic-bezier(.15,.85,.3,1)}.splash-logo strong{font-weight:850}.splash-logo strong span{color:var(--blue)}.splash-symbol{color:var(--blue);animation:splash-rotate 650ms ease-out}.splash-caption{font-size:10px;letter-spacing:2px;color:var(--muted);font-weight:780}
+.splash{position:fixed;z-index:999;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:17px;background:var(--page);pointer-events:none;transition:opacity 360ms,visibility 360ms}.splash.dismissed{opacity:0;visibility:hidden}.splash-logo{display:flex;align-items:center;gap:11px;font-size:clamp(35px,9vw,55px);font-weight:860;letter-spacing:-3px;animation:splash-scale 520ms cubic-bezier(.15,.85,.3,1)}.splash-logo strong{font-weight:850}.splash-logo strong span{color:var(--blue)}.splash-caption{font-size:10px;letter-spacing:2px;color:var(--muted);font-weight:780}
 @keyframes splash-scale{from{opacity:0;transform:translateY(10px) scale(.93)}to{opacity:1;transform:translateY(0) scale(1)}}@keyframes splash-rotate{from{transform:rotate(-65deg)}to{transform:rotate(0)}}@keyframes game-enter{from{opacity:.3;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}@keyframes sheet-up{from{transform:translateY(35px);opacity:.7}to{transform:translateY(0);opacity:1}}@keyframes fade-in{from{opacity:0}to{opacity:1}}@keyframes fade-out{to{opacity:0;transform:translateY(8px)}}@keyframes number-pop{0%{transform:scale(.6)}70%{transform:scale(1.12)}100%{transform:scale(1)}}@keyframes mine-pop{from{filter:brightness(.94)}to{filter:brightness(1)}}@keyframes dialog-in{from{opacity:.2;transform:scale(.96)}to{opacity:1;transform:scale(1)}}@keyframes confetti-fall{to{top:110vh;transform:translateX(var(--drift)) rotate(720deg)}}
 @media(max-width:600px){.home-page{padding-left:22px;padding-right:22px}.home-cards{grid-template-columns:1fr;gap:17px;max-width:415px;margin:auto}.home-game-card{padding:14px}.home-art{height:185px}.home-hero{margin:8px 0 30px}.home-hero h1{letter-spacing:-3.5px}.home-foot{margin:23px 0}.home-art-grid,.home-mine-preview{height:136px;width:136px}.home-art-grid i,.home-mine-preview i{font-size:20px}}
 @media(max-height:670px){.screen-header{height:59px}.sudoku-content{gap:9px;padding:2px 0 9px}.sudoku-board-frame{width:min(100%,calc(100dvh - 235px));max-height:calc(100dvh - 235px)}.sudoku-stats span{font-size:13px}.sudoku-stats strong{font-size:16px}.number-pad{min-height:54px}.num-button span{font-size:clamp(25px,6vw,36px)}}
@@ -78,6 +81,61 @@
 </head>
 <body>
   <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-brand" viewBox="0 0 165 142">
+<rect x="108.59" y="99.2051" width="14.1026" height="14.1026" fill="currentColor"/>
+<rect x="108.59" y="85.1026" width="14.1026" height="14.1026" fill="currentColor"/>
+<rect x="109" y="85" width="35" height="14" fill="currentColor"/>
+<rect x="137" y="75" width="14" height="24" fill="currentColor"/>
+<rect x="137" y="70" width="14" height="21" fill="currentColor"/>
+<rect x="146" y="71" width="19" height="14" fill="currentColor"/>
+<rect x="145" y="44" width="20" height="38" fill="currentColor"/>
+<rect x="150.897" y="42.7949" width="14.1026" height="14.1026" fill="currentColor"/>
+<rect x="137" y="33" width="14" height="23" fill="currentColor"/>
+<rect x="137" y="29" width="14" height="20" fill="currentColor"/>
+<rect x="117" y="29" width="34" height="11" fill="currentColor"/>
+<rect x="108.59" y="28.6923" width="14.1026" height="14.1026" fill="currentColor"/>
+<rect x="102" y="29" width="14" height="14" fill="currentColor"/>
+<rect x="93.0769" y="20.2308" width="18.3333" height="14.1026" fill="currentColor"/>
+<rect x="78.9744" y="41.3846" width="14.1026" height="14.1026" fill="currentColor"/>
+<rect x="16.9231" y="42.7949" width="14.1026" height="21.1538" fill="currentColor"/>
+<rect x="48" y="37" width="14" height="33" fill="currentColor"/>
+<rect x="17" y="29" width="21" height="17" fill="currentColor"/>
+<rect x="16.9231" y="61.1282" width="21.1538" height="25.3846" fill="currentColor"/>
+<rect x="108.59" y="55.4872" width="14.1026" height="14.1026" fill="currentColor"/>
+<rect x="114" y="51" width="16" height="22" fill="currentColor"/>
+<rect x="108.59" y="42.7949" width="14.1026" height="14.1026" fill="currentColor"/>
+<rect x="102" y="41" width="17" height="14" fill="currentColor"/>
+<rect x="108.59" y="69.5897" width="14.1026" height="16.9231" fill="currentColor"/>
+<rect x="108.59" y="82" width="14.1026" height="16.9231" fill="currentColor"/>
+<rect x="78.9744" y="63.9487" width="21.1538" height="14.1026" fill="currentColor"/>
+<rect x="59.2308" y="21.641" width="9.87179" height="67.6923" fill="currentColor"/>
+<rect x="115" y="14" width="22" height="19" fill="currentColor"/>
+<rect x="102" y="14" width="35" height="26" fill="currentColor"/>
+<rect x="64.8718" y="14.5897" width="46.5385" height="14.1026" fill="currentColor"/>
+<rect x="94.4872" y="6.12817" width="21.1538" height="14.1026" fill="currentColor"/>
+<rect x="80.3334" y="0.487183" width="14" height="18" fill="currentColor"/>
+<rect x="66.3334" y="0.487183" width="14" height="18" fill="currentColor"/>
+<rect x="51" width="45" height="18" fill="currentColor"/>
+<rect x="52.1795" y="11.7693" width="14.1026" height="11.2821" fill="currentColor"/>
+<rect x="34" y="12" width="37" height="11" fill="currentColor"/>
+<rect x="24" y="12" width="15" height="34" fill="currentColor"/>
+<rect x="10" y="28" width="19" height="15" fill="currentColor"/>
+<rect x="10" y="29" width="21" height="56" fill="currentColor"/>
+<rect y="41" width="27" height="46" fill="currentColor"/>
+<rect y="56.9487" width="27" height="14" fill="currentColor"/>
+<rect y="70.9487" width="27" height="15" fill="currentColor"/>
+<rect x="14" y="61" width="25" height="39" fill="currentColor"/>
+<rect x="23.9744" y="85.1026" width="14.1026" height="14.1026" fill="currentColor"/>
+<rect x="38.0769" y="82.2821" width="22.5641" height="16.9231" fill="currentColor"/>
+<rect x="31" y="82" width="30" height="27" fill="currentColor"/>
+<rect x="52.1795" y="87.9231" width="63.4615" height="11.2821" fill="currentColor"/>
+<rect x="52.1795" y="99.2051" width="14.1026" height="14.1026" fill="currentColor"/>
+<rect x="52" y="88" width="19" height="39" fill="currentColor"/>
+<rect x="33.8461" y="127.41" width="18.3333" height="14.1026" fill="currentColor"/>
+<rect x="66" y="88" width="57" height="26" fill="currentColor"/>
+<rect x="80.3846" y="99.2051" width="14.1026" height="14.1026" fill="currentColor"/>
+<rect x="94.4872" y="99.2051" width="14.1026" height="14.1026" fill="currentColor"/>
+</symbol>
     <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M15 19 8 12l7-7"/></symbol>
     <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
     <symbol id="i-settings" viewBox="0 0 24 24"><path d="M10.6 2.8h2.8l.6 2.2a7.7 7.7 0 0 1 1.7.7l2-.9 2 2-1 2a7.5 7.5 0 0 1 .8 1.7l2.2.6v2.8l-2.2.6a7.5 7.5 0 0 1-.8 1.7l1 2-2 2-2-.9a7.7 7.7 0 0 1-1.7.7l-.6 2.2h-2.8l-.6-2.2a7.7 7.7 0 0 1-1.7-.7l-2 .9-2-2 1-2a7.5 7.5 0 0 1-.8-1.7l-2.2-.6v-2.8l2.2-.6a7.5 7.5 0 0 1 .8-1.7l-1-2 2-2 2 .9a7.7 7.7 0 0 1 1.7-.7l.6-2.2Z"/><circle cx="12" cy="12" r="3"/></symbol>
@@ -101,14 +159,14 @@
 
   <!-- One very brief splash when opening the PWA. -->
   <div id="splash" class="splash" aria-hidden="true">
-    <div class="splash-logo"><span class="splash-symbol">✳</span><strong>brainfarts<span>.</span></strong></div>
+    <div class="splash-logo"><svg class="brand-symbol splash-symbol" aria-hidden="true"><use href="#i-brand"/></svg><strong>brainfarts<span>.</span></strong></div>
     <div class="splash-caption">A LITTLE WORKOUT FOR YOUR BRAIN</div>
   </div>
 
   <main id="main" class="app-shell">
     <!-- The home screen doubles as game selection. Game setup has its own screen. -->
     <section class="page home-page" id="page-home">
-      <div class="home-topline"><span class="home-mark">✳</span><button id="home-settings-button" class="bare-icon" aria-label="Settings"><svg><use href="#i-settings"/></svg></button></div>
+      <div class="home-topline"><svg class="brand-symbol home-mark" role="img" aria-label="Brainfarts logo"><use href="#i-brand"/></svg><button id="home-settings-button" class="bare-icon" aria-label="Settings"><svg><use href="#i-settings"/></svg></button></div>
       <header class="home-hero"><span class="home-eyebrow">THE POCKET PUZZLE CLUB</span><h1>brainfarts<span>.</span></h1><p>Less scrolling. More solving.</p></header>
       <div class="home-cards">
         <button class="home-game-card" data-route="setup-sudoku" aria-label="Choose Sudoku difficulty"><span class="game-card-number">01 / NUMBERS</span><span class="home-art sudoku-art" aria-hidden="true"><span class="home-art-grid"><i>5</i><i>2</i><i></i><i>3</i><i></i><i>8</i><i>9</i><i></i><i></i><i>4</i><i>7</i><i>1</i><i></i><i>8</i><i>6</i><i></i></span></span><span class="home-card-text"><span><strong>Sudoku</strong><small>Make every number count.</small></span><span class="card-next"><svg><use href="#i-arrow"/></svg></span></span></button>
@@ -437,7 +495,7 @@ $('#settings-howto').addEventListener('click', () => {
 });
 function updateSettingsUI() {
   document.documentElement.dataset.theme = settings.theme;
-  document.querySelector('meta[name="theme-color"]').content = settings.theme === 'dark' ? '#17202e' : '#ffffff';
+  document.querySelector('meta[name="theme-color"]').content = settings.theme === 'dark' ? '#1b2737' : '#ffffff';
   $('#theme-toggle').checked = settings.theme === 'dark';
   $('#sound-toggle').checked = settings.sound;
   $('#numbers-left-toggle').checked = settings.showRemaining;
@@ -464,7 +522,7 @@ $('#install-button').addEventListener('click', async () => {
   closeSettings();
   if (installPrompt) {
     installPrompt.prompt(); await installPrompt.userChoice; installPrompt = null;
-  } else dialog(`<div class="dialog-kicker">PLAY ANYWHERE</div><h2 id="dialog-title">Install Brainfarts.</h2><p>On iPhone, use Safari's Share button then Add to Home Screen. On Android or desktop, open the browser menu and choose Install app. Visit once online to cache the app for offline play.</p><div class="dialog-actions"><button class="start-button" data-dialog-action="close">Got it</button></div>`);
+  } else dialog(`<div class="install-brand" aria-hidden="true"><svg class="brand-symbol"><use href="#i-brand"/></svg></div><div class="dialog-kicker">PLAY ANYWHERE</div><h2 id="dialog-title">Install Brainfarts.</h2><p>On iPhone, use Safari's Share button then Add to Home Screen. On Android or desktop, open the browser menu and choose Install app. Visit once online to cache the app for offline play.</p><div class="dialog-actions"><button class="start-button" data-dialog-action="close">Got it</button></div>`);
 });
 
 /* Launch splash: intentionally short, and skipped when reduced motion is requested. */
