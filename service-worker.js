@@ -1,5 +1,5 @@
 // Version is stamped automatically by publish.ps1 (hash of all app files).
-const VERSION = 'e8dbc9d5c277';
+const VERSION = 'f3141158f53b';
 const CACHE = 'brainfarts-' + VERSION;
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 

@@ -6,7 +6,7 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icon-192.png">
   <meta name="theme-color" content="#ffffff">
-  <meta name="description" content="Brainfarts: fresh Sudoku, Minesweeper, Nonogram and Wordle puzzles made for your pocket. Offline, no distractions.">
+  <meta name="description" content="Brainfarts: fresh Sudoku, Minesweeper, Nonogram, Wordle, Lights Out and 2048 made for your pocket. Offline, no distractions.">
   <meta name="color-scheme" content="light dark">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -15,7 +15,7 @@
 /* BRAINFARTS — uncluttered, thumb-first design system inspired by classic puzzle UIs. */
 :root{color-scheme:light;--page:#fff;--panel:#fff;--ink:#1b2b43;--muted:#858e9f;--blue:#345fb4;--blue-dark:#214b9d;--blue-faint:#e4edf6;--blue-select:#b0dafa;--blue-match:#d6eaff;--line:#e4e9f1;--shadow:0 16px 60px #29436118;--tile:#c4d1df;--board-line:#b6c3d2;--board-bold:#3e4552;--mine-covered:#dfeaf6;--mine-open:#f5f8fc;--mine-outline:#b8c9dc;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif}
 :root[data-theme="dark"]{color-scheme:dark;--page:#17202e;--panel:#202c3c;--ink:#f4f6fb;--muted:#a4b2c4;--blue:#83acfc;--blue-dark:#a8c7ff;--blue-faint:#2d4057;--blue-select:#345f94;--blue-match:#2a425e;--line:#33475d;--shadow:0 20px 65px #0003;--tile:#354a61;--board-line:#566b84;--board-bold:#b3c5db;--mine-covered:#33475f;--mine-open:#223246;--mine-outline:#586e88}
-*{box-sizing:border-box}html{background:var(--page);-webkit-text-size-adjust:100%;overscroll-behavior:none}body{margin:0;min-height:100%;font:16px/1.4 var(--font);color:var(--ink);background:var(--page);-webkit-font-smoothing:antialiased}body[data-screen="sudoku"],body[data-screen="mines"],body[data-screen="nonogram"],body[data-screen="wordle"],body[data-screen="lights"]{height:100dvh;overflow:hidden}button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}button:disabled{opacity:.4;cursor:not-allowed}button:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:3px}svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;stroke-linecap:round;flex-shrink:0}.svg-sprite{position:absolute;width:0;height:0;overflow:hidden}#main{min-height:100dvh}.page[hidden],.settings-backdrop[hidden],.modal-backdrop[hidden],.pause-overlay[hidden],.setup-page[hidden],.settings-section[hidden],.settings-info[hidden],[hidden]{display:none!important}.visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;pointer-events:none}
+*{box-sizing:border-box}html{background:var(--page);-webkit-text-size-adjust:100%;overscroll-behavior:none}body{margin:0;min-height:100%;font:16px/1.4 var(--font);color:var(--ink);background:var(--page);-webkit-font-smoothing:antialiased}body[data-screen="sudoku"],body[data-screen="mines"],body[data-screen="nonogram"],body[data-screen="wordle"],body[data-screen="lights"],body[data-screen="2048"]{height:100dvh;overflow:hidden}button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}button:disabled{opacity:.4;cursor:not-allowed}button:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:3px}svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;stroke-linecap:round;flex-shrink:0}.svg-sprite{position:absolute;width:0;height:0;overflow:hidden}#main{min-height:100dvh}.page[hidden],.settings-backdrop[hidden],.modal-backdrop[hidden],.pause-overlay[hidden],.setup-page[hidden],.settings-section[hidden],.settings-info[hidden],[hidden]{display:none!important}.visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;pointer-events:none}
 /* Navigation — only the back and settings actions frame each game. */
 .screen-header{height:clamp(65px,10dvh,88px);padding:8px max(16px,env(safe-area-inset-right)) 0 max(16px,env(safe-area-inset-left));display:grid;grid-template-columns:56px minmax(0,1fr) 56px;align-items:center;gap:8px;flex-shrink:0;width:100%;max-width:640px;margin:0 auto}.screen-title{text-align:center;font-size:clamp(19px,5.1vw,25px);font-weight:780;letter-spacing:-.6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bare-icon{width:50px;height:50px;display:inline-grid;place-items:center;background:transparent;color:var(--blue);border-radius:15px;transition:background 160ms,transform 160ms}.bare-icon:active{background:var(--blue-faint);transform:scale(.91)}.bare-icon svg{width:30px;height:30px;stroke-width:2.5}.screen-header>.bare-icon:last-child{justify-self:end}
 /* Home/selection screen, designed to scroll only if content actually requires it. */
@@ -64,6 +64,15 @@
 .nonogram-art{background:linear-gradient(145deg,#dcecff,#b7d3ff)}.nonogram-preview{display:grid;grid-template-columns:repeat(5,24px);gap:3px;padding:12px;background:white;border-radius:12px;transform:rotate(-7deg);box-shadow:0 16px 22px #193a6b2d}.nonogram-preview i{width:24px;height:24px;background:#e9f0f9;border-radius:2px}.nonogram-preview i.on{background:#345fb4}
 .nono-viewport{position:relative;flex:1;min-height:0;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}.nono-layer{position:absolute;left:50%;top:50%;transform-origin:center;will-change:transform}.nono-board{display:grid;grid-template-columns:var(--clue-w) repeat(var(--n),var(--cell));grid-template-rows:var(--clue-h) repeat(var(--n),var(--cell));width:max-content}.nono-clue{display:flex;align-items:center;justify-content:flex-end;gap:3px;padding:2px 5px;color:var(--ink);font-size:var(--clue-font);font-weight:650;line-height:1;white-space:nowrap}.nono-clue.col{flex-direction:column;justify-content:flex-end;padding:2px;gap:2px}.nono-clue.done{opacity:.35}.nono-cell{width:var(--cell);height:var(--cell);padding:0;border:0;border-right:1px solid var(--board-line);border-bottom:1px solid var(--board-line);border-radius:0;background:var(--page);color:var(--blue);font-size:calc(var(--cell)*.65);line-height:1;display:grid;place-items:center;touch-action:none;transition:background 120ms,color 120ms}.nono-cell.edge-top{border-top:2px solid var(--board-bold)}.nono-cell.edge-left{border-left:2px solid var(--board-bold)}.nono-cell.fifth-col{border-right:2px solid var(--board-bold)}.nono-cell.fifth-row{border-bottom:2px solid var(--board-bold)}.nono-cell.active{background:var(--blue-faint)}.nono-cell.filled{background:var(--blue)}.nono-cell:active{filter:brightness(.9)}.nono-cell:focus-visible{outline:2px solid var(--ink);outline-offset:-3px;z-index:1}.nono-board.solved .filled{animation:mine-pop 350ms ease-out}.nono-result-art{display:grid;grid-template-columns:repeat(var(--n),1fr);width:min(150px,45vw);aspect-ratio:1;margin:12px auto;gap:1px}.nono-result-art i{background:var(--blue-faint)}.nono-result-art i.on{background:var(--blue)}
 
+/* 2048 uses a fixed board with moving tiles and separate, accessible direction controls. */
+.merge-art{background:linear-gradient(145deg,#fff1d6,#edc988)}.merge-art-grid{display:grid;grid-template-columns:repeat(2,52px);gap:7px;transform:rotate(-7deg)}.merge-art-grid i{display:grid;place-items:center;height:52px;border-radius:10px;font-style:normal;font-size:25px;font-weight:800;color:#593a17;background:#fff4dc;box-shadow:0 6px 14px #6d471523}.merge-art-grid i:last-child{background:#a86616;color:#fff;font-size:20px}
+.merge-content{--merge-base:#e6dfd4;--merge-empty:#f5f0e7;--merge-low:#faf2df;--merge-ink:#59401f;--merge-muted:#626f80;flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;width:min(100%,500px);margin:auto;padding:10px max(20px,env(safe-area-inset-right)) max(18px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left))}.merge-scores{display:flex;width:min(100%,392px);align-items:center;gap:10px}.merge-score{border-radius:13px;background:var(--blue-faint);padding:9px 16px;min-width:90px}.merge-score span{display:block;color:var(--blue-dark);font-size:12px;font-weight:700}.merge-score strong{font-size:24px;line-height:1.2;letter-spacing:-.5px;font-variant-numeric:tabular-nums}.merge-scores>button{margin-left:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:56px;min-width:56px;border-radius:12px;background:transparent;color:var(--blue-dark);font-size:12px;font-weight:700}.merge-scores>button:active{background:var(--blue-faint)}
+.merge-board{position:relative;width:min(100%,calc(100dvh - 340px),392px);aspect-ratio:1;border-radius:18px;background:var(--merge-base);padding:8px;touch-action:none;user-select:none;flex-shrink:0;outline-offset:4px}.merge-board:focus-visible{outline:3px solid var(--blue)}.merge-slots{height:100%;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);gap:8px}.merge-slots i{border-radius:10px;background:var(--merge-empty)}.merge-tiles{position:absolute;inset:8px;pointer-events:none}.merge-tile{position:absolute;left:calc(var(--col) * (100% + 8px) / 4);top:calc(var(--row) * (100% + 8px) / 4);width:calc((100% - 24px) / 4);height:calc((100% - 24px) / 4);border-radius:10px;display:grid;place-items:center;background:var(--merge-low);color:var(--merge-ink);font-size:clamp(22px,7vw,38px);font-weight:800;letter-spacing:-1px;font-variant-numeric:tabular-nums;box-shadow:0 2px 3px #35220b0d}.merge-tile[data-value="4"]{background:#f3ddad}.merge-tile[data-value="8"]{background:#bf772b;color:#fff}.merge-tile[data-value="16"]{background:#ae5c23;color:#fff}.merge-tile[data-value="32"]{background:#a6472d;color:#fff}.merge-tile[data-value="64"]{background:#94332d;color:#fff}.merge-tile.high{background:#855e0a;color:#fff;font-size:clamp(18px,5.7vw,30px)}.merge-tile.extra{background:#4f3b22;font-size:clamp(15px,4.8vw,25px)}.merge-tile.spawn{animation:merge-appear 160ms ease-out both}.merge-tile.join{animation:merge-pop 180ms ease-out both}
+.merge-footer{width:min(100%,392px);display:flex;flex-direction:column;align-items:center;gap:12px}.merge-status{min-height:20px;margin:0;text-align:center;font-size:13px;color:var(--merge-muted)}.merge-status.finished{color:var(--ink);font-weight:700}.merge-directions{display:flex;gap:8px;align-items:center}.merge-directions button{width:48px;height:48px;border-radius:13px;display:grid;place-items:center;background:var(--blue-faint);color:var(--blue-dark)}.merge-directions button:active{background:var(--blue-select);transform:scale(.95)}.merge-directions svg{width:22px;height:22px}.merge-continue{padding:11px 22px;border-radius:12px;background:var(--blue);color:#fff;font-weight:700;min-height:44px}
+[data-theme="dark"] .merge-content{--merge-base:#384252;--merge-empty:#252f3d;--merge-low:#e7dcc5;--merge-ink:#3f2c16;--merge-muted:#b5c3d6}
+@keyframes merge-appear{from{transform:scale(.5);opacity:.3}to{transform:scale(1);opacity:1}}@keyframes merge-pop{0%,100%{transform:scale(1)}45%{transform:scale(1.12)}}
+@media(max-height:700px){.merge-content{gap:10px}.merge-board{width:min(100%,calc(100dvh - 295px),392px)}.merge-footer{gap:8px}.merge-score{padding:7px 13px}.merge-score strong{font-size:21px}}
+@media(max-height:500px) and (orientation:landscape){.merge-content{width:min(100%,740px);display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-content:center;align-items:center}.merge-board{width:min(calc(100dvh - 110px),45vw)}.merge-scores{flex-direction:column}.merge-scores>button{margin:0}.merge-score{width:100%;max-width:130px}.merge-directions{display:grid;grid-template-columns:repeat(2,48px)}.merge-footer{gap:14px}.merge-tile{font-size:27px}.merge-tile.high{font-size:23px}.merge-tile.extra{font-size:18px}}
 </style>
   <title>Brainfarts — Give your brain a little workout</title>
 </head>
@@ -107,6 +116,7 @@
         <button class="home-game-card" data-route="setup-nonogram" aria-label="Choose Nonogram difficulty"><span class="game-card-number">03 / PICTURE LOGIC</span><span class="home-art nonogram-art" aria-hidden="true"><span class="nonogram-preview"><i></i><i class="on"></i><i></i><i class="on"></i><i></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i class="on"></i><i></i><i></i></span></span><span class="home-card-text"><span><strong>Nonogram</strong><small>Find the picture in the numbers.</small></span><span class="card-next"><svg><use href="#i-arrow"/></svg></span></span></button>
         <button class="home-game-card" data-route="setup-wordle" aria-label="Play Wordle"><span class="game-card-number">04 / WORDS</span><span class="home-art word-art" aria-hidden="true"><span class="word-art-preview"><i class="miss">C</i><i class="close">R</i><i class="miss">A</i><i class="good">N</i><i class="miss">E</i><i class="good">S</i><i class="good">L</i><i class="good">A</i><i class="good">T</i><i class="good">E</i></span></span><span class="home-card-text"><span><strong>Wordle</strong><small>A fresh word whenever you are.</small></span><span class="card-next"><svg><use href="#i-arrow"/></svg></span></span></button>
         <button class="home-game-card" data-route="setup-lights" aria-label="Choose Lights Out difficulty"><span class="game-card-number">05 / LOGIC</span><span class="home-art lights-art" aria-hidden="true"><span class="lights-art-grid"><i></i><i class="on"></i><i class="on"></i><i></i><i class="on"></i><i></i><i></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i class="on"></i><i></i><i class="on"></i></span></span><span class="home-card-text"><span><strong>Lights Out</strong><small>One tap changes everything.</small></span><span class="card-next"><svg><use href="#i-arrow"/></svg></span></span></button>
+        <button class="home-game-card" data-route="setup-2048" aria-label="Play 2048"><span class="game-card-number">06 / NUMBERS</span><span class="home-art merge-art" aria-hidden="true"><span class="merge-art-grid"><i>2</i><i>4</i><i>8</i><i>2048</i></span></span><span class="home-card-text"><span><strong>2048</strong><small>Small moves. Bigger numbers.</small></span><span class="card-next"><svg><use href="#i-arrow"/></svg></span></span></button>
       </div>
       <p class="home-foot">Designed for your thumbs. Available offline.</p>
     </section>
@@ -133,6 +143,8 @@
     <section class="page play-page" id="page-nonogram" hidden><header class="screen-header play-header"><button class="bare-icon back-button" data-route="setup-nonogram" aria-label="Back to Nonogram setup"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">Nonogram</span><button class="bare-icon settings-open" aria-label="Nonogram settings"><svg><use href="#i-settings"/></svg></button></header><div class="nono-viewport" id="nono-viewport" aria-label="Nonogram board. Pinch to zoom and drag to pan."><div class="nono-layer" id="nono-layer"><div class="nono-board" id="nono-board" role="grid" aria-label="Nonogram puzzle"></div></div></div></section>
     <section class="page setup-page" id="page-setup-wordle" hidden><header class="screen-header"><button class="bare-icon back-button" data-route="home" aria-label="Back to games"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">Wordle</span><button class="bare-icon settings-open" aria-label="Settings"><svg><use href="#i-settings"/></svg></button></header><div class="setup-body"><div class="setup-badge">WORD GAME ? UNLIMITED PLAY</div><h1>Find the word.</h1><p>Six guesses, five letters, and a fresh word whenever you want one.</p><div class="setup-options"><div class="setup-option"><span><strong>Play at your pace</strong><small>Random words ? no daily limit</small></span><span aria-hidden="true">?</span></div></div><button class="start-button" id="start-wordle">Play <svg><use href="#i-arrow"/></svg></button><button class="resume-link" id="resume-wordle" hidden>Resume saved word</button></div></section>
     <section class="page play-page" id="page-wordle" hidden><header class="screen-header play-header"><button class="bare-icon back-button" data-route="setup-wordle" aria-label="Back to Wordle setup"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">Wordle</span><button class="bare-icon settings-open" aria-label="Wordle settings"><svg><use href="#i-settings"/></svg></button></header><div class="word-content"><div class="word-board-area"><div class="word-board" id="word-board" aria-label="Wordle guesses"></div></div><div class="word-input-area"><div class="word-legend" aria-hidden="true"><span><i></i>Correct spot</span><span><i></i>Elsewhere</span><span><i></i>Not in word</span></div><div class="word-keyboard" id="word-keyboard" aria-label="Wordle keyboard"></div></div></div></section>
+    <section class="page setup-page" id="page-setup-2048" hidden><header class="screen-header"><button class="bare-icon back-button" data-route="home" aria-label="Back to games"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">2048</span><button class="bare-icon settings-open" aria-label="Settings"><svg><use href="#i-settings"/></svg></button></header><div class="setup-body"><div class="setup-badge">NUMBERS &middot; 2048</div><h1>Make room for more.</h1><p>Slide matching tiles together. Keep the board open and work your way to 2048.</p><div class="setup-section-label">FOUR DIRECTIONS. ONE BIG NUMBER.</div><p>Swipe the board, use the arrow keys, or tap the direction buttons. Every move adds a new tile.</p><button class="start-button" id="start-2048">New game <svg><use href="#i-arrow"/></svg></button><button class="resume-link" id="resume-2048" hidden>Resume saved game</button></div></section>
+    <section class="page play-page" id="page-2048" hidden><header class="screen-header play-header"><button class="bare-icon back-button" data-route="setup-2048" aria-label="Back to 2048 setup"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">2048</span><button class="bare-icon settings-open" aria-label="2048 settings"><svg><use href="#i-settings"/></svg></button></header><div class="merge-content"><div class="merge-scores"><div class="merge-score"><span>SCORE</span><strong id="merge-score">0</strong></div><div class="merge-score"><span>BEST</span><strong id="merge-best">0</strong></div><button id="merge-undo" aria-label="Undo last 2048 move"><svg><use href="#i-undo"/></svg><span>Undo</span></button></div><div class="merge-board" id="merge-board" tabindex="0" role="group" aria-label="2048 board" aria-describedby="merge-instructions merge-board-description"><div class="merge-slots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="merge-tiles" id="merge-tiles" aria-hidden="true"></div><div class="visually-hidden" id="merge-board-description"></div></div><div class="merge-footer"><p class="merge-status" id="merge-status" role="status" aria-live="polite" aria-atomic="true"></p><button class="merge-continue" id="merge-continue" hidden>Keep playing</button><button class="merge-continue" id="merge-again" hidden>New game</button><div class="merge-directions" role="group" aria-label="Move tiles"><button data-merge-dir="left" aria-label="Move tiles left"><svg><use href="#i-arrow-left"/></svg></button><button data-merge-dir="up" aria-label="Move tiles up"><svg style="transform:rotate(-90deg)"><use href="#i-arrow"/></svg></button><button data-merge-dir="down" aria-label="Move tiles down"><svg style="transform:rotate(90deg)"><use href="#i-arrow"/></svg></button><button data-merge-dir="right" aria-label="Move tiles right"><svg><use href="#i-arrow"/></svg></button></div><span id="merge-instructions" class="visually-hidden">Swipe or use arrow keys to slide tiles. Direction buttons are also available. Matching tiles merge once per move. Reach 2048 to win.</span></div></div></section>
     <section class="page setup-page" id="page-setup-lights" hidden><header class="screen-header"><button class="bare-icon back-button" data-route="home" aria-label="Back to games"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">Lights Out</span><button class="bare-icon settings-open" aria-label="Settings"><svg><use href="#i-settings"/></svg></button></header><div class="setup-body"><div class="setup-badge">LOGIC ? LIGHTS OUT</div><h1>Find the off switch.</h1><p>Every tap changes a light and its neighbors. Can you turn them all off?</p><div class="setup-section-label">CHOOSE DIFFICULTY</div><div class="setup-options" role="radiogroup" aria-label="Lights Out difficulty"><label class="setup-option"><input type="radio" name="setup-lights" value="easy" checked><span><strong>Easy</strong><small>3 ? 3 ? A quick warm-up</small></span><span class="radio-dot"></span></label><label class="setup-option"><input type="radio" name="setup-lights" value="medium" ><span><strong>Medium</strong><small>5 ? 5 ? A little more thought</small></span><span class="radio-dot"></span></label><label class="setup-option"><input type="radio" name="setup-lights" value="hard" ><span><strong>Hard</strong><small>6 ? 6 ? A deeper challenge</small></span><span class="radio-dot"></span></label></div><button class="start-button" id="start-lights">Play <svg><use href="#i-arrow"/></svg></button><button class="resume-link" id="resume-lights" hidden>Resume saved puzzle</button></div></section>
     <section class="page play-page" id="page-lights" hidden><header class="screen-header play-header"><button class="bare-icon back-button" data-route="setup-lights" aria-label="Back to Lights Out setup"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">Lights Out</span><button class="bare-icon settings-open" aria-label="Lights Out settings"><svg><use href="#i-settings"/></svg></button></header><div class="lights-content"><div class="lights-meta"><div><span>Moves</span><strong id="lights-moves">0</strong></div><div><span>Time</span><strong id="lights-time">00:00</strong></div></div><div class="lights-board" id="lights-board" role="group" aria-label="Lights Out board"></div><p class="lights-caption">Turn every light off.</p></div></section>
     <!-- Sudoku play: ONE focused view; zero navigation, sidebars, or footers. -->
@@ -159,6 +171,7 @@
     <section class="settings-sheet" role="dialog" aria-modal="true" aria-labelledby="settings-title" tabindex="-1">
       <header class="sheet-header"><h2 id="settings-title">Settings</h2><button class="bare-icon" id="settings-close" aria-label="Close settings"><svg><use href="#i-close"/></svg></button></header>
       <div class="settings-scroll">
+        <div class="settings-section" id="merge-settings" hidden><h3>2048 toolkit</h3><p class="settings-info">Swipe or use the arrow keys. Equal tiles merge once per move. Keep an empty space or two, and build toward 2048. Undo is available above the board.</p><div class="settings-actions"><button class="sheet-action" id="merge-restart"><svg><use href="#i-refresh"/></svg> Restart game</button><button class="sheet-action" id="merge-new"><svg><use href="#i-sparkle"/></svg> New game</button></div></div>
         <div class="settings-section" id="lights-settings" hidden><h3>Lights Out toolkit</h3><div class="tool-grid"><button class="tool-button" id="lights-undo"><svg><use href="#i-undo"/></svg><span>Undo</span></button><button class="tool-button" id="lights-hint"><svg><use href="#i-sparkle"/></svg><span>Hint</span></button></div><p class="settings-info">Tap a light to switch it and its up, down, left and right neighbors. Turn every light off to win.</p><div class="settings-actions"><button class="sheet-action" id="lights-restart"><svg><use href="#i-refresh"/></svg> Restart puzzle</button><button class="sheet-action" id="lights-new"><svg><use href="#i-sparkle"/></svg> New puzzle</button></div></div>
         <div class="settings-section" id="word-settings" hidden><h3>Wordle</h3><div class="sheet-stats"><div><span>Played</span><strong id="word-played">0</strong></div><div><span>Wins</span><strong id="word-wins">0</strong></div><div><span>Streak</span><strong id="word-streak">0</strong></div></div><p class="settings-info">Guess a five-letter word in six tries. Green is in the correct spot; gold is elsewhere; gray is absent. Letters may repeat.</p><div class="settings-actions"><button class="sheet-action" id="word-new"><svg><use href="#i-refresh"/></svg> New word</button></div></div>
         <div class="settings-section" id="nono-settings" hidden><h3>Nonogram toolkit</h3><div class="tool-grid"><button class="tool-button" id="nono-undo"><svg><use href="#i-undo"/></svg><span>Undo</span></button><button class="tool-button" id="nono-erase"><svg><use href="#i-eraser"/></svg><span>Erase</span></button><button class="tool-button" id="nono-hint"><svg><use href="#i-sparkle"/></svg><span>Hint</span></button><button class="tool-button" id="nono-reset-zoom"><svg><use href="#i-refresh"/></svg><span>Reset zoom</span></button></div><p class="settings-info">Tap to fill; hold to mark X. Pinch to zoom, then drag to pan.</p><div class="sheet-stats"><div><span>Time</span><strong id="nono-time">00:00</strong></div><div><span>Moves</span><strong id="nono-moves">0</strong></div><div><span>Difficulty</span><strong id="nono-level">Easy</strong></div></div><label class="settings-row"><span>Completed line indicators</span><input id="nono-indicators" type="checkbox" role="switch"></label><label class="settings-row"><span>Haptic feedback</span><input id="nono-haptics" type="checkbox" role="switch"></label><div class="settings-actions"><button class="sheet-action" id="nono-restart">Restart puzzle</button><button class="sheet-action" id="nono-new">New puzzle</button></div></div>
@@ -276,6 +289,7 @@ function closeDialog() {
   document.body.classList.remove('body-no-scroll');
 }
 const RULES = {
+  '2048': { title: '2048, made simple.', subtitle: 'A little space goes a long way.', steps: ['Swipe up, down, left or right to slide every tile in that direction. Arrow keys, WASD and the direction buttons work too.', 'Two equal tiles touching in the direction of travel merge into one. Each tile can merge only once per move. The merged value is added to your score.', 'A new 2 or 4 appears after each move that changes the board. Reach a 2048 tile to win, then keep playing if you like.', 'The game ends when the board is full and no neighbors match. Undo restores your last move, including the new tile. Progress and best score are saved on this device.'] },
   sudoku: {
     title: 'Sudoku, made simple.', subtitle: 'Nine rows. Nine columns. Nine 3 × 3 boxes. One of each number in every group.',
     steps: [
@@ -324,6 +338,8 @@ $('#dialog-content').addEventListener('click', event => {
   const action = button.dataset.dialogAction;
   closeDialog();
   if (action === 'new') { if (route === 'sudoku') newSudoku(sudoku.difficulty); else if (route === 'mines') newMines(mines.difficulty); else if (route === 'nonogram') newNonogram(nonogram.difficulty); else if (route === 'wordle') newWordle(); else if (route === 'lights') newLights(lights.difficulty); }
+  if (action === 'merge-new-confirm') { newMerge(); navigate('2048'); }
+  if (action === 'merge-restart-confirm') restartMerge();
   if (action === 'nono-replay') restartNonogram();
   if (action === 'lights-back') navigate('setup-lights');
   if (action === 'lights-replay') restartLights();
@@ -334,8 +350,8 @@ $('#dialog-content').addEventListener('click', event => {
 $$('[data-help]').forEach(button => button.addEventListener('click', () => showHelp(button.dataset.help)));
 
 /* -------- Game selection, routing, settings, install -------- */
-const GAME_ROUTES = ['home','setup-sudoku','setup-mines','setup-nonogram','setup-wordle','setup-lights','sudoku','mines','nonogram','wordle','lights'];
-const gameForRoute = r => r.includes('sudoku') ? 'sudoku' : r.includes('mines') ? 'mines' : r.includes('nonogram') ? 'nonogram' : r.includes('wordle') ? 'wordle' : r.includes('lights') ? 'lights' : null;
+const GAME_ROUTES = ['home','setup-sudoku','setup-mines','setup-nonogram','setup-wordle','setup-lights','setup-2048','2048','sudoku','mines','nonogram','wordle','lights'];
+const gameForRoute = r => r.includes('2048') ? '2048' : r.includes('sudoku') ? 'sudoku' : r.includes('mines') ? 'mines' : r.includes('nonogram') ? 'nonogram' : r.includes('wordle') ? 'wordle' : r.includes('lights') ? 'lights' : null;
 function navigate(next) {
   if (!GAME_ROUTES.includes(next)) next = 'home';
   closeSettings();
@@ -358,8 +374,9 @@ function navigate(next) {
   if (next === 'nonogram' || next === 'setup-nonogram') { if (!nonogram) restoreNonogram(); $('#resume-nonogram').hidden = !nonogram || nonogram.status === 'won'; if (next === 'nonogram') { if (!nonogram) newNonogram('easy'); renderNonogram(); requestAnimationFrame(fitNonogram); } }
   if (next === 'wordle' || next === 'setup-wordle') { if (!wordle) restoreWordle(); $('#resume-wordle').hidden = !wordle || wordle.status !== 'playing'; if (next === 'wordle') { if (!wordle) newWordle(); renderWordle(); } }
   if (next === 'lights' || next === 'setup-lights') { if (!lights) restoreLights(); $('#resume-lights').hidden = !lights || lights.status === 'won'; if (next === 'lights') { if (!lights) newLights('easy'); renderLights(); } }
-  document.title = next === 'home' ? 'Brainfarts — Give your brain a little workout' : `${gameForRoute(next) === 'mines' ? 'Minesweeper' : gameForRoute(next) === 'nonogram' ? 'Nonogram' : gameForRoute(next) === 'wordle' ? 'Wordle' : gameForRoute(next) === 'lights' ? 'Lights Out' : 'Sudoku'} · Brainfarts`;
-  if (next !== 'sudoku' && next !== 'mines' && next !== 'nonogram' && next !== 'wordle' && next !== 'lights') window.scrollTo({ top: 0, behavior: 'instant' });
+  if (next === '2048' || next === 'setup-2048') { if (!merge) restoreMerge(); $('#resume-2048').hidden = !merge; if (next === '2048') { if (!merge) newMerge(); renderMerge(); } }
+  document.title = next === 'home' ? 'Brainfarts — Give your brain a little workout' : `${gameForRoute(next) === '2048' ? '2048' : gameForRoute(next) === 'mines' ? 'Minesweeper' : gameForRoute(next) === 'nonogram' ? 'Nonogram' : gameForRoute(next) === 'wordle' ? 'Wordle' : gameForRoute(next) === 'lights' ? 'Lights Out' : 'Sudoku'} · Brainfarts`;
+  if (next !== 'sudoku' && next !== 'mines' && next !== 'nonogram' && next !== 'wordle' && next !== 'lights' && next !== '2048') window.scrollTo({ top: 0, behavior: 'instant' });
 }
 $$('[data-route]').forEach(el => el.addEventListener('click', event => {
   if (el.tagName === 'A') event.preventDefault();
@@ -380,6 +397,8 @@ $('#start-nonogram').addEventListener('click', () => { newNonogram($('input[name
 $('#resume-nonogram').addEventListener('click', () => navigate('nonogram'));
 $('#start-wordle').addEventListener('click', () => { newWordle(); navigate('wordle'); });
 $('#resume-wordle').addEventListener('click', () => navigate('wordle'));
+$('#start-2048').addEventListener('click', () => requestMergeNew());
+$('#resume-2048').addEventListener('click', () => navigate('2048'));
 $('#start-lights').addEventListener('click', () => { newLights($('input[name=setup-lights]:checked').value); navigate('lights'); });
 $('#resume-lights').addEventListener('click', () => navigate('lights'));
 $('#resume-mines').addEventListener('click', () => navigate('mines'));
@@ -389,6 +408,7 @@ function closeSettings() {
   document.body.classList.remove('sheet-open');
 }
 function openSettings() {
+  $('#merge-settings').hidden = route !== '2048';
   const isSudoku = route === 'sudoku';
   const isMines = route === 'mines';
   $('#lights-settings').hidden = route !== 'lights';
@@ -1234,6 +1254,130 @@ $('#lights-hint').addEventListener('click',()=>{if(!lights||lights.status==='won
 $('#lights-restart').addEventListener('click',()=>{restartLights();closeSettings()});
 $('#lights-new').addEventListener('click',()=>{newLights(lights?.difficulty||'easy');closeSettings()});
 
+/* -------- 2048: pure directional reducer, one merge per tile, local progress -------- */
+let merge = null, mergeBusy = false, mergeAnimationTimer = null, mergeGesture = null;
+const mergeBoardValid = cells => Array.isArray(cells) && cells.length === 16 && cells.every(v => Number.isSafeInteger(v) && v >= 0 && (v === 0 || (v >= 2 && Number.isInteger(Math.log2(v)))));
+function mergeSnapshotValid(v) {
+  return !!v && mergeBoardValid(v.cells) && v.cells.some(Boolean) && Number.isSafeInteger(v.score) && v.score >= 0 && Number.isSafeInteger(v.moves) && v.moves >= 0 && ['playing','won','over'].includes(v.status) && typeof v.continued === 'boolean';
+}
+function mergeSnapshot() { return {cells:[...merge.cells],score:merge.score,moves:merge.moves,status:merge.status,continued:merge.continued}; }
+function mergeCanMove(cells) {
+  return cells.some((v,i) => v === 0 || (i % 4 < 3 && v === cells[i+1]) || (i < 12 && v === cells[i+4]));
+}
+// A direction maps each row/column into its leading-edge order. Compact first,
+// combine equal neighbors once, then pad. Transitions are visual data only.
+function slideMerge(cells, direction) {
+  const result = [...cells], transitions = [], merged = [];
+  let gained = 0;
+  for (let line=0;line<4;line++) {
+    const indices = Array.from({length:4},(_,k) => direction==='left' ? line*4+k : direction==='right' ? line*4+3-k : direction==='up' ? k*4+line : (3-k)*4+line);
+    const items = indices.filter(i=>cells[i]).map(i=>({index:i,value:cells[i]}));
+    indices.forEach(i=>result[i]=0);
+    let write=0;
+    for (let j=0;j<items.length;j++) {
+      const item=items[j], dest=indices[write++];
+      if (j+1<items.length && item.value===items[j+1].value) {
+        result[dest]=item.value*2;gained+=result[dest];merged.push(dest);
+        transitions.push({from:item.index,to:dest,value:item.value},{from:items[j+1].index,to:dest,value:item.value});j++;
+      } else { result[dest]=item.value;transitions.push({from:item.index,to:dest,value:item.value}); }
+    }
+  }
+  return {cells:result,gained,transitions,merged,changed:result.some((v,i)=>v!==cells[i])};
+}
+function spawnMerge(cells) {
+  const empty=cells.map((v,i)=>v? -1:i).filter(i=>i>=0);
+  if (!empty.length) return -1;
+  const index=empty[Math.floor(Math.random()*empty.length)];cells[index]=Math.random()<.9?2:4;return index;
+}
+function restoreMerge() {
+  const value=load('2048');
+  if (!mergeSnapshotValid(value) || !mergeBoardValid(value.initial)) return;
+  const history=Array.isArray(value.history) ? value.history.filter(mergeSnapshotValid).slice(-50) : [];
+  merge={...value,history};
+  if (merge.status==='playing' && !mergeCanMove(merge.cells)) merge.status='over';
+  updateMergeBest();
+}
+function newMerge() {
+  const cells=Array(16).fill(0);spawnMerge(cells);spawnMerge(cells);
+  merge={cells,initial:[...cells],score:0,moves:0,status:'playing',continued:false,history:[]};
+  save('2048',merge);renderMerge();
+}
+function requestMergeNew() {
+  closeSettings();
+  if (merge && merge.moves>0 && merge.status!=='over') {
+    dialog(`<div class="dialog-kicker">A FRESH BOARD</div><h2 id="dialog-title">Start a new game?</h2><p>Your current 2048 board will be replaced. Your best score stays.</p><div class="dialog-actions"><button class="secondary-button" data-dialog-action="close">Keep this game</button><button class="primary-button" data-dialog-action="merge-new-confirm">New game</button></div>`);
+  } else {newMerge();navigate('2048');}
+}
+function restartMerge() {
+  if (!merge) return;
+  merge={cells:[...merge.initial],initial:[...merge.initial],score:0,moves:0,status:'playing',continued:false,history:[]};
+  save('2048',merge);renderMerge();closeSettings();
+}
+function updateMergeBest() {
+  const stored=load('best.2048',0),best=Number.isSafeInteger(stored)&&stored>=0?stored:0;
+  if (merge && merge.score>best) { save('best.2048',merge.score);return merge.score; }
+  return best;
+}
+function mergeTile(value,index,classes='') {
+  return `<div class="merge-tile ${value>=128?'high':''} ${value>=16384?'extra':''} ${classes}" data-value="${value}" style="--col:${index%4};--row:${Math.floor(index/4)}">${value}</div>`;
+}
+function renderMerge(spawn=-1,joined=[]) {
+  clearTimeout(mergeAnimationTimer);mergeBusy=false;mergeGesture=null;
+  if (!merge) return;
+  $('#merge-tiles').innerHTML=merge.cells.map((v,i)=>v?mergeTile(v,i,i===spawn?'spawn':joined.includes(i)?'join':''):'').join('');
+  $('#merge-score').textContent=merge.score.toLocaleString();$('#merge-best').textContent=updateMergeBest().toLocaleString();
+  $('#merge-undo').disabled=!merge.history.length;
+  const won=merge.status==='won',over=merge.status==='over';
+  $('#merge-status').textContent=won?'2048! You made room for something big.':over?'No moves left. Undo a move or start fresh.':`Swipe to combine. ${merge.moves ? 'Moves: '+merge.moves+'.' : 'Your next big number starts here.'}`;
+  $('#merge-status').classList.toggle('finished',won||over);$('#merge-continue').hidden=!won;$('#merge-again').hidden=!over;
+  $$('[data-merge-dir]').forEach(b=>b.disabled=won||over);
+  $('#merge-board-description').textContent=Array.from({length:4},(_,r)=>`Row ${r+1}: ${merge.cells.slice(r*4,r*4+4).map(v=>v||'empty').join(', ')}.`).join(' ');
+}
+function moveMerge(direction) {
+  if (!merge || route!=='2048' || mergeBusy || merge.status!=='playing' || !['left','right','up','down'].includes(direction) || !$('#settings-backdrop').hidden || !$('#modal-backdrop').hidden) return;
+  const move=slideMerge(merge.cells,direction);
+  if (!move.changed) { if (!mergeCanMove(merge.cells)) {merge.status='over';save('2048',merge);renderMerge();} return; }
+  merge.history.push(mergeSnapshot());if(merge.history.length>50)merge.history.shift();
+  merge.cells=move.cells;merge.score+=move.gained;merge.moves++;
+  const spawn=spawnMerge(merge.cells);
+  if (!merge.continued && merge.cells.some(v=>v>=2048)) merge.status='won';
+  else if (!mergeCanMove(merge.cells)) merge.status='over';
+  save('2048',merge);updateMergeBest();
+  if(move.gained)clickSound(390+Math.min(500,move.gained),.04);
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const layer=$('#merge-tiles');
+  if (reduced || !layer.animate) {renderMerge(spawn,move.merged);return;}
+  mergeBusy=true;
+  layer.innerHTML=move.transitions.map(t=>mergeTile(t.value,t.from)).join('');
+  const step=(layer.clientWidth+8)/4;
+  [...layer.children].forEach((el,i)=>{const t=move.transitions[i];el.animate([{transform:'translate(0,0)'},{transform:`translate(${(t.to%4-t.from%4)*step}px,${(Math.floor(t.to/4)-Math.floor(t.from/4))*step}px)`}],{duration:120,easing:'ease-out',fill:'forwards'});});
+  mergeAnimationTimer=setTimeout(()=>renderMerge(spawn,move.merged),125);
+}
+function undoMerge() {
+  if (!merge?.history.length) return;
+  const snapshot=merge.history.pop();Object.assign(merge,snapshot);save('2048',merge);renderMerge();
+}
+$('#merge-undo').addEventListener('click',undoMerge);
+$('#merge-continue').addEventListener('click',()=>{if(merge?.status!=='won')return;merge.continued=true;merge.status=mergeCanMove(merge.cells)?'playing':'over';save('2048',merge);renderMerge();});
+$('#merge-again').addEventListener('click',requestMergeNew);
+$('#merge-new').addEventListener('click',requestMergeNew);
+$('#merge-restart').addEventListener('click',()=>{closeSettings();dialog(`<div class="dialog-kicker">BACK TO THE BEGINNING</div><h2 id="dialog-title">Restart this game?</h2><p>Return to your original two tiles with a score of zero. Your best score stays.</p><div class="dialog-actions"><button class="secondary-button" data-dialog-action="close">Keep playing</button><button class="primary-button" data-dialog-action="merge-restart-confirm">Restart</button></div>`);});
+$$('[data-merge-dir]').forEach(button=>button.addEventListener('click',()=>moveMerge(button.dataset.mergeDir)));
+$('#merge-board').addEventListener('pointerdown',event=>{
+  if (!event.isPrimary) {mergeGesture=null;return;}
+  if (event.pointerType==='mouse' && event.button!==0) return;
+  mergeGesture={id:event.pointerId,x:event.clientX,y:event.clientY};
+  $('#merge-board').setPointerCapture(event.pointerId);
+});
+$('#merge-board').addEventListener('pointerup',event=>{
+  if (!mergeGesture || mergeGesture.id!==event.pointerId) return;
+  const dx=event.clientX-mergeGesture.x,dy=event.clientY-mergeGesture.y;mergeGesture=null;
+  if (Math.max(Math.abs(dx),Math.abs(dy))<24) return;
+  moveMerge(Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up'));
+});
+$('#merge-board').addEventListener('pointercancel',()=>{mergeGesture=null;});
+$('#merge-board').addEventListener('lostpointercapture',()=>{mergeGesture=null;});
+
 /* -------- Keyboard support and live timers -------- */
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape' && !$('#modal-backdrop').hidden) { closeDialog(); return; }
@@ -1251,6 +1395,7 @@ document.addEventListener('keydown', event => {
   }
   if (!$('#settings-backdrop').hidden) return;
   if (event.target.matches('select,input,textarea')) return;
+  if (route === '2048') { const direction = {ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down',a:'left',d:'right',w:'up',s:'down'}[event.key.length===1?event.key.toLowerCase():event.key]; if (direction && !event.ctrlKey && !event.metaKey && !event.altKey) { event.preventDefault(); moveMerge(direction); } return; }
   if (route === 'wordle') { if ($('#word-keyboard').contains(event.target) && (event.key === 'Enter' || event.key === ' ')) return; if (!event.ctrlKey && !event.metaKey && !event.altKey && (/^[a-z]$/i.test(event.key) || event.key === 'Enter' || event.key === 'Backspace')) { event.preventDefault(); wordInput(event.key.toUpperCase()); } return; }
   if (route === 'sudoku' && sudoku && !['paused','won','lost'].includes(sudoku.status)) {
     const key = event.key;
@@ -1320,6 +1465,7 @@ window.addEventListener('pagehide', () => {
   if (nonogram) save('nonogram', nonogram);
   if (wordle) save('wordle', wordle);
   if (lights) save('lights', lights);
+  if (merge) save('2048', merge);
 });
 
 // Route after the UI has been initialized.
