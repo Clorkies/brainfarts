@@ -1,0 +1,1335 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Brainfarts: fresh Sudoku, Minesweeper, Nonogram and Wordle puzzles made for your pocket. Offline, no distractions.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Brainfarts">
+  <style>
+/* BRAINFARTS — uncluttered, thumb-first design system inspired by classic puzzle UIs. */
+:root{color-scheme:light;--page:#fff;--panel:#fff;--ink:#1b2b43;--muted:#858e9f;--blue:#345fb4;--blue-dark:#214b9d;--blue-faint:#e4edf6;--blue-select:#b0dafa;--blue-match:#d6eaff;--line:#e4e9f1;--shadow:0 16px 60px #29436118;--tile:#c4d1df;--board-line:#b6c3d2;--board-bold:#3e4552;--mine-covered:#dfeaf6;--mine-open:#f5f8fc;--mine-outline:#b8c9dc;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif}
+:root[data-theme="dark"]{color-scheme:dark;--page:#17202e;--panel:#202c3c;--ink:#f4f6fb;--muted:#a4b2c4;--blue:#83acfc;--blue-dark:#a8c7ff;--blue-faint:#2d4057;--blue-select:#345f94;--blue-match:#2a425e;--line:#33475d;--shadow:0 20px 65px #0003;--tile:#354a61;--board-line:#566b84;--board-bold:#b3c5db;--mine-covered:#33475f;--mine-open:#223246;--mine-outline:#586e88}
+*{box-sizing:border-box}html{background:var(--page);-webkit-text-size-adjust:100%;overscroll-behavior:none}body{margin:0;min-height:100%;font:16px/1.4 var(--font);color:var(--ink);background:var(--page);-webkit-font-smoothing:antialiased}body[data-screen="sudoku"],body[data-screen="mines"],body[data-screen="nonogram"],body[data-screen="wordle"],body[data-screen="lights"]{height:100dvh;overflow:hidden}button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}button:disabled{opacity:.4;cursor:not-allowed}button:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:3px}svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;stroke-linecap:round;flex-shrink:0}.svg-sprite{position:absolute;width:0;height:0;overflow:hidden}#main{min-height:100dvh}.page[hidden],.settings-backdrop[hidden],.modal-backdrop[hidden],.pause-overlay[hidden],.setup-page[hidden],.settings-section[hidden],.settings-info[hidden],[hidden]{display:none!important}.visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;pointer-events:none}
+/* Navigation — only the back and settings actions frame each game. */
+.screen-header{height:clamp(65px,10dvh,88px);padding:8px max(16px,env(safe-area-inset-right)) 0 max(16px,env(safe-area-inset-left));display:grid;grid-template-columns:56px minmax(0,1fr) 56px;align-items:center;gap:8px;flex-shrink:0;width:100%;max-width:640px;margin:0 auto}.screen-title{text-align:center;font-size:clamp(19px,5.1vw,25px);font-weight:780;letter-spacing:-.6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bare-icon{width:50px;height:50px;display:inline-grid;place-items:center;background:transparent;color:var(--blue);border-radius:15px;transition:background 160ms,transform 160ms}.bare-icon:active{background:var(--blue-faint);transform:scale(.91)}.bare-icon svg{width:30px;height:30px;stroke-width:2.5}.screen-header>.bare-icon:last-child{justify-self:end}
+/* Home/selection screen, designed to scroll only if content actually requires it. */
+.home-page{max-width:1000px;margin:0 auto;padding:env(safe-area-inset-top) clamp(20px,5vw,54px) max(24px,env(safe-area-inset-bottom))}.home-topline{height:75px;display:flex;justify-content:space-between;align-items:center}.home-mark{color:var(--blue);font-size:34px}.home-hero{text-align:center;margin:12px 0 42px}.home-eyebrow{font-size:11px;letter-spacing:2.6px;font-weight:800;color:var(--blue)}.home-hero h1{font-size:clamp(51px,11vw,90px);line-height:1;letter-spacing:-5px;margin:15px 0 8px;font-weight:850}.home-hero h1 span{color:var(--blue)}.home-hero p{font-size:clamp(16px,3.5vw,21px);color:var(--muted);margin:12px 0 0}.home-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.home-game-card{color:var(--ink);background:var(--panel);padding:18px;min-width:0;border:1px solid var(--line);border-radius:25px;box-shadow:var(--shadow);text-align:left;transition:transform 230ms,box-shadow 230ms}.home-game-card:hover{transform:translateY(-4px);box-shadow:0 20px 56px #29436122}.home-game-card:active{transform:scale(.985)}.game-card-number{display:block;font-size:11px;font-weight:750;letter-spacing:1.35px;color:var(--muted);padding:0 3px 14px}.home-art{height:clamp(165px,23vw,250px);border-radius:17px;display:grid;place-items:center;overflow:hidden}.sudoku-art{background:linear-gradient(145deg,#e4edff,#b7d3ff)}.mines-art{background:linear-gradient(135deg,#d7e7fb,#a9c7ee)}.home-art-grid,.home-mine-preview{width:155px;height:155px;display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding:7px;border-radius:12px;box-shadow:0 16px 22px #193a6b2d;transform:rotate(-8deg);background:#fff}.home-art-grid i,.home-mine-preview i{display:grid;place-items:center;font-size:25px;font-weight:600;color:#142b47;font-style:normal;background:#e9f0f9;border-radius:3px}.home-art-grid i:nth-child(3n),.home-mine-preview i:nth-child(4n){background:#b7dafa}.home-mine-preview{transform:rotate(8deg)}.home-mine-preview i{font-size:21px}.home-mine-preview i:nth-child(3),.home-mine-preview i:nth-child(8){color:#2c5ebc}.home-card-text{display:flex;align-items:center;justify-content:space-between;padding:20px 4px 4px;gap:10px}.home-card-text strong{font-size:clamp(22px,3vw,31px);font-weight:790;letter-spacing:-.9px;display:block}.home-card-text small{font-size:13px;color:var(--muted);display:block;margin-top:3px}.card-next{background:var(--blue-faint);color:var(--blue);border-radius:50%;width:40px;height:40px;display:grid;place-items:center}.home-foot{text-align:center;margin:30px 0;color:var(--muted);font-size:12px}
+/* Setup is where difficulty and mine sizes belong. */
+.setup-page{max-width:640px;margin:auto;padding-bottom:max(35px,env(safe-area-inset-bottom));min-height:100dvh}.setup-body{padding:clamp(26px,7dvh,58px) clamp(24px,6vw,46px)}.setup-badge{color:var(--blue);letter-spacing:1.7px;font-size:11px;font-weight:800}.setup-body h1{font-size:clamp(37px,9vw,49px);letter-spacing:-2.2px;line-height:1.06;margin:14px 0 10px}.setup-body>p{font-size:16px;color:var(--muted);line-height:1.65;max-width:470px;margin:0 0 39px}.setup-section-label{font-size:12px;color:var(--muted);font-weight:750;letter-spacing:1.2px;margin-bottom:13px}.setup-options{border:1px solid var(--line);border-radius:20px;overflow:hidden}.setup-option{display:flex;align-items:center;justify-content:space-between;min-height:84px;padding:16px 19px;cursor:pointer;position:relative;background:var(--panel);transition:background 180ms}.setup-option:not(:last-child){border-bottom:1px solid var(--line)}.setup-option:has(input:checked){background:var(--blue-faint)}.setup-option input{opacity:0;position:absolute;inset:0;cursor:pointer}.setup-option strong{font-size:19px;display:block;font-weight:730}.setup-option small{font-size:13px;color:var(--muted)}.radio-dot{width:22px;height:22px;border:2px solid #b6c1d2;border-radius:50%;flex-shrink:0}.setup-option:has(input:checked) .radio-dot{border-color:var(--blue);box-shadow:inset 0 0 0 5px var(--panel);background:var(--blue)}.setup-option:focus-within{outline:3px solid var(--blue);outline-offset:-3px}.start-button{background:var(--blue);color:white;width:100%;min-height:57px;padding:13px 20px;border-radius:15px;font-weight:750;font-size:17px;display:flex;align-items:center;justify-content:center;gap:12px;transition:background 180ms,transform 180ms}.start-button:hover{background:var(--blue-dark)}.start-button:active{transform:scale(.985)}.setup-body>.start-button{margin-top:24px}.resume-link{display:block;background:none;color:var(--blue);font-size:15px;font-weight:720;padding:18px 12px;margin:0 auto}
+/* Gameplay — the document never scrolls, the board has an explicit fixed ratio. */
+.play-page{height:100dvh;max-height:100dvh;overflow:hidden;display:flex;flex-direction:column;background:var(--page);padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);animation:game-enter 220ms ease-out}.sudoku-content{width:min(calc(100% - 20px),560px);min-height:0;flex:1;margin:0 auto;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:clamp(10px,2dvh,22px);padding:clamp(4px,1.5dvh,14px) 0 clamp(12px,2.7dvh,27px)}.sudoku-stats{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:0 5px;flex:0 0 auto}.sudoku-stats>div{display:flex;flex-direction:column;gap:3px;align-items:center;min-width:0;flex:1}.sudoku-stats>div:first-child{align-items:flex-start}.sudoku-stats>div:last-child{align-items:flex-end}.sudoku-stats span{font-size:clamp(13px,3.1vw,17px);color:var(--muted);font-weight:660}.sudoku-stats strong{font-size:clamp(17px,4.1vw,22px);font-weight:700;color:var(--muted);white-space:nowrap;line-height:1.25}.sudoku-board-frame{position:relative;align-self:center;width:min(100%,calc(100dvh - 288px));max-height:calc(100dvh - 288px);aspect-ratio:1;flex:0 0 auto;overflow:hidden}.sudoku-grid{width:100%;height:100%;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));grid-template-rows:repeat(9,minmax(0,1fr));border:3px solid var(--board-bold);background:var(--board-line);gap:0;contain:layout size;touch-action:manipulation}.s-cell{width:100%;height:100%;min-width:0;min-height:0;position:relative;display:grid;place-items:center;line-height:1;padding:0;background:var(--page);color:var(--blue);font-weight:490;border:0;border-right:1px solid var(--board-line);border-bottom:1px solid var(--board-line);border-radius:0;overflow:hidden;transition:background 110ms ease;touch-action:manipulation}.s-cell:nth-child(3n){border-right:3px solid var(--board-bold)}.s-cell:nth-child(9n){border-right:0}.s-cell:nth-child(n+19):nth-child(-n+27),.s-cell:nth-child(n+46):nth-child(-n+54){border-bottom:3px solid var(--board-bold)}.s-cell:nth-child(n+73){border-bottom:0}.s-cell.is-given{color:var(--ink)}.s-cell.is-peer{background:var(--blue-faint)}.s-cell.is-same{background:var(--blue-match)}.s-cell.is-selected{background:var(--blue-select)}.s-cell.is-error .cell-number{color:#df4d52}.s-cell:focus-visible{outline:2px solid var(--blue);outline-offset:-2px;z-index:2}.cell-number{display:block;font-size:clamp(17px,calc(min(100vw - 20px, 100dvh - 288px) / 14),37px);font-weight:500;line-height:1}.s-cell.is-given .cell-number{font-weight:540}.cell-number.pop{animation:number-pop 170ms cubic-bezier(.2,1.2,.4,1)}.note-grid{position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));align-items:center;justify-items:center;width:100%;height:100%;pointer-events:none;overflow:hidden;line-height:1}.note-grid b{display:block;font-size:clamp(6px,1.45vw,12px);font-weight:500;color:var(--blue);min-width:0;min-height:0;white-space:nowrap}.pause-overlay{position:absolute;inset:0;background:var(--page);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:5;text-align:center}.pause-overlay>span{font-size:52px;color:var(--blue)}.pause-overlay h3{font-size:25px;margin:0}.pause-overlay .start-button{width:auto;min-width:170px}.number-pad{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));align-items:center;gap:1px;margin-top:auto;min-height:clamp(58px,11dvh,92px);width:100%;flex-shrink:0;touch-action:manipulation}.num-button{background:transparent;min-width:0;height:100%;max-height:92px;padding:0;color:var(--blue);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1px;border-radius:10px;touch-action:manipulation;user-select:none;-webkit-user-select:none;transition:transform 100ms,background 110ms}.num-button:active{transform:scale(.89);background:var(--blue-faint)}.num-button span{font-size:clamp(29px,7.3vw,45px);font-weight:470;line-height:1.12;letter-spacing:-1px}.num-button small{display:none;font-size:clamp(7px,1.65vw,11px);font-weight:650;white-space:nowrap;color:var(--muted)}.number-pad.show-left .num-button small{display:block}.number-pad.show-left .num-button span{font-size:clamp(26px,6.2vw,40px)}.number-pad .num-button:disabled{opacity:.22}
+/* Minefield: an edge-to-edge interaction viewport; no scrolling or outside controls. */
+.mines-page{overscroll-behavior:none}.mines-header{z-index:1}.mine-viewport{position:relative;flex:1;width:100%;min-height:0;overflow:hidden;touch-action:none;overscroll-behavior:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}.mine-pan-layer{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);transform-origin:center center;will-change:transform}.mine-board{display:grid;grid-template-columns:repeat(var(--cols),var(--tile));grid-template-rows:repeat(var(--rows),var(--tile));border:2px solid var(--board-bold);box-shadow:0 15px 40px #29436120;touch-action:none;overflow:hidden}.mine-cell{width:var(--tile);height:var(--tile);min-height:0;min-width:0;padding:0;margin:0;display:grid;place-items:center;font-size:calc(var(--tile)*.56);font-weight:780;line-height:1;background:var(--mine-covered);color:var(--ink);border:1px solid var(--mine-outline);border-radius:0;touch-action:none;user-select:none;-webkit-user-select:none;transition:background 120ms}.mine-cell:not(.revealed):not(.flagged){box-shadow:inset 1px 1px 2px #fff8,inset -1px -1px 2px #7b9abc45}.mine-cell.revealed{background:var(--mine-open);border-color:var(--mine-outline)}.mine-cell.flagged{color:var(--blue-dark);background:var(--blue-match)}.mine-cell.flagged svg,.mine-cell.mine svg{width:56%;height:56%;stroke-width:2.8}.mine-cell.exploded{background:#efb9c0;color:#c82236}.mine-cell.wrong-flag{color:#df4d52}.mine-cell.n1{color:#3167c7}.mine-cell.n2{color:#36855b}.mine-cell.n3{color:#d94757}.mine-cell.n4{color:#764fb4}.mine-cell.n5{color:#9f623f}.mine-cell.n6{color:#3991a1}.mine-cell.n7{color:#3e4451}.mine-cell.n8{color:#6c7889}.mine-cell.fresh{animation:mine-pop 180ms ease-out}.mine-cell:focus-visible{outline:2px solid var(--blue);outline-offset:-2px;z-index:1}
+/* Preferences + toolkit live in an accessible sheet, not on the board. */
+.settings-backdrop{position:fixed;inset:0;z-index:150;background:#18284490;display:flex;align-items:flex-end;justify-content:center;animation:fade-in 150ms}.settings-sheet{position:relative;width:min(100%,530px);height:min(84dvh,740px);display:flex;flex-direction:column;min-height:0;border-radius:25px 25px 0 0;background:var(--panel);box-shadow:0 -20px 65px #15294330;overflow:hidden;animation:sheet-up 240ms cubic-bezier(.2,.8,.25,1)}.sheet-header{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 12px 27px;border-bottom:1px solid var(--line);flex-shrink:0}.sheet-header h2{font-size:24px;letter-spacing:-.7px;margin:0}.sheet-header svg{width:23px;height:23px}.settings-scroll{padding:8px 25px max(28px,env(safe-area-inset-bottom));min-height:0;overflow-y:auto;overscroll-behavior:contain}.settings-section{padding:16px 0;border-bottom:1px solid var(--line)}.settings-section:last-child{border-bottom:0}.settings-section h3{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:0 0 14px}.settings-info{font-size:13px;line-height:1.6;color:var(--muted);margin:6px 0 10px}.tool-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.tool-button{padding:13px 5px;min-height:85px;border-radius:13px;border:1px solid var(--line);background:var(--page);color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px;font-weight:650}.tool-button svg{color:var(--blue);width:25px;height:25px}.tool-button.active{background:var(--blue-faint);border-color:var(--blue)}.tool-button small{color:var(--blue);font-size:10px}.sheet-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.sheet-stats>div{padding:11px 5px;border:1px solid var(--line);border-radius:12px;text-align:center}.sheet-stats span{font-size:11px;color:var(--muted);display:block}.sheet-stats strong{font-size:18px}.settings-row{min-height:54px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:16px;color:var(--ink);font-weight:550}.settings-row input[role="switch"]{appearance:none;-webkit-appearance:none;width:47px;height:28px;background:var(--line);border-radius:20px;position:relative;flex-shrink:0;transition:background 150ms;cursor:pointer}.settings-row input[role="switch"]:before{content:"";position:absolute;top:4px;left:4px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px #0002;transition:transform 150ms}.settings-row input[role="switch"]:checked{background:var(--blue)}.settings-row input[role="switch"]:checked:before{transform:translateX(19px)}.link-row{width:100%;padding:0;background:transparent;text-align:left}.link-row svg{width:21px;height:21px;color:var(--blue)}.settings-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.sheet-action{display:flex;justify-content:center;align-items:center;gap:9px;background:var(--blue-faint);color:var(--blue-dark);padding:13px 10px;border-radius:12px;font-weight:700;font-size:13px}.sheet-action svg{width:18px;height:18px}.settings-quickstats{display:flex;justify-content:space-around;color:var(--muted);font-size:14px;margin-bottom:14px}
+/* Results and help dialog. */
+.modal-backdrop{position:fixed;inset:0;z-index:210;background:#14213799;display:grid;place-items:center;padding:18px;backdrop-filter:blur(3px)}.dialog{position:relative;width:min(100%,450px);max-height:85dvh;overflow-y:auto;border-radius:23px;padding:36px 24px 25px;background:var(--panel);box-shadow:0 25px 80px #14213740;animation:dialog-in 240ms ease-out}.dialog-close{position:absolute;right:11px;top:10px;width:41px;height:41px}.dialog-kicker{font-size:11px;color:var(--blue);font-weight:850;letter-spacing:1.5px;margin:5px 0 12px}.dialog h2{font-size:clamp(27px,7vw,35px);line-height:1.08;letter-spacing:-1.1px;margin:0 0 12px}.dialog p{font-size:14px;color:var(--muted);line-height:1.65}.dialog-hero-icon{font-size:44px;color:var(--blue);display:block}.dialog-list{list-style:none;padding:0}.dialog-list li{display:flex;align-items:flex-start;gap:12px;font-size:14px;line-height:1.5;margin:15px 0}.dialog-list li span{flex-shrink:0;width:28px;height:28px;border-radius:9px;background:var(--blue-faint);color:var(--blue);font-size:13px;display:grid;place-items:center;font-weight:800}.dialog-actions{margin-top:23px;display:flex;gap:9px}.dialog-actions>button{flex:1}.secondary-button{border-radius:13px;background:var(--blue-faint);color:var(--blue-dark);font-weight:730;padding:12px}.primary-button{background:var(--blue);color:white;font-weight:730;padding:12px;border-radius:13px;display:flex;align-items:center;justify-content:center;gap:8px}.primary-button svg{width:19px}.result-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:18px 0}.result-stat{background:var(--blue-faint);border-radius:12px;text-align:center;padding:13px 3px}.result-stat strong{display:block;font-size:21px}.result-stat small{font-size:10px;font-weight:720;color:var(--muted)}.toast-region{position:fixed;bottom:max(20px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);max-width:calc(100vw - 24px);z-index:250;pointer-events:none}.toast{background:var(--ink);color:var(--page);font-size:13px;font-weight:680;display:flex;gap:9px;align-items:center;border-radius:14px;padding:12px 16px;box-shadow:0 15px 30px #0003;animation:fade-in 160ms;white-space:nowrap}.toast svg{width:18px;height:18px}.toast.out{animation:fade-out 180ms forwards}.confetti-piece{position:fixed;top:-20px;left:var(--x);width:8px;height:13px;border-radius:2px;background:var(--color);z-index:255;pointer-events:none;animation:confetti-fall var(--duration) ease-in var(--delay) forwards;transform:rotate(var(--rotation))}
+/* Splash appears briefly without blocking game initialization. */
+.splash{position:fixed;z-index:999;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:17px;background:var(--page);pointer-events:none;transition:opacity 360ms,visibility 360ms}.splash.dismissed{opacity:0;visibility:hidden}.splash-logo{display:flex;align-items:center;gap:11px;font-size:clamp(35px,9vw,55px);font-weight:860;letter-spacing:-3px;animation:splash-scale 520ms cubic-bezier(.15,.85,.3,1)}.splash-logo strong{font-weight:850}.splash-logo strong span{color:var(--blue)}.splash-symbol{color:var(--blue);animation:splash-rotate 650ms ease-out}.splash-caption{font-size:10px;letter-spacing:2px;color:var(--muted);font-weight:780}
+@keyframes splash-scale{from{opacity:0;transform:translateY(10px) scale(.93)}to{opacity:1;transform:translateY(0) scale(1)}}@keyframes splash-rotate{from{transform:rotate(-65deg)}to{transform:rotate(0)}}@keyframes game-enter{from{opacity:.3;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}@keyframes sheet-up{from{transform:translateY(35px);opacity:.7}to{transform:translateY(0);opacity:1}}@keyframes fade-in{from{opacity:0}to{opacity:1}}@keyframes fade-out{to{opacity:0;transform:translateY(8px)}}@keyframes number-pop{0%{transform:scale(.6)}70%{transform:scale(1.12)}100%{transform:scale(1)}}@keyframes mine-pop{from{filter:brightness(.94)}to{filter:brightness(1)}}@keyframes dialog-in{from{opacity:.2;transform:scale(.96)}to{opacity:1;transform:scale(1)}}@keyframes confetti-fall{to{top:110vh;transform:translateX(var(--drift)) rotate(720deg)}}
+@media(max-width:600px){.home-page{padding-left:22px;padding-right:22px}.home-cards{grid-template-columns:1fr;gap:17px;max-width:415px;margin:auto}.home-game-card{padding:14px}.home-art{height:185px}.home-hero{margin:8px 0 30px}.home-hero h1{letter-spacing:-3.5px}.home-foot{margin:23px 0}.home-art-grid,.home-mine-preview{height:136px;width:136px}.home-art-grid i,.home-mine-preview i{font-size:20px}}
+@media(max-height:670px){.screen-header{height:59px}.sudoku-content{gap:9px;padding:2px 0 9px}.sudoku-board-frame{width:min(100%,calc(100dvh - 235px));max-height:calc(100dvh - 235px)}.sudoku-stats span{font-size:13px}.sudoku-stats strong{font-size:16px}.number-pad{min-height:54px}.num-button span{font-size:clamp(25px,6vw,36px)}}
+@media(max-height:500px) and (orientation:landscape){.sudoku-content{flex-direction:row;align-items:center;justify-content:center;gap:17px}.sudoku-stats{position:absolute;left:12px;top:12px;width:260px;display:none}.sudoku-board-frame{width:min(calc(100dvh - 90px),54vw);max-height:none}.number-pad{width:220px;height:60%;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);margin:0}.num-button{height:100%}.num-button span{font-size:28px}}
+
+/* Board feedback stays inside each fixed-size cell, so puzzle geometry never moves. */
+.s-cell.unit-complete::after,.mine-cell.reveal-wave::after{content:"";position:absolute;inset:0;pointer-events:none;background:var(--blue-select);opacity:0;animation:unit-glow 480ms ease-out var(--feedback-delay,0ms) both}
+.s-cell.unit-complete,.mine-cell.reveal-wave{z-index:1;animation:cell-lift 480ms ease-out var(--feedback-delay,0ms) both}.mine-cell.reveal-wave{animation-duration:340ms}.mine-cell{position:relative}.mine-cell.reveal-wave::after{background:var(--blue-match);animation-name:reveal-glow;animation-duration:340ms}.mine-cell.flag-pop svg{animation:flag-set 220ms cubic-bezier(.2,.8,.3,1)}
+@keyframes cell-lift{0%,100%{transform:translateY(0)}40%{transform:translateY(-3px)}}@keyframes unit-glow{0%{opacity:0}30%{opacity:.8}100%{opacity:0}}@keyframes reveal-glow{0%{opacity:.85}100%{opacity:0}}@keyframes flag-set{0%{transform:scale(.7);opacity:.4}65%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}
+
+
+/* Wordle: a fixed board and thumb-friendly keyboard share the available viewport. */
+.word-art{background:linear-gradient(145deg,#e2efff,#bed4f3)}.word-art-preview{display:grid;grid-template-columns:repeat(5,26px);gap:4px;transform:rotate(7deg)}.word-art-preview i{display:grid;place-items:center;width:26px;height:26px;border-radius:4px;background:#fff;color:#345fb4;font-size:15px;font-style:normal;font-weight:800;box-shadow:0 3px 7px #29436118}.word-art-preview i.good{background:#3e8067;color:white}.word-art-preview i.close{background:#b58c35;color:white}.word-art-preview i.miss{background:#8290a2;color:white}
+.word-content{width:min(100%,540px);flex:1;min-height:0;margin:0 auto;display:flex;flex-direction:column;align-items:center;padding:4px max(6px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left));gap:8px}.word-board-area{flex:1;min-height:0;width:100%;display:grid;place-items:center}.word-board{--word-tile:min(13vw,calc((100dvh - 300px) / 6),57px);display:grid;grid-template-columns:repeat(5,var(--word-tile));grid-template-rows:repeat(6,var(--word-tile));gap:5px;perspective:600px}.word-tile{display:grid;place-items:center;border:2px solid var(--board-line);border-radius:7px;color:var(--ink);font-size:clamp(17px,calc(var(--word-tile)*.52),30px);font-weight:800;line-height:1;text-transform:uppercase;user-select:none}.word-tile.typed{border-color:var(--blue);animation:word-type 140ms ease-out}.word-tile.correct,.word-key.correct{background:#3e8067;border-color:#3e8067;color:#fff}.word-tile.present,.word-key.present{background:#9b7421;border-color:#9b7421;color:#fff}.word-tile.absent,.word-key.absent{background:#637184;border-color:#637184;color:#fff}.word-tile.reveal{animation:word-flip 480ms ease-in-out both;animation-delay:var(--reveal-delay)}.word-board.invalid{animation:word-shake 280ms ease}.word-board.won .word-tile.last-row{animation:word-jump 500ms ease both;animation-delay:var(--reveal-delay)}
+.word-input-area{width:100%}.word-keyboard{width:100%;flex:0 0 auto;display:grid;gap:6px;touch-action:manipulation}.word-key-row{display:flex;justify-content:center;gap:4px}.word-key{height:clamp(38px,7.1dvh,58px);min-width:0;flex:1;max-width:47px;padding:0;border-radius:7px;background:var(--blue-faint);color:var(--ink);font-size:clamp(13px,3.5vw,16px);font-weight:750;transition:background 150ms,transform 100ms;touch-action:manipulation}.word-key.wide{flex:1.5;max-width:70px;font-size:clamp(10px,2.8vw,13px)}.word-key:active{transform:scale(.92)}.word-key:focus-visible{outline-offset:-3px}.word-legend{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:11px;font-weight:650}.word-legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;background:#3e8067}.word-legend span:nth-child(2) i{background:#9b7421}.word-legend span:nth-child(3) i{background:#637184}
+@keyframes word-type{from{transform:scale(.88)}to{transform:scale(1)}}@keyframes word-flip{0%{transform:rotateX(0)}50%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}@keyframes word-jump{0%,100%{transform:translateY(0)}45%{transform:translateY(-6px)}}@keyframes word-shake{20%,60%{transform:translateX(-4px)}40%,80%{transform:translateX(4px)}}
+@media(max-height:620px){.word-content{gap:4px;padding-top:0}.word-keyboard{gap:3px}.word-key{height:clamp(30px,6.5dvh,42px)}.word-board{--word-tile:min(10vw,calc((100dvh - 210px) / 6),48px);gap:3px}.word-legend{font-size:10px}}
+@media(max-height:500px) and (orientation:landscape){.word-content{flex-direction:row;align-items:center;width:min(100%,720px);gap:12px}.word-board-area{flex:1}.word-board{--word-tile:min(10vh,42px)}.word-input-area{width:min(52%,420px)}.word-key{height:min(12vh,48px)}}
+
+
+/* Lights Out keeps its geometry fixed while the light travels across each tile. */
+.lights-art{background:linear-gradient(145deg,#e4efff,#b5cff4)}.lights-art-grid{display:grid;grid-template-columns:repeat(4,28px);gap:6px;padding:14px;background:#fff;border-radius:15px;transform:rotate(-7deg);box-shadow:0 16px 25px #193a6b2d}.lights-art-grid i{width:28px;height:28px;border-radius:7px;background:#d9e6f5}.lights-art-grid i.on{background:#4f85dc;box-shadow:0 0 13px #75a9f299}
+.lights-content{flex:1;min-height:0;width:min(100%,560px);margin:auto;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:clamp(18px,4dvh,32px);padding:10px max(18px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left))}.lights-meta{width:min(100%,400px);display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:13px;font-weight:650}.lights-meta strong{display:block;color:var(--ink);font-size:20px;font-weight:750}.lights-meta>div:last-child{text-align:right}.lights-board{display:grid;grid-template-columns:repeat(var(--lights-size),minmax(0,1fr));gap:clamp(6px,1.8vw,10px);width:min(100%,calc(100dvh - 250px),400px);aspect-ratio:1}.lights-cell{position:relative;min-width:0;min-height:0;border:1px solid var(--line);border-radius:clamp(10px,2.5vw,17px);background:var(--blue-faint);box-shadow:inset 0 1px 0 #fff8;transition:background 180ms ease,box-shadow 180ms ease,border-color 180ms ease;touch-action:manipulation;overflow:hidden}.lights-cell::before{content:"";position:absolute;inset:29%;border-radius:50%;background:var(--board-line);opacity:.5;transform:scale(.7);transition:transform 180ms ease,opacity 180ms ease,background 180ms ease}.lights-cell.on{background:var(--blue);border-color:var(--blue);box-shadow:0 5px 16px #345fb43d,inset 0 1px 2px #fff5}.lights-cell.on::before{background:#fff;opacity:.95;transform:scale(1);box-shadow:0 0 16px #fff8}.lights-cell:active{transform:scale(.95)}.lights-cell.changed::after{content:"";position:absolute;inset:0;background:#fff;pointer-events:none;animation:lights-flash 320ms ease-out var(--lights-delay,0ms) both}.lights-cell.changed{animation:lights-bump 320ms ease-out var(--lights-delay,0ms)}.lights-cell.hint{outline:3px solid var(--blue-dark);outline-offset:3px;z-index:1}.lights-board.solved .lights-cell{animation:lights-finish 500ms ease-out var(--lights-delay,0ms) both}.lights-caption{margin:0;color:var(--muted);font-size:13px;text-align:center}.lights-cell:focus-visible{outline:3px solid var(--blue-dark);outline-offset:3px;z-index:2}
+@keyframes lights-flash{0%{opacity:.55}100%{opacity:0}}@keyframes lights-bump{0%,100%{transform:translateY(0)}40%{transform:translateY(-4px)}}@keyframes lights-finish{0%,100%{transform:scale(1)}45%{transform:scale(.91);background:var(--blue-select)}}
+@media(max-height:500px) and (orientation:landscape){.lights-content{flex-direction:row;gap:24px}.lights-meta{width:auto;flex-direction:column;gap:20px}.lights-meta>div:last-child{text-align:left}.lights-board{width:min(calc(100dvh - 90px),55vw)}.lights-caption{display:none}}
+
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+
+.nonogram-art{background:linear-gradient(145deg,#dcecff,#b7d3ff)}.nonogram-preview{display:grid;grid-template-columns:repeat(5,24px);gap:3px;padding:12px;background:white;border-radius:12px;transform:rotate(-7deg);box-shadow:0 16px 22px #193a6b2d}.nonogram-preview i{width:24px;height:24px;background:#e9f0f9;border-radius:2px}.nonogram-preview i.on{background:#345fb4}
+.nono-viewport{position:relative;flex:1;min-height:0;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}.nono-layer{position:absolute;left:50%;top:50%;transform-origin:center;will-change:transform}.nono-board{display:grid;grid-template-columns:var(--clue-w) repeat(var(--n),var(--cell));grid-template-rows:var(--clue-h) repeat(var(--n),var(--cell));width:max-content}.nono-clue{display:flex;align-items:center;justify-content:flex-end;gap:3px;padding:2px 5px;color:var(--ink);font-size:var(--clue-font);font-weight:650;line-height:1;white-space:nowrap}.nono-clue.col{flex-direction:column;justify-content:flex-end;padding:2px;gap:2px}.nono-clue.done{opacity:.35}.nono-cell{width:var(--cell);height:var(--cell);padding:0;border:0;border-right:1px solid var(--board-line);border-bottom:1px solid var(--board-line);border-radius:0;background:var(--page);color:var(--blue);font-size:calc(var(--cell)*.65);line-height:1;display:grid;place-items:center;touch-action:none;transition:background 120ms,color 120ms}.nono-cell.edge-top{border-top:2px solid var(--board-bold)}.nono-cell.edge-left{border-left:2px solid var(--board-bold)}.nono-cell.fifth-col{border-right:2px solid var(--board-bold)}.nono-cell.fifth-row{border-bottom:2px solid var(--board-bold)}.nono-cell.active{background:var(--blue-faint)}.nono-cell.filled{background:var(--blue)}.nono-cell:active{filter:brightness(.9)}.nono-cell:focus-visible{outline:2px solid var(--ink);outline-offset:-3px;z-index:1}.nono-board.solved .filled{animation:mine-pop 350ms ease-out}.nono-result-art{display:grid;grid-template-columns:repeat(var(--n),1fr);width:min(150px,45vw);aspect-ratio:1;margin:12px auto;gap:1px}.nono-result-art i{background:var(--blue-faint)}.nono-result-art i.on{background:var(--blue)}
+
+</style>
+  <title>Brainfarts — Give your brain a little workout</title>
+</head>
+<body>
+  <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M15 19 8 12l7-7"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M10.6 2.8h2.8l.6 2.2a7.7 7.7 0 0 1 1.7.7l2-.9 2 2-1 2a7.5 7.5 0 0 1 .8 1.7l2.2.6v2.8l-2.2.6a7.5 7.5 0 0 1-.8 1.7l1 2-2 2-2-.9a7.7 7.7 0 0 1-1.7.7l-.6 2.2h-2.8l-.6-2.2a7.7 7.7 0 0 1-1.7-.7l-2 .9-2-2 1-2a7.5 7.5 0 0 1-.8-1.7l-2.2-.6v-2.8l2.2-.6a7.5 7.5 0 0 1 .8-1.7l-1-2 2-2 2 .9a7.7 7.7 0 0 1 1.7-.7l.6-2.2Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M5 5 19 19M19 5 5 19"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5M4 9h10a6 6 0 0 1 0 12h-2"/></symbol>
+    <symbol id="i-eraser" viewBox="0 0 24 24"><path d="m20 20-8-8M3.8 15.8l9.8-9.8a2 2 0 0 1 2.8 0l4.6 4.6a2 2 0 0 1 0 2.8L13.5 21H8.9l-5.1-5.2a2 2 0 0 1 0-2.8Z"/></symbol>
+    <symbol id="i-pencil" viewBox="0 0 24 24"><path d="m16 4 4 4M4 20l4.5-1 11-11a2.8 2.8 0 0 0-4-4l-11 11L4 20Z"/></symbol>
+    <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="m12 2 2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5L12 2Z"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><rect x="5" y="4" width="5" height="16" rx="1.5"/><rect x="14" y="4" width="5" height="16" rx="1.5"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7V5Z"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4m0 1c5-4 9 4 14 0v11c-5 4-9-4-14 0"/></symbol>
+    <symbol id="i-bomb" viewBox="0 0 24 24"><circle cx="11" cy="13" r="7"/><path d="m15 7 3-3m-1-2 2 2m0 0 3 1M9 11h.01"/></symbol>
+    <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 21h8m-4-4v4M7 3h10v8a5 5 0 0 1-10 0V3ZM7 5H3v3a4 4 0 0 0 4 4m10-7h4v3a4 4 0 0 0 4 4"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-9h.01"/></symbol>
+    <symbol id="i-volume" viewBox="0 0 24 24"><path d="M5 9H2v6h3l5 4V5L5 9Zm9-1a5 5 0 0 1 0 8m3-11a9 9 0 0 1 0 14"/></symbol>
+    <symbol id="i-volume-off" viewBox="0 0 24 24"><path d="M5 9H2v6h3l5 4V5L5 9Zm9 1 6 6m0-6-6 6"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 17v4h16v-4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m4 12 5 5L20 6"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.5-4.6L3 9m0-5v5h5m-4 4a8 8 0 0 0 14.5 4.6L21 15m0 5v-5h-5"/></symbol>
+  </svg>
+
+  <!-- One very brief splash when opening the PWA. -->
+  <div id="splash" class="splash" aria-hidden="true">
+    <div class="splash-logo"><span class="splash-symbol">✳</span><strong>brainfarts<span>.</span></strong></div>
+    <div class="splash-caption">A LITTLE WORKOUT FOR YOUR BRAIN</div>
+  </div>
+
+  <main id="main" class="app-shell">
+    <!-- The home screen doubles as game selection. Game setup has its own screen. -->
+    <section class="page home-page" id="page-home">
+      <div class="home-topline"><span class="home-mark">✳</span><button id="home-settings-button" class="bare-icon" aria-label="Settings"><svg><use href="#i-settings"/></svg></button></div>
+      <header class="home-hero"><span class="home-eyebrow">THE POCKET PUZZLE CLUB</span><h1>brainfarts<span>.</span></h1><p>Less scrolling. More solving.</p></header>
+      <div class="home-cards">
+        <button class="home-game-card" data-route="setup-sudoku" aria-label="Choose Sudoku difficulty"><span class="game-card-number">01 / NUMBERS</span><span class="home-art sudoku-art" aria-hidden="true"><span class="home-art-grid"><i>5</i><i>2</i><i></i><i>3</i><i></i><i>8</i><i>9</i><i></i><i></i><i>4</i><i>7</i><i>1</i><i></i><i>8</i><i>6</i><i></i></span></span><span class="home-card-text"><span><strong>Sudoku</strong><small>Make every number count.</small></span><span class="card-next"><svg><use href="#i-arrow"/></svg></span></span></button>
+        <button class="home-game-card" data-route="setup-mines" aria-label="Choose Minesweeper board"><span class="game-card-number">02 / STRATEGY</span><span class="home-art mines-art" aria-hidden="true"><span class="home-mine-preview"><i>1</i><i>2</i><i>⚑</i><i>2</i><i>1</i><i></i><i>2</i><i>⚑</i><i>3</i><i>1</i><i></i><i>1</i><i>2</i><i>1</i><i></i><i></i></span></span><span class="home-card-text"><span><strong>Minesweeper</strong><small>Think twice. Tap once.</small></span><span class="card-next"><svg><use href="#i-arrow"/></svg></span></span></button>
+        <button class="home-game-card" data-route="setup-nonogram" aria-label="Choose Nonogram difficulty"><span class="game-card-number">03 / PICTURE LOGIC</span><span class="home-art nonogram-art" aria-hidden="true"><span class="nonogram-preview"><i></i><i class="on"></i><i></i><i class="on"></i><i></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i class="on"></i><i></i><i></i></span></span><span class="home-card-text"><span><strong>Nonogram</strong><small>Find the picture in the numbers.</small></span><span class="card-next"><svg><use href="#i-arrow"/></svg></span></span></button>
+        <button class="home-game-card" data-route="setup-wordle" aria-label="Play Wordle"><span class="game-card-number">04 / WORDS</span><span class="home-art word-art" aria-hidden="true"><span class="word-art-preview"><i class="miss">C</i><i class="close">R</i><i class="miss">A</i><i class="good">N</i><i class="miss">E</i><i class="good">S</i><i class="good">L</i><i class="good">A</i><i class="good">T</i><i class="good">E</i></span></span><span class="home-card-text"><span><strong>Wordle</strong><small>A fresh word whenever you are.</small></span><span class="card-next"><svg><use href="#i-arrow"/></svg></span></span></button>
+        <button class="home-game-card" data-route="setup-lights" aria-label="Choose Lights Out difficulty"><span class="game-card-number">05 / LOGIC</span><span class="home-art lights-art" aria-hidden="true"><span class="lights-art-grid"><i></i><i class="on"></i><i class="on"></i><i></i><i class="on"></i><i></i><i></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i class="on"></i><i></i><i class="on"></i></span></span><span class="home-card-text"><span><strong>Lights Out</strong><small>One tap changes everything.</small></span><span class="card-next"><svg><use href="#i-arrow"/></svg></span></span></button>
+      </div>
+      <p class="home-foot">Designed for your thumbs. Available offline.</p>
+    </section>
+
+    <!-- Setup: all difficulty / board-size decisions stay OUT of gameplay. -->
+    <section class="page setup-page" id="page-setup-sudoku" hidden>
+      <header class="screen-header"><button class="bare-icon back-button" data-route="home" aria-label="Back to games"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">Sudoku</span><button class="bare-icon settings-open" aria-label="Settings"><svg><use href="#i-settings"/></svg></button></header>
+      <div class="setup-body"><div class="setup-badge">NUMBER PUZZLE · 9 × 9</div><h1>Find your flow.</h1><p>Fill every row, column and 3 × 3 box with the numbers 1–9.</p>
+        <div class="setup-section-label">CHOOSE DIFFICULTY</div>
+        <div class="setup-options" role="radiogroup" aria-label="Sudoku difficulty"><label class="setup-option"><input type="radio" name="setup-sudoku" value="easy" checked><span><strong>Easy</strong><small>A smooth warm-up</small></span><span class="radio-dot"></span></label><label class="setup-option"><input type="radio" name="setup-sudoku" value="medium"><span><strong>Medium</strong><small>A little more thought</small></span><span class="radio-dot"></span></label><label class="setup-option"><input type="radio" name="setup-sudoku" value="hard"><span><strong>Hard</strong><small>For the deep thinkers</small></span><span class="radio-dot"></span></label></div>
+        <button class="start-button" id="start-sudoku">Start playing <svg><use href="#i-arrow"/></svg></button><button class="resume-link" id="resume-sudoku" hidden>Resume saved puzzle</button>
+      </div>
+    </section>
+
+    <section class="page setup-page" id="page-setup-mines" hidden>
+      <header class="screen-header"><button class="bare-icon back-button" data-route="home" aria-label="Back to games"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">Minesweeper</span><button class="bare-icon settings-open" aria-label="Settings"><svg><use href="#i-settings"/></svg></button></header>
+      <div class="setup-body"><div class="setup-badge">LOGIC · DISCOVERY</div><h1>Stay curious.</h1><p>Reveal the safe spaces. Use the numbers to avoid hidden mines.</p><div class="setup-section-label">CHOOSE YOUR MINEFIELD</div>
+        <div class="setup-options" role="radiogroup" aria-label="Minesweeper size"><label class="setup-option"><input type="radio" name="setup-mines" value="beginner" checked><span><strong>Beginner</strong><small>9 × 9 · 10 mines</small></span><span class="radio-dot"></span></label><label class="setup-option"><input type="radio" name="setup-mines" value="intermediate"><span><strong>Intermediate</strong><small>16 × 16 · 40 mines</small></span><span class="radio-dot"></span></label><label class="setup-option"><input type="radio" name="setup-mines" value="expert"><span><strong>Expert</strong><small>30 × 16 · 99 mines</small></span><span class="radio-dot"></span></label></div>
+        <button class="start-button" id="start-mines">Start playing <svg><use href="#i-arrow"/></svg></button><button class="resume-link" id="resume-mines" hidden>Resume saved minefield</button>
+      </div>
+    </section>
+
+    <section class="page setup-page" id="page-setup-nonogram" hidden><header class="screen-header"><button class="bare-icon back-button" data-route="home" aria-label="Back to games"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">Nonogram</span><button class="bare-icon settings-open" aria-label="Settings"><svg><use href="#i-settings"/></svg></button></header><div class="setup-body"><div class="setup-badge">PICTURE LOGIC ? PICROSS</div><h1>Picture this.</h1><p>Follow the clues and uncover a picture, one square at a time.</p><div class="setup-section-label">CHOOSE DIFFICULTY</div><div class="setup-options" role="radiogroup" aria-label="Nonogram difficulty"><label class="setup-option"><input type="radio" name="setup-nonogram" value="easy" checked><span><strong>Easy</strong><small>5 ? 5</small></span><span class="radio-dot"></span></label><label class="setup-option"><input type="radio" name="setup-nonogram" value="medium" ><span><strong>Medium</strong><small>10 ? 10</small></span><span class="radio-dot"></span></label><label class="setup-option"><input type="radio" name="setup-nonogram" value="hard" ><span><strong>Hard</strong><small>15 ? 15</small></span><span class="radio-dot"></span></label></div><button class="start-button" id="start-nonogram">Play <svg><use href="#i-arrow"/></svg></button><button class="resume-link" id="resume-nonogram" hidden>Resume saved puzzle</button></div></section>
+    <section class="page play-page" id="page-nonogram" hidden><header class="screen-header play-header"><button class="bare-icon back-button" data-route="setup-nonogram" aria-label="Back to Nonogram setup"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">Nonogram</span><button class="bare-icon settings-open" aria-label="Nonogram settings"><svg><use href="#i-settings"/></svg></button></header><div class="nono-viewport" id="nono-viewport" aria-label="Nonogram board. Pinch to zoom and drag to pan."><div class="nono-layer" id="nono-layer"><div class="nono-board" id="nono-board" role="grid" aria-label="Nonogram puzzle"></div></div></div></section>
+    <section class="page setup-page" id="page-setup-wordle" hidden><header class="screen-header"><button class="bare-icon back-button" data-route="home" aria-label="Back to games"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">Wordle</span><button class="bare-icon settings-open" aria-label="Settings"><svg><use href="#i-settings"/></svg></button></header><div class="setup-body"><div class="setup-badge">WORD GAME ? UNLIMITED PLAY</div><h1>Find the word.</h1><p>Six guesses, five letters, and a fresh word whenever you want one.</p><div class="setup-options"><div class="setup-option"><span><strong>Play at your pace</strong><small>Random words ? no daily limit</small></span><span aria-hidden="true">?</span></div></div><button class="start-button" id="start-wordle">Play <svg><use href="#i-arrow"/></svg></button><button class="resume-link" id="resume-wordle" hidden>Resume saved word</button></div></section>
+    <section class="page play-page" id="page-wordle" hidden><header class="screen-header play-header"><button class="bare-icon back-button" data-route="setup-wordle" aria-label="Back to Wordle setup"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">Wordle</span><button class="bare-icon settings-open" aria-label="Wordle settings"><svg><use href="#i-settings"/></svg></button></header><div class="word-content"><div class="word-board-area"><div class="word-board" id="word-board" aria-label="Wordle guesses"></div></div><div class="word-input-area"><div class="word-legend" aria-hidden="true"><span><i></i>Correct spot</span><span><i></i>Elsewhere</span><span><i></i>Not in word</span></div><div class="word-keyboard" id="word-keyboard" aria-label="Wordle keyboard"></div></div></div></section>
+    <section class="page setup-page" id="page-setup-lights" hidden><header class="screen-header"><button class="bare-icon back-button" data-route="home" aria-label="Back to games"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">Lights Out</span><button class="bare-icon settings-open" aria-label="Settings"><svg><use href="#i-settings"/></svg></button></header><div class="setup-body"><div class="setup-badge">LOGIC ? LIGHTS OUT</div><h1>Find the off switch.</h1><p>Every tap changes a light and its neighbors. Can you turn them all off?</p><div class="setup-section-label">CHOOSE DIFFICULTY</div><div class="setup-options" role="radiogroup" aria-label="Lights Out difficulty"><label class="setup-option"><input type="radio" name="setup-lights" value="easy" checked><span><strong>Easy</strong><small>3 ? 3 ? A quick warm-up</small></span><span class="radio-dot"></span></label><label class="setup-option"><input type="radio" name="setup-lights" value="medium" ><span><strong>Medium</strong><small>5 ? 5 ? A little more thought</small></span><span class="radio-dot"></span></label><label class="setup-option"><input type="radio" name="setup-lights" value="hard" ><span><strong>Hard</strong><small>6 ? 6 ? A deeper challenge</small></span><span class="radio-dot"></span></label></div><button class="start-button" id="start-lights">Play <svg><use href="#i-arrow"/></svg></button><button class="resume-link" id="resume-lights" hidden>Resume saved puzzle</button></div></section>
+    <section class="page play-page" id="page-lights" hidden><header class="screen-header play-header"><button class="bare-icon back-button" data-route="setup-lights" aria-label="Back to Lights Out setup"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">Lights Out</span><button class="bare-icon settings-open" aria-label="Lights Out settings"><svg><use href="#i-settings"/></svg></button></header><div class="lights-content"><div class="lights-meta"><div><span>Moves</span><strong id="lights-moves">0</strong></div><div><span>Time</span><strong id="lights-time">00:00</strong></div></div><div class="lights-board" id="lights-board" role="group" aria-label="Lights Out board"></div><p class="lights-caption">Turn every light off.</p></div></section>
+    <!-- Sudoku play: ONE focused view; zero navigation, sidebars, or footers. -->
+    <section class="page play-page sudoku-page" id="page-sudoku" hidden>
+      <header class="screen-header play-header"><button class="bare-icon back-button" data-route="setup-sudoku" aria-label="Back to Sudoku setup"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title" id="sudoku-title">Sudoku</span><button class="bare-icon settings-open" aria-label="Sudoku settings"><svg><use href="#i-settings"/></svg></button></header>
+      <div class="sudoku-content">
+        <div class="sudoku-stats"><div><span>Difficulty</span><strong id="sudoku-current-level">Easy</strong></div><div><span>Mistakes</span><strong id="sudoku-mistakes">0 / 3</strong></div><div><span>Time</span><strong id="sudoku-time">00:00</strong></div></div>
+        <div class="sudoku-board-frame"><div class="sudoku-grid" id="sudoku-board" role="grid" aria-label="Sudoku puzzle"></div><div class="pause-overlay" id="sudoku-pause-overlay" hidden><span>Ⅱ</span><h3>Taking a break?</h3><button class="start-button" id="sudoku-resume">Resume</button></div></div>
+        <div class="number-pad" id="sudoku-number-pad" aria-label="Tap a number to enter, hold for 95 milliseconds to add a note"></div>
+      </div>
+    </section>
+
+    <!-- Minesweeper play: literally only top two buttons + the mine grid. -->
+    <section class="page play-page mines-page" id="page-mines" hidden>
+      <header class="screen-header play-header mines-header"><button class="bare-icon back-button" data-route="setup-mines" aria-label="Back to Minesweeper setup"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title" id="mines-title">Minesweeper</span><button class="bare-icon settings-open" aria-label="Minesweeper settings"><svg><use href="#i-settings"/></svg></button></header>
+      <div class="mine-viewport" id="mine-viewport" aria-label="Minefield. Pinch with two fingers to zoom; drag to pan when zoomed.">
+        <div class="mine-pan-layer" id="mine-pan-layer"><div class="mine-board" id="mines-board" role="grid" aria-label="Minesweeper grid"></div></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Single settings sheet with context-specific toolkit and guides. -->
+  <div id="settings-backdrop" class="settings-backdrop" hidden>
+    <section class="settings-sheet" role="dialog" aria-modal="true" aria-labelledby="settings-title" tabindex="-1">
+      <header class="sheet-header"><h2 id="settings-title">Settings</h2><button class="bare-icon" id="settings-close" aria-label="Close settings"><svg><use href="#i-close"/></svg></button></header>
+      <div class="settings-scroll">
+        <div class="settings-section" id="lights-settings" hidden><h3>Lights Out toolkit</h3><div class="tool-grid"><button class="tool-button" id="lights-undo"><svg><use href="#i-undo"/></svg><span>Undo</span></button><button class="tool-button" id="lights-hint"><svg><use href="#i-sparkle"/></svg><span>Hint</span></button></div><p class="settings-info">Tap a light to switch it and its up, down, left and right neighbors. Turn every light off to win.</p><div class="settings-actions"><button class="sheet-action" id="lights-restart"><svg><use href="#i-refresh"/></svg> Restart puzzle</button><button class="sheet-action" id="lights-new"><svg><use href="#i-sparkle"/></svg> New puzzle</button></div></div>
+        <div class="settings-section" id="word-settings" hidden><h3>Wordle</h3><div class="sheet-stats"><div><span>Played</span><strong id="word-played">0</strong></div><div><span>Wins</span><strong id="word-wins">0</strong></div><div><span>Streak</span><strong id="word-streak">0</strong></div></div><p class="settings-info">Guess a five-letter word in six tries. Green is in the correct spot; gold is elsewhere; gray is absent. Letters may repeat.</p><div class="settings-actions"><button class="sheet-action" id="word-new"><svg><use href="#i-refresh"/></svg> New word</button></div></div>
+        <div class="settings-section" id="nono-settings" hidden><h3>Nonogram toolkit</h3><div class="tool-grid"><button class="tool-button" id="nono-undo"><svg><use href="#i-undo"/></svg><span>Undo</span></button><button class="tool-button" id="nono-erase"><svg><use href="#i-eraser"/></svg><span>Erase</span></button><button class="tool-button" id="nono-hint"><svg><use href="#i-sparkle"/></svg><span>Hint</span></button><button class="tool-button" id="nono-reset-zoom"><svg><use href="#i-refresh"/></svg><span>Reset zoom</span></button></div><p class="settings-info">Tap to fill; hold to mark X. Pinch to zoom, then drag to pan.</p><div class="sheet-stats"><div><span>Time</span><strong id="nono-time">00:00</strong></div><div><span>Moves</span><strong id="nono-moves">0</strong></div><div><span>Difficulty</span><strong id="nono-level">Easy</strong></div></div><label class="settings-row"><span>Completed line indicators</span><input id="nono-indicators" type="checkbox" role="switch"></label><label class="settings-row"><span>Haptic feedback</span><input id="nono-haptics" type="checkbox" role="switch"></label><div class="settings-actions"><button class="sheet-action" id="nono-restart">Restart puzzle</button><button class="sheet-action" id="nono-new">New puzzle</button></div></div>
+        <div class="settings-section" id="sudoku-settings-tools" hidden><h3>Sudoku toolkit</h3><div class="tool-grid">
+          <button class="tool-button" id="sudoku-undo"><svg><use href="#i-undo"/></svg><span>Undo</span></button>
+          <button class="tool-button" id="sudoku-erase"><svg><use href="#i-eraser"/></svg><span>Erase</span></button>
+          <button class="tool-button" id="sudoku-notes" aria-pressed="false"><svg><use href="#i-pencil"/></svg><span>Notes <small id="note-status">OFF</small></span></button>
+          <button class="tool-button" id="sudoku-hint"><svg><use href="#i-sparkle"/></svg><span>Hint <small id="hint-count">3</small></span></button>
+        </div><p class="settings-info" id="notes-tip" hidden>Tap a number for a guess. Hold for 95 ms to toggle that number as a pencil note. Notes never change the grid size.</p></div>
+        <div class="settings-section" id="mines-settings-tools" hidden><h3>Minefield info</h3><div class="sheet-stats"><div><span>Time</span><strong id="mines-time">00:00</strong></div><div><span>Flags left</span><strong id="mines-flags">10</strong></div><div><span>Safe tiles</span><strong id="mines-revealed">0 / 71</strong></div></div><p class="settings-info">Tap to reveal. Hold for 95 ms to flag. Right-click also flags. Pinch to zoom, then drag to move around the board.</p></div>
+        <div class="settings-section"><h3>Preferences</h3><label class="settings-row"><span>Dark theme</span><input id="theme-toggle" type="checkbox" role="switch"></label><label class="settings-row"><span>Sound effects</span><input id="sound-toggle" type="checkbox" role="switch"></label><label class="settings-row" id="remaining-toggle-row"><span>Show numbers left</span><input id="numbers-left-toggle" type="checkbox" role="switch"></label></div>
+        <div class="settings-section" id="sudoku-game-actions" hidden><h3>Current game</h3><div class="settings-quickstats"><span id="sudoku-progress-label">0%</span><span id="sudoku-filled">0 / 81</span><span id="sudoku-best">—</span></div><div class="settings-actions"><button class="sheet-action" id="sudoku-pause"><svg><use href="#i-pause"/></svg> Pause game</button><button class="sheet-action" id="sudoku-new"><svg><use href="#i-refresh"/></svg> Restart with a new puzzle</button></div></div>
+        <div class="settings-section" id="mines-game-actions" hidden><h3>Current game</h3><div class="settings-quickstats"><span id="mines-progress-label">0%</span><span id="mines-best">—</span></div><div class="settings-actions"><button class="sheet-action" id="mines-new"><svg><use href="#i-refresh"/></svg> New minefield</button></div></div>
+        <div class="settings-section"><h3>Learn &amp; install</h3><button class="settings-row link-row" id="settings-howto">How to play <svg><use href="#i-arrow"/></svg></button><button class="settings-row link-row" id="install-button">Install Brainfarts <svg><use href="#i-download"/></svg></button></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- State and accessibility helpers: hidden, not rendered on gameplay screens. -->
+  <div class="visually-hidden" aria-hidden="true">
+    <select id="sudoku-difficulty"><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select>
+    <select id="mines-difficulty"><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="expert">Expert</option></select>
+    <div id="mistake-dots"><i></i><i></i><i></i></div><div id="sudoku-progress-bar"></div><div id="sudoku-board-status"></div>
+    <div id="mines-progress-bar"></div><div id="mines-board-status"></div>
+    <button id="mines-reveal-mode"></button><button id="mines-flag-mode"></button><button id="mines-restart"></button>
+    <button id="sound-button"></button><button id="theme-button"></button>
+  </div>
+  <div class="modal-backdrop" id="modal-backdrop" hidden><div class="dialog" id="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title"><button class="dialog-close bare-icon" id="dialog-close" aria-label="Close dialog"><svg><use href="#i-close"/></svg></button><div id="dialog-content"></div></div></div>
+  <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+  <script>
+/*
+ * Brainfarts — Sudoku + Minesweeper, one pocket-first PWA.
+ * Vanilla JS, no accounts, trackers, network APIs, or external dependencies.
+ */
+'use strict';
+
+const $ = selector => document.querySelector(selector);
+const $$ = selector => [...document.querySelectorAll(selector)];
+const icon = name => `<svg aria-hidden="true"><use href="#i-${name}"/></svg>`;
+const STORAGE = 'brainfarts.v2.';
+const load = (key, fallback = null) => {
+  try { const raw = localStorage.getItem(STORAGE + key); return raw ? JSON.parse(raw) : fallback; }
+  catch { return fallback; }
+};
+const save = (key, value) => {
+  try { localStorage.setItem(STORAGE + key, JSON.stringify(value)); } catch { /* Private-mode storage may be unavailable. */ }
+};
+const shuffle = arr => {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
+const pad = n => String(n).padStart(2, '0');
+const formatTime = seconds => seconds >= 3600
+  ? `${pad(Math.floor(seconds / 3600))}:${pad(Math.floor(seconds % 3600 / 60))}:${pad(seconds % 60)}`
+  : `${pad(Math.floor(seconds / 60))}:${pad(seconds % 60)}`;
+const difficultyLabel = s => s.charAt(0).toUpperCase() + s.slice(1);
+let route = 'home';
+let soundContext = null;
+let toastTimer = null;
+let installPrompt = null;
+const settings = load('settings', { theme: 'light', sound: false, showRemaining: false });
+settings.theme = settings.theme === 'dark' ? 'dark' : 'light';
+settings.sound = !!settings.sound;
+settings.showRemaining = !!settings.showRemaining;
+
+document.documentElement.dataset.theme = settings.theme;
+
+function clickSound(frequency = 440, duration = .08, type = 'sine') {
+  if (!settings.sound) return;
+  try {
+    soundContext ||= new (window.AudioContext || window.webkitAudioContext)();
+    if (soundContext.state === 'suspended') soundContext.resume();
+    const o = soundContext.createOscillator();
+    const g = soundContext.createGain();
+    o.type = type; o.frequency.setValueAtTime(frequency, soundContext.currentTime);
+    g.gain.setValueAtTime(.048, soundContext.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001, soundContext.currentTime + duration);
+    o.connect(g); g.connect(soundContext.destination);
+    o.start(); o.stop(soundContext.currentTime + duration);
+  } catch { /* Sound is a progressive enhancement. */ }
+}
+
+function notify(message) {
+  const region = $('#toast-region');
+  if (toastTimer) clearTimeout(toastTimer);
+  region.innerHTML = `<div class="toast">${icon('check')}<span>${message}</span></div>`;
+  toastTimer = setTimeout(() => {
+    region.firstElementChild?.classList.add('out');
+    setTimeout(() => { region.innerHTML = ''; }, 190);
+  }, 2600);
+}
+function confetti() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const colors = ['#8a7af7', '#f89b77', '#75ce9d', '#eebf61', '#c2a1f7'];
+  for (let i = 0; i < 75; i++) {
+    const piece = document.createElement('i');
+    piece.className = 'confetti-piece';
+    piece.style.cssText = `--x:${Math.random() * 100}vw;--drift:${(Math.random() -.5) * 300}px;--duration:${2 + Math.random() * 2.2}s;--delay:${Math.random() * .6}s;--rotation:${Math.random() * 180}deg;--color:${colors[i % colors.length]}`;
+    document.body.append(piece);
+    setTimeout(() => piece.remove(), 4900);
+  }
+}
+function dialog(html) {
+  $('#dialog-content').innerHTML = html;
+  $('#modal-backdrop').hidden = false;
+  document.body.classList.add('body-no-scroll');
+  $('#dialog-close').focus();
+}
+function closeDialog() {
+  $('#modal-backdrop').hidden = true;
+  document.body.classList.remove('body-no-scroll');
+}
+const RULES = {
+  sudoku: {
+    title: 'Sudoku, made simple.', subtitle: 'Nine rows. Nine columns. Nine 3 × 3 boxes. One of each number in every group.',
+    steps: [
+      'Fill every empty square with a number from 1 to 9.',
+      'Each row, column, and 3 × 3 box must contain each number exactly once.',
+      'Tap a number to enter a guess, or hold for 95 milliseconds to pencil in a note. Undo, Erase and Notes mode live in Settings.',
+      'You have three hints and three mistakes per round. Tap a cell, then a number — or use your keyboard.'
+    ]
+  },
+  lights: { title: 'Lights Out, made simple.', subtitle: 'A little light logic.', steps: ['Turn every light off to complete the puzzle.', 'Tap a tile to toggle it and its immediate neighbors above, below, left and right. Diagonal tiles do not change.', 'Every puzzle has a solution. Find Undo, Hint, Restart and New Puzzle in Settings.', 'Use the arrow keys to move around the board, then Enter or Space to toggle a tile.'] },
+  wordle: { title: 'Wordle, made simple.', subtitle: 'Find the five-letter word in six tries.', steps: ['Type a five-letter English word and press Enter.', 'Green means a letter is in the correct spot. Gold means it is in the word but in a different spot. Gray means there are no unmatched copies of that letter.', 'Letters can appear more than once. The keyboard keeps the best clue seen for each letter.', 'Play as many random words as you like. Your unfinished word and statistics are saved on this device.'] },
+  nonogram: { title: 'Nonogram, made simple.', subtitle: 'Use the clues to uncover the picture.', steps: ['Each number is a group of consecutive filled squares, in order. Groups are separated by at least one empty square.', 'Tap a square to fill or clear it. Hold for 95 milliseconds to toggle an X; holding a filled square changes it to an X. Right-click also marks X.', 'Pinch to zoom and drag to pan. Undo, hints, restart and zoom reset are in Settings.', 'Fill all squares in the picture to win. X marks are optional.'] },
+  mines: {
+    title: 'Minesweeper, demystified.', subtitle: 'Find every safe square without uncovering a mine.',
+    steps: [
+      'Tap or click a square to uncover it. Your first click and its neighbors are safe.',
+      'The number tells you how many of its eight surrounding squares contain mines.',
+      'Hold for 95 milliseconds to flag a tile (or right-click on desktop). Pinch to zoom, drag to move while zoomed.',
+      'Click an already open number to reveal its unflagged neighbors when you have marked enough flags. Reveal all safe squares to win.'
+    ]
+  }
+};
+function showHelp(game) {
+  const rule = RULES[game];
+  dialog(`<div class="dialog-kicker">THE LITTLE RULEBOOK</div><h2 id="dialog-title">${rule.title}</h2><p>${rule.subtitle}</p><ol class="dialog-list">${rule.steps.map((text, i) => `<li><span>${i + 1}</span>${text}</li>`).join('')}</ol><div class="dialog-actions"><button class="primary-button" data-dialog-action="close">Got it, let's play ${icon('arrow')}</button></div>`);
+}
+function showResult(game, won) {
+  const state = game === 'sudoku' ? sudoku : mines;
+  const label = game === 'sudoku' ? 'Sudoku' : 'Minesweeper';
+  const best = load(`best.${game}.${state.difficulty}`);
+  const title = won ? 'That felt good, right?' : game === 'sudoku' ? 'A little plot twist.' : 'Oops. Found a mine.';
+  const description = won ? 'One more puzzle conquered. You made those neurons dance.' : game === 'sudoku' ? 'Three mistakes this time. Every good solve starts with another try.' : 'That mine was sneaky. The next field is yours.';
+  dialog(`<span class="dialog-hero-icon" aria-hidden="true">${won ? '✳' : '◈'}</span><div class="dialog-kicker">${won ? 'PUZZLE COMPLETE' : 'GAME OVER'} · ${label.toUpperCase()}</div><h2 id="dialog-title">${title}</h2><p>${description}</p><div class="result-stats"><div class="result-stat"><strong>${formatTime(state.elapsed)}</strong><small>YOUR TIME</small></div><div class="result-stat"><strong>${best == null ? '—' : formatTime(best)}</strong><small>BEST TIME</small></div><div class="result-stat"><strong>${difficultyLabel(state.difficulty)}</strong><small>DIFFICULTY</small></div></div><div class="dialog-actions"><button class="secondary-button" data-dialog-action="home">All games</button><button class="primary-button" data-dialog-action="new">Play again ${icon('arrow')}</button></div>`);
+  if (won) {
+    confetti();
+    clickSound(660, .18);
+    setTimeout(() => clickSound(880, .24), 130);
+  } else clickSound(190, .25, 'triangle');
+}
+
+$('#dialog-close').addEventListener('click', closeDialog);
+$('#modal-backdrop').addEventListener('click', event => { if (event.target === $('#modal-backdrop')) closeDialog(); });
+$('#dialog-content').addEventListener('click', event => {
+  const button = event.target.closest('[data-dialog-action]');
+  if (!button) return;
+  const action = button.dataset.dialogAction;
+  closeDialog();
+  if (action === 'new') { if (route === 'sudoku') newSudoku(sudoku.difficulty); else if (route === 'mines') newMines(mines.difficulty); else if (route === 'nonogram') newNonogram(nonogram.difficulty); else if (route === 'wordle') newWordle(); else if (route === 'lights') newLights(lights.difficulty); }
+  if (action === 'nono-replay') restartNonogram();
+  if (action === 'lights-back') navigate('setup-lights');
+  if (action === 'lights-replay') restartLights();
+  if (action === 'word-back') navigate('setup-wordle');
+  if (action === 'nono-back') navigate('setup-nonogram');
+  if (action === 'home') navigate('home');
+});
+$$('[data-help]').forEach(button => button.addEventListener('click', () => showHelp(button.dataset.help)));
+
+/* -------- Game selection, routing, settings, install -------- */
+const GAME_ROUTES = ['home','setup-sudoku','setup-mines','setup-nonogram','setup-wordle','setup-lights','sudoku','mines','nonogram','wordle','lights'];
+const gameForRoute = r => r.includes('sudoku') ? 'sudoku' : r.includes('mines') ? 'mines' : r.includes('nonogram') ? 'nonogram' : r.includes('wordle') ? 'wordle' : r.includes('lights') ? 'lights' : null;
+function navigate(next) {
+  if (!GAME_ROUTES.includes(next)) next = 'home';
+  closeSettings();
+  route = next;
+  document.body.dataset.screen = next;
+  if (location.hash !== '#' + next) history.pushState(null, '', '#' + next);
+  $$('.page').forEach(p => { p.hidden = p.id !== 'page-' + next; });
+  if (next === 'sudoku' || next === 'setup-sudoku') {
+    if (!sudoku) restoreOrCreateSudoku();
+    $('#resume-sudoku').hidden = ['won','lost'].includes(sudoku.status);
+    $('#sudoku-difficulty').value = sudoku.difficulty;
+    if (next === 'sudoku') renderSudoku();
+  }
+  if (next === 'mines' || next === 'setup-mines') {
+    if (!mines) restoreOrCreateMines();
+    $('#resume-mines').hidden = ['won','lost'].includes(mines.status);
+    $('#mines-difficulty').value = mines.difficulty;
+    if (next === 'mines') { renderMines(); requestAnimationFrame(fitMineBoard); }
+  }
+  if (next === 'nonogram' || next === 'setup-nonogram') { if (!nonogram) restoreNonogram(); $('#resume-nonogram').hidden = !nonogram || nonogram.status === 'won'; if (next === 'nonogram') { if (!nonogram) newNonogram('easy'); renderNonogram(); requestAnimationFrame(fitNonogram); } }
+  if (next === 'wordle' || next === 'setup-wordle') { if (!wordle) restoreWordle(); $('#resume-wordle').hidden = !wordle || wordle.status !== 'playing'; if (next === 'wordle') { if (!wordle) newWordle(); renderWordle(); } }
+  if (next === 'lights' || next === 'setup-lights') { if (!lights) restoreLights(); $('#resume-lights').hidden = !lights || lights.status === 'won'; if (next === 'lights') { if (!lights) newLights('easy'); renderLights(); } }
+  document.title = next === 'home' ? 'Brainfarts — Give your brain a little workout' : `${gameForRoute(next) === 'mines' ? 'Minesweeper' : gameForRoute(next) === 'nonogram' ? 'Nonogram' : gameForRoute(next) === 'wordle' ? 'Wordle' : gameForRoute(next) === 'lights' ? 'Lights Out' : 'Sudoku'} · Brainfarts`;
+  if (next !== 'sudoku' && next !== 'mines' && next !== 'nonogram' && next !== 'wordle' && next !== 'lights') window.scrollTo({ top: 0, behavior: 'instant' });
+}
+$$('[data-route]').forEach(el => el.addEventListener('click', event => {
+  if (el.tagName === 'A') event.preventDefault();
+  navigate(el.dataset.route);
+}));
+window.addEventListener('hashchange', () => navigate(location.hash.slice(1) || 'home'));
+
+$('#start-sudoku').addEventListener('click', () => {
+  const difficulty = $('input[name="setup-sudoku"]:checked').value;
+  newSudoku(difficulty); navigate('sudoku');
+});
+$('#start-mines').addEventListener('click', () => {
+  const difficulty = $('input[name="setup-mines"]:checked').value;
+  newMines(difficulty); resetMineZoom(); navigate('mines');
+});
+$('#resume-sudoku').addEventListener('click', () => navigate('sudoku'));
+$('#start-nonogram').addEventListener('click', () => { newNonogram($('input[name=setup-nonogram]:checked').value); navigate('nonogram'); });
+$('#resume-nonogram').addEventListener('click', () => navigate('nonogram'));
+$('#start-wordle').addEventListener('click', () => { newWordle(); navigate('wordle'); });
+$('#resume-wordle').addEventListener('click', () => navigate('wordle'));
+$('#start-lights').addEventListener('click', () => { newLights($('input[name=setup-lights]:checked').value); navigate('lights'); });
+$('#resume-lights').addEventListener('click', () => navigate('lights'));
+$('#resume-mines').addEventListener('click', () => navigate('mines'));
+
+function closeSettings() {
+  $('#settings-backdrop').hidden = true;
+  document.body.classList.remove('sheet-open');
+}
+function openSettings() {
+  const isSudoku = route === 'sudoku';
+  const isMines = route === 'mines';
+  $('#lights-settings').hidden = route !== 'lights';
+  if (route === 'lights') updateLightsTools();
+  $('#word-settings').hidden = route !== 'wordle';
+  if (route === 'wordle') updateWordStats();
+  $('#nono-settings').hidden = route !== 'nonogram';
+  if (route === 'nonogram') updateNonogramTools();
+  $('#sudoku-settings-tools').hidden = !isSudoku;
+  $('#sudoku-game-actions').hidden = !isSudoku;
+  $('#notes-tip').hidden = !isSudoku;
+  $('#mines-settings-tools').hidden = !isMines;
+  $('#mines-game-actions').hidden = !isMines;
+  $('#remaining-toggle-row').hidden = !isSudoku;
+  $('#settings-howto').hidden = !(isSudoku || isMines || gameForRoute(route));
+  $('#settings-backdrop').hidden = false;
+  document.body.classList.add('sheet-open');
+  $('.settings-sheet').focus();
+}
+$$('.settings-open, #home-settings-button').forEach(button => button.addEventListener('click', openSettings));
+$('#settings-close').addEventListener('click', closeSettings);
+$('#settings-backdrop').addEventListener('click', e => { if (e.target === $('#settings-backdrop')) closeSettings(); });
+$('#settings-howto').addEventListener('click', () => {
+  const game = gameForRoute(route);
+  closeSettings(); if (game) showHelp(game);
+});
+function updateSettingsUI() {
+  document.documentElement.dataset.theme = settings.theme;
+  document.querySelector('meta[name="theme-color"]').content = settings.theme === 'dark' ? '#17202e' : '#ffffff';
+  $('#theme-toggle').checked = settings.theme === 'dark';
+  $('#sound-toggle').checked = settings.sound;
+  $('#numbers-left-toggle').checked = settings.showRemaining;
+  $('#sudoku-number-pad').classList.toggle('show-left', settings.showRemaining);
+}
+$('#theme-toggle').addEventListener('change', event => {
+  settings.theme = event.target.checked ? 'dark' : 'light';
+  save('settings', settings); updateSettingsUI();
+});
+$('#sound-toggle').addEventListener('change', event => {
+  settings.sound = event.target.checked;
+  save('settings', settings); updateSettingsUI();
+  if (settings.sound) clickSound(520);
+});
+$('#numbers-left-toggle').addEventListener('change', event => {
+  settings.showRemaining = event.target.checked;
+  save('settings', settings); updateSettingsUI();
+});
+updateSettingsUI();
+
+window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); installPrompt = event; });
+window.addEventListener('appinstalled', () => { installPrompt = null; notify('Brainfarts is installed and ready offline!'); });
+$('#install-button').addEventListener('click', async () => {
+  closeSettings();
+  if (installPrompt) {
+    installPrompt.prompt(); await installPrompt.userChoice; installPrompt = null;
+  } else dialog(`<div class="dialog-kicker">PLAY ANYWHERE</div><h2 id="dialog-title">Install Brainfarts.</h2><p>On iPhone, use Safari's Share button then Add to Home Screen. On Android or desktop, open the browser menu and choose Install app. Visit once online to cache the app for offline play.</p><div class="dialog-actions"><button class="start-button" data-dialog-action="close">Got it</button></div>`);
+});
+
+/* Launch splash: intentionally short, and skipped when reduced motion is requested. */
+const splashDelay = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 70 : 650;
+window.setTimeout(() => {
+  $('#splash').classList.add('dismissed');
+  window.setTimeout(() => $('#splash').remove(), 390);
+}, splashDelay);
+
+/* -------- Sudoku: unique-solution puzzle generator -------- */
+const SUDOKU_CLUES = { easy: 42, medium: 35, hard: 29 };
+let sudoku = null;
+function sudokuSolution() {
+  // Each shuffled band/stack still obeys the base Latin square's 3 × 3 constraints.
+  const perm = () => shuffle([0, 1, 2]).flatMap(group => shuffle([0, 1, 2]).map(i => group * 3 + i));
+  const rows = perm(), cols = perm(), digits = shuffle([1,2,3,4,5,6,7,8,9]);
+  return Array.from({ length: 81 }, (_, i) => {
+    const r = rows[Math.floor(i / 9)], c = cols[i % 9];
+    return digits[(r * 3 + Math.floor(r / 3) + c) % 9];
+  });
+}
+function countSolutions(grid, limit = 2) {
+  // MRV backtracking plus bit masks. Stop as soon as a second solution is found.
+  const row = new Int32Array(9), col = new Int32Array(9), box = new Int32Array(9);
+  const empty = [];
+  for (let i = 0; i < 81; i++) {
+    const v = grid[i], r = Math.floor(i / 9), c = i % 9, b = Math.floor(r / 3) * 3 + Math.floor(c / 3);
+    if (v) {
+      const bit = 1 << v;
+      if ((row[r] | col[c] | box[b]) & bit) return 0;
+      row[r] |= bit; col[c] |= bit; box[b] |= bit;
+    } else empty.push(i);
+  }
+  let total = 0;
+  const bitcount = n => { let count = 0; while (n) { n &= n - 1; count++; } return count; };
+  const dfs = depth => {
+    if (total >= limit) return;
+    if (depth === empty.length) { total++; return; }
+    let best = depth, bestCount = 10;
+    for (let k = depth; k < empty.length; k++) {
+      const i = empty[k], r = Math.floor(i / 9), c = i % 9, b = Math.floor(r / 3) * 3 + Math.floor(c / 3);
+      const count = bitcount(0x3fe & ~(row[r] | col[c] | box[b]));
+      if (count < bestCount) { best = k; bestCount = count; if (count <= 1) break; }
+    }
+    if (!bestCount) return;
+    [empty[depth], empty[best]] = [empty[best], empty[depth]];
+    const i = empty[depth], r = Math.floor(i / 9), c = i % 9, b = Math.floor(r / 3) * 3 + Math.floor(c / 3);
+    let bits = 0x3fe & ~(row[r] | col[c] | box[b]);
+    while (bits && total < limit) {
+      const bit = bits & -bits;
+      bits ^= bit;
+      row[r] |= bit; col[c] |= bit; box[b] |= bit;
+      dfs(depth + 1);
+      row[r] ^= bit; col[c] ^= bit; box[b] ^= bit;
+    }
+    [empty[depth], empty[best]] = [empty[best], empty[depth]];
+  };
+  dfs(0);
+  return total;
+}
+function createSudoku(difficulty) {
+  const solution = sudokuSolution();
+  const puzzle = [...solution];
+  const target = SUDOKU_CLUES[difficulty] || 42;
+  let remaining = 81;
+  for (const index of shuffle(Array.from({length: 81}, (_, i) => i))) {
+    if (remaining <= target) break;
+    const previous = puzzle[index];
+    puzzle[index] = 0;
+    if (countSolutions(puzzle) !== 1) puzzle[index] = previous;
+    else remaining--;
+  }
+  return {
+    difficulty, solution, puzzle, entries: [...puzzle], notes: {},
+    selected: puzzle.findIndex(v => !v), notesMode: false,
+    mistakes: 0, hints: 3, elapsed: 0, moves: 0,
+    status: 'ready', history: []
+  };
+}
+function validSudoku(s) {
+  return s && SUDOKU_CLUES[s.difficulty] && Array.isArray(s.solution) && s.solution.length === 81 &&
+    Array.isArray(s.puzzle) && s.puzzle.length === 81 && Array.isArray(s.entries) && s.entries.length === 81 &&
+    s.notes && typeof s.notes === 'object' && typeof s.elapsed === 'number' && ['ready','playing','paused','won','lost'].includes(s.status);
+}
+function restoreOrCreateSudoku() {
+  const existing = load('sudoku');
+  sudoku = validSudoku(existing) ? existing : createSudoku('easy');
+  save('sudoku', sudoku);
+}
+function newSudoku(difficulty = 'easy') {
+  sudoku = createSudoku(difficulty);
+  save('sudoku', sudoku);
+  renderSudoku();
+}
+function snapshotSudoku() {
+  sudoku.history.push({
+    entries: [...sudoku.entries], notes: JSON.parse(JSON.stringify(sudoku.notes)),
+    mistakes: sudoku.mistakes, hints: sudoku.hints, moves: sudoku.moves, status: sudoku.status
+  });
+  if (sudoku.history.length > 100) sudoku.history.shift();
+}
+const peers = (a, b) => {
+  const ar = Math.floor(a / 9), ac = a % 9, br = Math.floor(b / 9), bc = b % 9;
+  return ar === br || ac === bc || (Math.floor(ar / 3) === Math.floor(br / 3) && Math.floor(ac / 3) === Math.floor(bc / 3));
+};
+// Compare before and after so notes, incorrect entries and already completed units
+// never retrigger the celebration. The wave begins at the newly filled cell.
+function sudokuCompletedUnits(before, index) {
+  const row = Math.floor(index / 9), col = index % 9;
+  const units = [Array.from({length:9}, (_, c) => row * 9 + c),
+    Array.from({length:9}, (_, r) => r * 9 + col),
+    Array.from({length:9}, (_, k) => (Math.floor(row / 3) * 3 + Math.floor(k / 3)) * 9 + Math.floor(col / 3) * 3 + k % 3)];
+  const correct = (entries, unit) => unit.every(i => entries[i] === sudoku.solution[i]);
+  return units.filter(unit => !correct(before, unit) && correct(sudoku.entries, unit));
+}
+function celebrateSudokuUnits(units, origin) {
+  if (!units.length || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const board = $('#sudoku-board'), row = Math.floor(origin / 9), col = origin % 9;
+  for (const i of new Set(units.flat())) {
+    const cell = board.querySelector(`[data-index="${i}"]`);
+    if (!cell) continue;
+    cell.style.setProperty('--feedback-delay', `${(Math.abs(Math.floor(i / 9) - row) + Math.abs(i % 9 - col)) * 22}ms`);
+    cell.classList.add('unit-complete');
+  }
+}
+function sudokuAction(number, forceNote = false) {
+  if (!sudoku || ['paused', 'won', 'lost'].includes(sudoku.status)) return;
+  const i = sudoku.selected;
+  if (i == null || i < 0 || sudoku.puzzle[i]) return;
+  const beforeEntries = [...sudoku.entries];
+  if (sudoku.status === 'ready') sudoku.status = 'playing';
+  if ((sudoku.notesMode || forceNote) && number) {
+    snapshotSudoku();
+    if (sudoku.entries[i]) sudoku.entries[i] = 0;
+    const notes = new Set(sudoku.notes[i] || []);
+    if (notes.has(number)) notes.delete(number); else notes.add(number);
+    sudoku.notes[i] = [...notes];
+    clickSound(450, .045);
+  } else {
+    if (number && sudoku.entries[i] === number && number !== sudoku.solution[i]) number = 0;
+    if (sudoku.entries[i] === number && !sudoku.notes[i]?.length) return;
+    snapshotSudoku();
+    sudoku.entries[i] = number;
+    delete sudoku.notes[i];
+    if (number) {
+      sudoku.moves++;
+      if (number !== sudoku.solution[i]) {
+        sudoku.mistakes++;
+        clickSound(230, .16);
+        $('#sudoku-board').classList.remove('shake');
+        void $('#sudoku-board').offsetWidth;
+        $('#sudoku-board').classList.add('shake');
+        if (sudoku.mistakes >= 3) sudoku.status = 'lost';
+      } else {
+        // Entering a correct number removes that possibility from all peer notes.
+        for (const [key, values] of Object.entries(sudoku.notes)) {
+          if (peers(i, +key)) sudoku.notes[key] = values.filter(n => n !== number);
+        }
+        clickSound(600, .065);
+      }
+    } else clickSound(340, .055);
+  }
+  const finished = sudoku.entries.every((v, index) => v === sudoku.solution[index]);
+  if (finished) finishSudoku();
+  save('sudoku', sudoku);
+  renderSudoku(i);
+  celebrateSudokuUnits(sudokuCompletedUnits(beforeEntries, i), i);
+  if (sudoku.status === 'lost') showResult('sudoku', false);
+}
+function finishSudoku() {
+  sudoku.status = 'won';
+  const key = `best.sudoku.${sudoku.difficulty}`;
+  const prev = load(key);
+  if (prev == null || sudoku.elapsed < prev) save(key, sudoku.elapsed);
+  save('sudoku', sudoku);
+  setTimeout(() => showResult('sudoku', true), 680);
+}
+function sudokuUndo() {
+  if (!sudoku || sudoku.status === 'paused' || sudoku.status === 'won') return;
+  const previous = sudoku.history.pop();
+  if (!previous) { notify('Nothing to undo yet.'); return; }
+  Object.assign(sudoku, previous);
+  if (sudoku.status === 'ready') sudoku.status = 'playing';
+  save('sudoku', sudoku); renderSudoku(); clickSound(385, .055);
+}
+function sudokuHint() {
+  if (!sudoku || ['won','lost','paused'].includes(sudoku.status)) return;
+  if (sudoku.hints < 1) { notify('All your hints have been used.'); return; }
+  let i = sudoku.selected;
+  if (i < 0 || sudoku.puzzle[i] || sudoku.entries[i] === sudoku.solution[i])
+    i = sudoku.entries.findIndex((v, k) => v !== sudoku.solution[k]);
+  if (i < 0) return;
+  const beforeEntries = [...sudoku.entries];
+  snapshotSudoku();
+  sudoku.status = 'playing';
+  sudoku.selected = i;
+  sudoku.entries[i] = sudoku.solution[i];
+  delete sudoku.notes[i];
+  sudoku.hints--;
+  for (const [key, values] of Object.entries(sudoku.notes)) {
+    if (peers(i, +key)) sudoku.notes[key] = values.filter(n => n !== sudoku.solution[i]);
+  }
+  if (sudoku.entries.every((v, k) => v === sudoku.solution[k])) finishSudoku();
+  save('sudoku', sudoku); renderSudoku(i); celebrateSudokuUnits(sudokuCompletedUnits(beforeEntries, i), i); clickSound(740, .13);
+  notify('A little nudge in the right direction.');
+}
+function sudokuTogglePause() {
+  if (!sudoku || ['won','lost'].includes(sudoku.status)) return;
+  sudoku.status = sudoku.status === 'paused' ? 'playing' : 'paused';
+  save('sudoku', sudoku); renderSudoku();
+}
+function renderSudoku(popIndex = -1) {
+  if (!sudoku) return;
+  const s = sudoku;
+  $('#sudoku-difficulty').value = s.difficulty;
+  $('#sudoku-current-level').textContent = difficultyLabel(s.difficulty);
+  const active = s.selected >= 0 ? s.entries[s.selected] : 0;
+  const board = $('#sudoku-board');
+  const wasFocused = board.contains(document.activeElement);
+  const html = s.entries.map((value, i) => {
+    const given = !!s.puzzle[i], selected = i === s.selected;
+    const same = active > 0 && value === active && !selected;
+    const peer = s.selected >= 0 && peers(i, s.selected) && !selected;
+    const error = value && value !== s.solution[i];
+    const classes = ['s-cell', given && 'is-given', selected && 'is-selected', same && 'is-same', peer && 'is-peer', error && 'is-error'].filter(Boolean).join(' ');
+    const contents = value
+      ? `<span class="cell-number ${popIndex === i ? 'pop' : ''}">${value}</span>`
+      : s.notes[i]?.length ? `<span class="note-grid">${Array.from({ length: 9 }, (_, n) => `<b>${s.notes[i].includes(n + 1) ? n + 1 : ''}</b>`).join('')}</span>` : '';
+    const label = `Row ${Math.floor(i / 9) + 1}, column ${i % 9 + 1}: ${value ? value + (given ? ', given' : error ? ', incorrect' : '') : s.notes[i]?.length ? 'notes ' + s.notes[i].join(', ') : 'empty'}`;
+    return `<button class="${classes}" role="gridcell" data-index="${i}" tabindex="${s.status === 'paused' ? -1 : selected ? 0 : -1}" aria-label="${label}" aria-selected="${selected}">${contents}</button>`;
+  }).join('');
+  board.innerHTML = html;
+  if (wasFocused && s.status !== 'paused') board.querySelector(`[data-index="${s.selected}"]`)?.focus({ preventScroll: true });
+  const total = s.entries.filter(Boolean).length;
+  $('#sudoku-time').textContent = formatTime(s.elapsed);
+  $('#sudoku-progress-label').textContent = `${Math.round(total / 81 * 100)}%`;
+  $('#sudoku-filled').textContent = `${total} / 81`;
+  $('#sudoku-progress-bar').style.width = `${total / 81 * 100}%`;
+  $('#sudoku-mistakes').textContent = `${s.mistakes} / 3`;
+  $$('#mistake-dots i').forEach((dot, i) => dot.classList.toggle('used', i < s.mistakes));
+  $('#sudoku-board-status').textContent = ({ready:'READY WHEN YOU ARE',playing:'IN YOUR FLOW',paused:'ON A LITTLE BREAK',won:'PUZZLE COMPLETE',lost:'ROUND OVER'})[s.status];
+  $('#sudoku-pause-overlay').hidden = s.status !== 'paused';
+  $('#sudoku-pause').innerHTML = icon(s.status === 'paused' ? 'play' : 'pause') + (s.status === 'paused' ? ' Resume game' : ' Pause game');
+  $('#sudoku-pause').disabled = ['won','lost'].includes(s.status);
+  $('#sudoku-undo').disabled = !s.history.length || ['won', 'paused'].includes(s.status);
+  $('#sudoku-notes').classList.toggle('active', s.notesMode);
+  $('#sudoku-notes').setAttribute('aria-pressed', String(s.notesMode));
+  $('#note-status').textContent = s.notesMode ? 'ON' : 'OFF';
+  $('#hint-count').textContent = s.hints;
+  $('#sudoku-hint').disabled = !s.hints || ['won','lost','paused'].includes(s.status);
+  $('#sudoku-erase').disabled = ['won','lost','paused'].includes(s.status);
+  const best = load(`best.sudoku.${s.difficulty}`);
+  $('#sudoku-best').textContent = best == null ? '—' : formatTime(best);
+  $('#sudoku-number-pad').innerHTML = Array.from({length: 9}, (_, n) => {
+    const number = n + 1;
+    const completed = s.entries.filter((v, i) => v === number && v === s.solution[i]).length;
+    return `<button class="num-button" data-number="${number}" ${(completed === 9 && !(s.selected >= 0 && s.entries[s.selected] === number && number !== s.solution[s.selected])) || ['won','lost','paused'].includes(s.status) ? 'disabled' : ''} aria-label="Enter ${number}, ${9 - completed} remaining"><span>${number}</span><small>${9 - completed} left</small></button>`;
+  }).join('');
+}
+$('#sudoku-board').addEventListener('click', event => {
+  const cell = event.target.closest('.s-cell');
+  if (!cell || !sudoku || sudoku.status === 'paused') return;
+  sudoku.selected = +cell.dataset.index;
+  const i = sudoku.selected;
+  if (!['won','lost'].includes(sudoku.status) && !sudoku.puzzle[i] && sudoku.entries[i] && sudoku.entries[i] !== sudoku.solution[i]) {
+    sudokuAction(0);
+    return;
+  }
+  save('sudoku', sudoku); renderSudoku();
+});
+/* A fast, deliberate 95ms hold creates a note; normal taps commit a guess.
+   Handling pointer-up manually means a hold cannot also submit a guess. */
+const HOLD_MS = 95;
+function makeQuickHold(element, selector, onTap, onHold) {
+  let state = null;
+  const cancel = () => { if (state?.timer) clearTimeout(state.timer); state = null; };
+  element.addEventListener('pointerdown', event => {
+    if (event.button !== 0 || !event.isPrimary) return;
+    const target = event.target.closest(selector);
+    if (!target || target.disabled) return;
+    cancel();
+    const key = target.dataset.number ?? target.dataset.index;
+    state = { id: event.pointerId, key, x: event.clientX, y: event.clientY, fired: false, timer: null };
+    try { element.setPointerCapture?.(event.pointerId); } catch { /* Synthetic/test pointers may lack capture support. */ }
+    state.timer = setTimeout(() => {
+      if (!state) return;
+      state.fired = true;
+      onHold(+state.key);
+      navigator.vibrate?.(12);
+    }, HOLD_MS);
+  });
+  element.addEventListener('pointermove', event => {
+    if (!state || event.pointerId !== state.id) return;
+    if (Math.hypot(event.clientX - state.x, event.clientY - state.y) > 9) cancel();
+  });
+  element.addEventListener('pointerup', event => {
+    if (!state || event.pointerId !== state.id) return;
+    const {key,fired} = state;
+    cancel();
+    if (!fired) onTap(+key);
+  });
+  for (const type of ['pointercancel','lostpointercapture']) element.addEventListener(type, cancel);
+  // Keyboard activation emits click.detail === 0. Physical taps/clicks were handled above.
+  element.addEventListener('click', event => {
+    if (event.detail !== 0) return;
+    const target = event.target.closest(selector);
+    if (target && !target.disabled) onTap(+(target.dataset.number ?? target.dataset.index));
+  });
+}
+makeQuickHold($('#sudoku-number-pad'), '[data-number]', n => sudokuAction(n), n => sudokuAction(n, true));
+$('#sudoku-undo').addEventListener('click', sudokuUndo);
+$('#sudoku-erase').addEventListener('click', () => { sudokuAction(0); closeSettings(); });
+$('#sudoku-notes').addEventListener('click', () => {
+  if (!sudoku || ['paused','won','lost'].includes(sudoku.status)) return;
+  sudoku.notesMode = !sudoku.notesMode; save('sudoku', sudoku); renderSudoku(); clickSound(500, .045);
+});
+$('#sudoku-hint').addEventListener('click', () => { sudokuHint(); closeSettings(); });
+$('#sudoku-pause').addEventListener('click', () => { sudokuTogglePause(); closeSettings(); });
+$('#sudoku-resume').addEventListener('click', sudokuTogglePause);
+$('#sudoku-new').addEventListener('click', () => { newSudoku(sudoku?.difficulty || 'easy'); closeSettings(); });
+// Difficulty is changed exclusively on the game setup screen.
+
+/* -------- Minesweeper: classic rules, flood reveal, chord, first-click safety -------- */
+const MINE_LEVELS = {
+  beginner: { rows: 9, cols: 9, count: 10, tile: 48 },
+  intermediate: { rows: 16, cols: 16, count: 40, tile: 32 },
+  expert: { rows: 16, cols: 30, count: 99, tile: 26 }
+};
+let mines = null;
+let freshlyRevealed = new Set();
+let mineWaveOrigin = -1, freshlyFlagged = -1;
+let holdTimer = null;
+let longPressIndex = -1;
+let suppressClickUntil = 0;
+let mineTile = 0;
+let zoom = 1, panX = 0, panY = 0;
+function createMines(difficulty = 'beginner') {
+  const config = MINE_LEVELS[difficulty] || MINE_LEVELS.beginner;
+  return {
+    difficulty, rows: config.rows, cols: config.cols, mineCount: config.count,
+    cells: Array.from({ length: config.rows * config.cols }, () => ({ mine: false, count: 0, revealed: false, flagged: false, exploded: false })),
+    initialized: false, selected: 0, clickMode: 'reveal', elapsed: 0,
+    status: 'ready', revealed: 0
+  };
+}
+function validMines(m) {
+  return m && MINE_LEVELS[m.difficulty] && Array.isArray(m.cells) &&
+    m.cells.length === MINE_LEVELS[m.difficulty].rows * MINE_LEVELS[m.difficulty].cols &&
+    typeof m.elapsed === 'number' && ['ready','playing','won','lost'].includes(m.status);
+}
+function restoreOrCreateMines() {
+  const existing = load('mines');
+  mines = validMines(existing) ? existing : createMines();
+  save('mines', mines);
+}
+function newMines(difficulty = 'beginner') {
+  clearTimeout(holdTimer);
+  freshlyRevealed = new Set();
+  mineWaveOrigin = -1; freshlyFlagged = -1;
+  mines = createMines(difficulty);
+  save('mines', mines);
+  renderMines();
+}
+function mineNeighbors(i) {
+  const r = Math.floor(i / mines.cols), c = i % mines.cols;
+  const indices = [];
+  for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+    if (!dr && !dc) continue;
+    const nr = r + dr, nc = c + dc;
+    if (nr >= 0 && nr < mines.rows && nc >= 0 && nc < mines.cols) indices.push(nr * mines.cols + nc);
+  }
+  return indices;
+}
+function seedMines(first) {
+  // Mines are assigned only after the first reveal. Its entire 3x3 opening is safe.
+  const safe = new Set([first, ...mineNeighbors(first)]);
+  const candidates = shuffle(Array.from({length: mines.cells.length}, (_, i) => i).filter(i => !safe.has(i)));
+  for (const i of candidates.slice(0, mines.mineCount)) mines.cells[i].mine = true;
+  for (let i = 0; i < mines.cells.length; i++)
+    if (!mines.cells[i].mine) mines.cells[i].count = mineNeighbors(i).filter(n => mines.cells[n].mine).length;
+  mines.initialized = true;
+  mines.status = 'playing';
+}
+function finishMines() {
+  mines.status = 'won';
+  mines.cells.forEach(cell => { if (cell.mine) cell.flagged = true; });
+  const key = `best.mines.${mines.difficulty}`;
+  const prev = load(key);
+  if (prev == null || mines.elapsed < prev) save(key, mines.elapsed);
+  save('mines', mines);
+  setTimeout(() => showResult('mines', true), 330);
+}
+function loseMines(index) {
+  mines.status = 'lost';
+  mines.cells[index].exploded = true;
+  mines.cells.forEach(cell => { if (cell.mine && !cell.flagged) cell.revealed = true; });
+  clickSound(155, .25, 'triangle');
+  save('mines', mines);
+  setTimeout(() => showResult('mines', false), 480);
+}
+function uncoverMines(indices) {
+  // Queue-based flood fill avoids recursion depth issues on expert boards.
+  const queue = [...indices];
+  const queued = new Set(indices);
+  freshlyRevealed = new Set();
+  while (queue.length && mines.status !== 'lost') {
+    const i = queue.shift();
+    const cell = mines.cells[i];
+    if (cell.revealed || cell.flagged) continue;
+    if (cell.mine) { loseMines(i); break; }
+    cell.revealed = true;
+    mines.revealed++;
+    freshlyRevealed.add(i);
+    if (!cell.count) {
+      for (const neighbor of mineNeighbors(i)) {
+        const c = mines.cells[neighbor];
+        if (!c.revealed && !c.flagged && !queued.has(neighbor)) {
+          queue.push(neighbor); queued.add(neighbor);
+        }
+      }
+    }
+  }
+  if (mines.status !== 'lost' && mines.revealed === mines.cells.length - mines.mineCount) finishMines();
+}
+function revealMine(index) {
+  if (!mines || ['won','lost'].includes(mines.status)) return;
+  const cell = mines.cells[index];
+  if (cell.flagged) return;
+  mines.selected = index;
+  mineWaveOrigin = index; freshlyFlagged = -1;
+  if (!mines.initialized) seedMines(index);
+  if (cell.revealed) {
+    // 'Chord': when the right number of flags touch a numbered cell,
+    // reveal the remaining neighbors in one action.
+    if (cell.count) {
+      const adjacent = mineNeighbors(index);
+      const flagged = adjacent.filter(i => mines.cells[i].flagged).length;
+      if (flagged === cell.count) {
+        const covered = adjacent.filter(i => !mines.cells[i].flagged && !mines.cells[i].revealed);
+        if (covered.length) { uncoverMines(covered); clickSound(550, .075); }
+      }
+    }
+  } else {
+    uncoverMines([index]);
+    if (mines.status !== 'lost') clickSound(cell.count ? 500 : 630, .08);
+  }
+  save('mines', mines); renderMines();
+}
+function flagMine(index) {
+  if (!mines || ['won','lost'].includes(mines.status)) return;
+  const cell = mines.cells[index];
+  if (cell.revealed) return;
+  mines.selected = index;
+  cell.flagged = !cell.flagged;
+  freshlyFlagged = cell.flagged ? index : -1;
+  freshlyRevealed = new Set();
+  clickSound(cell.flagged ? 700 : 410, .08);
+  save('mines', mines); renderMines();
+}
+function mineClick(index) {
+  if (mines.clickMode === 'flag') flagMine(index);
+  else revealMine(index);
+}
+function setMineMode(mode) {
+  if (!mines) return;
+  mines.clickMode = mode;
+  save('mines', mines); renderMines(); clickSound(480, .045);
+}
+function renderMines() {
+  if (!mines) return;
+  const m = mines;
+  $('#mines-difficulty').value = m.difficulty;
+  const config = MINE_LEVELS[m.difficulty];
+  const board = $('#mines-board');
+  const wasFocused = board.contains(document.activeElement);
+  board.style.setProperty('--cols', m.cols);
+  board.style.setProperty('--rows', m.rows);
+  board.style.setProperty('--tile', (mineTile || config.tile) + 'px');
+  board.innerHTML = m.cells.map((cell, index) => {
+    const className = [
+      'mine-cell', cell.revealed && 'revealed', freshlyRevealed.has(index) && 'fresh',
+      freshlyRevealed.has(index) && 'reveal-wave', freshlyFlagged === index && 'flag-pop',
+      cell.flagged && 'flagged', cell.mine && cell.revealed && 'mine',
+      cell.exploded && 'exploded', cell.flagged && m.status === 'lost' && !cell.mine && 'wrong-flag',
+      cell.revealed && cell.count && `n${cell.count}`
+    ].filter(Boolean).join(' ');
+    const content = cell.flagged ? icon(cell.mine || m.status !== 'lost' ? 'flag' : 'close')
+      : cell.revealed && cell.mine ? icon('bomb')
+      : cell.revealed && cell.count ? cell.count : '';
+    const desc = cell.flagged ? 'flagged' : cell.revealed ? cell.mine ? 'mine' : cell.count ? `${cell.count} neighboring mines` : 'empty' : 'covered';
+    const distance = mineWaveOrigin < 0 ? 0 : Math.max(Math.abs(Math.floor(index / m.cols) - Math.floor(mineWaveOrigin / m.cols)), Math.abs(index % m.cols - mineWaveOrigin % m.cols));
+    return `<button class="${className}" style="--feedback-delay:${Math.min(distance * 20, 180)}ms" role="gridcell" data-index="${index}" tabindex="${m.selected === index ? 0 : -1}" aria-label="Row ${Math.floor(index / m.cols) + 1}, column ${index % m.cols + 1}, ${desc}">${content}</button>`;
+  }).join('');
+  if (wasFocused) board.querySelector(`[data-index="${m.selected}"]`)?.focus({ preventScroll: true });
+  const flags = m.cells.filter(cell => cell.flagged).length;
+  const safe = m.cells.length - m.mineCount;
+  const percent = Math.round(m.revealed / safe * 100);
+  $('#mines-time').textContent = formatTime(m.elapsed);
+  $('#mines-flags').textContent = m.mineCount - flags;
+  $('#mines-revealed').textContent = `${m.revealed} / ${safe}`;
+  $('#mines-progress-label').textContent = `${percent}%`;
+  $('#mines-progress-bar').style.width = `${percent}%`;
+  $('#mines-board-status').textContent = ({ready:'FIRST CLICK IS SAFE',playing:'WATCH YOUR STEP',won:'FIELD CLEARED',lost:'MINE DETECTED'})[m.status];
+  const best = load(`best.mines.${m.difficulty}`);
+  $('#mines-best').textContent = best == null ? '—' : formatTime(best);
+  for (const mode of ['reveal', 'flag']) {
+    const button = $(`#mines-${mode}-mode`);
+    button.classList.toggle('active', m.clickMode === mode);
+    button.setAttribute('aria-pressed', String(m.clickMode === mode));
+  }
+  freshlyRevealed = new Set();
+  freshlyFlagged = -1;
+}
+/* -------- Minesweeper: drag + two-finger pinch zoom without scrollbars -------- */
+const mineViewport = $('#mine-viewport');
+const mineLayer = $('#mine-pan-layer');
+const pointers = new Map();
+let touchStart = null;
+let pinchState = null;
+let gestureUsed = false;
+const clamp = (v,min,max) => Math.min(max,Math.max(min,v));
+function applyMineTransform() {
+  if (!mines) return;
+  const maxX = Math.max(0, (mines.cols * mineTile * zoom - mineViewport.clientWidth) / 2) + 18;
+  const maxY = Math.max(0, (mines.rows * mineTile * zoom - mineViewport.clientHeight) / 2) + 18;
+  panX = clamp(panX,-maxX,maxX); panY = clamp(panY,-maxY,maxY);
+  mineLayer.style.transform = `translate(-50%, -50%) translate(${panX}px, ${panY}px) scale(${zoom})`;
+}
+function fitMineBoard() {
+  if (!mines || route !== 'mines') return;
+  const w = mineViewport.clientWidth - 16, h = mineViewport.clientHeight - 16;
+  if (w <= 0 || h <= 0) return;
+  mineTile = Math.max(5, Math.floor(Math.min(w / mines.cols, h / mines.rows, 48)));
+  $('#mines-board').style.setProperty('--tile', mineTile + 'px');
+  applyMineTransform();
+}
+function resetMineZoom() { zoom = mines?.difficulty === 'expert' ? 1.9 : 1; panX = 0; panY = 0; requestAnimationFrame(fitMineBoard); }
+window.addEventListener('resize', fitMineBoard);
+if ('ResizeObserver' in window) new ResizeObserver(() => fitMineBoard()).observe(mineViewport);
+function pointerDistance(a,b) { return Math.hypot(a.x-b.x,a.y-b.y); }
+function pointerCenter(a,b) { return { x:(a.x+b.x)/2, y:(a.y+b.y)/2 }; }
+mineViewport.addEventListener('pointerdown', event => {
+  if (event.pointerType === 'mouse' && event.button !== 0) return;
+  const cell = event.target.closest('.mine-cell');
+  const current = {x:event.clientX,y:event.clientY,index:cell ? +cell.dataset.index : null};
+  pointers.set(event.pointerId,current);
+  try { mineViewport.setPointerCapture(event.pointerId); } catch { /* Gracefully handle synthetic pointers. */ }
+  if (pointers.size === 1) {
+    gestureUsed = false;
+    touchStart = {id:event.pointerId, ...current, panX, panY, moved:false, held:false, timer:null};
+    if (cell) touchStart.timer = setTimeout(() => {
+      if (touchStart && !touchStart.moved && !gestureUsed && pointers.size===1) {
+        touchStart.held = true;
+        flagMine(touchStart.index);
+        navigator.vibrate?.(12);
+      }
+    }, HOLD_MS);
+  } else if (pointers.size === 2) {
+    if (touchStart?.timer) clearTimeout(touchStart.timer);
+    gestureUsed = true;
+    const [a,b] = [...pointers.values()];
+    pinchState = {dist:Math.max(1,pointerDistance(a,b)), center:pointerCenter(a,b), zoom, panX, panY};
+  }
+});
+mineViewport.addEventListener('pointermove', event => {
+  if (!pointers.has(event.pointerId)) return;
+  pointers.set(event.pointerId, {...pointers.get(event.pointerId), x:event.clientX,y:event.clientY});
+  if (pointers.size >= 2 && pinchState) {
+    const [a,b] = [...pointers.values()];
+    const center = pointerCenter(a,b);
+    zoom = clamp(pinchState.zoom * pointerDistance(a,b) / pinchState.dist,1,5);
+    const rect = mineViewport.getBoundingClientRect();
+    const focalX = pinchState.center.x - (rect.left+rect.width/2);
+    const focalY = pinchState.center.y - (rect.top+rect.height/2);
+    panX = pinchState.panX + center.x - pinchState.center.x + focalX * (1 - zoom/pinchState.zoom);
+    panY = pinchState.panY + center.y - pinchState.center.y + focalY * (1 - zoom/pinchState.zoom);
+    applyMineTransform(); return;
+  }
+  if (!touchStart || touchStart.id !== event.pointerId) return;
+  const dx = event.clientX-touchStart.x, dy = event.clientY-touchStart.y;
+  if (Math.hypot(dx,dy)>9) {
+    touchStart.moved = true;
+    clearTimeout(touchStart.timer);
+    if (zoom>1) { panX=touchStart.panX+dx; panY=touchStart.panY+dy; applyMineTransform(); }
+  }
+});
+function endMinePointer(event, cancelled=false) {
+  if (!pointers.has(event.pointerId)) return;
+  pointers.delete(event.pointerId);
+  if (touchStart?.timer) clearTimeout(touchStart.timer);
+  if (!cancelled && touchStart && touchStart.id===event.pointerId && !touchStart.moved && !touchStart.held && !gestureUsed && touchStart.index != null) revealMine(touchStart.index);
+  if (pointers.size < 2) pinchState = null;
+  if (pointers.size === 0) { touchStart = null; gestureUsed = false; }
+  else { touchStart = null; gestureUsed = true; }
+}
+mineViewport.addEventListener('pointerup', event => endMinePointer(event));
+mineViewport.addEventListener('pointercancel', event => endMinePointer(event,true));
+mineViewport.addEventListener('lostpointercapture', event => endMinePointer(event,true));
+$('#mines-board').addEventListener('click', event => {
+  if (event.detail !== 0) return;  // Keyboard activation only; pointer events handled above.
+  const cell=event.target.closest('.mine-cell'); if (cell) revealMine(+cell.dataset.index);
+});
+$('#mines-board').addEventListener('contextmenu', event => {
+  const cell=event.target.closest('.mine-cell');
+  event.preventDefault();
+  if (cell && event.pointerType !== 'touch') flagMine(+cell.dataset.index);
+});
+$('#mines-new').addEventListener('click', () => { newMines(mines?.difficulty || 'beginner'); resetMineZoom(); closeSettings(); });
+$('#mines-restart').addEventListener('click', () => { newMines(mines?.difficulty || 'beginner'); resetMineZoom(); });
+// There is no visible Reveal/Flag mode toggle: tap reveals and hold flags.
+
+
+/* -------- Nonogram: unique-solution picture bank and focused board --------
+   Every stored picture was checked with a line-pattern constraint solver. Rotations
+   and reflections preserve uniqueness. Cell states: 0 unknown, 1 filled, 2 X. */
+const NONOGRAM_BANK = {
+ easy:['1111011110110001110011100','0110001111111111111100000','0000011111111111111100111','1111111111111110110000000','0111001110111101111011110','0000011000110001111111111','1110011110111100111001110','0000001110011100111000000'],
+ medium:['0000000000000000000000000000001111111110111111111000011111100001111110000000000000000000000000000000','0000000000000000110011110011001111001100111111111011111111101111111100000000000000000000000000000000','0011001111001100111100110011110111111111011111100001111110000111111000111000000011100000001110000000','0000000000110000000011000001101100000110110000011011000000001100000000110000000011000000001100000000','0111110000011111000001111100000111110000011111000001111100000111110000011111000001111100000000110000','0000000000000111110000011111000001111100011111110001111111110111111111011111111101111111110111111111','1110000000111111111011111111111111111111111111111101111111110111111110011111111000000111000000000000','1110000000111000000011100000001111111110111111111011111111100111111110011111111001111111100000000110'],
+ hard:['000000000000000000000000000000011111111111100011111111111100011111111111100011111111111100011111100011100011111100011100011111100011100011111100011100001110000000000001110000000000001110000000000000000000000000000000000000000','001110000000000001110000110000011111100110000011111100110000011111100110000011111111110000011111111110000011111111110000011111111110000011111111110000011111111110000001111111110000001111111110000001111111110000001111111110000','000000000000000000000001111100000000001111100000000001111100000000001111100000000001111100000000001111100000000001111100000000001111100000000001111100000000001111100000000001111100000001111111100000001111111100000000000000000','000000000000000000000000110000000000000110000000000000110000000000000110000000000000110000000000000110000001111111111111001111111111111001111111111111000000000110000000000000110000000000000110000000000000000000000000000000000','000000000000000000000000000000000000000000000000000000001111000000000001111000000000001111000000000001111001111111111111001111111111111001111111111111001111111110000000000000000000000000000000000000000000000000000000000000000', '000000000000000000000000000000000000000000000000111110000000000111110000000000111110000000000111110001110000111110001110000111111001110000111111001110000111111000000000111110000000000000000000000000000000000000000000000000000', '000000110000000000000110000000000000110000000000000110000000000000111111110000000111111110000000110000111000000110000111001110111111111001110111111000001110000000000001110000000000001110000000000001110000000000001110000000000', '000000111111111001111111111111001111111111111001111111111111011111111111111011111111111111011111111111111011111111111111011110111111111011111111111111011111111110000011111111110000011111111110000000000000000000000000000000000']
+};
+let nonogram = null, nonoZoom=1, nonoX=0, nonoY=0, nonoCell=30;
+settings.nonoIndicators = settings.nonoIndicators !== false;
+settings.nonoHaptics = settings.nonoHaptics !== false;
+function nonoClues(line) { const runs=[]; let run=0; for(const v of line) { if(v) run++; else if(run) { runs.push(run); run=0; } } if(run) runs.push(run); return runs.length ? runs : [0]; }
+function restoreNonogram() { const v=load('nonogram'); if(v && ['easy','medium','hard'].includes(v.difficulty) && v.n === ({easy:5,medium:10,hard:15})[v.difficulty] && Array.isArray(v.solution) && v.solution.length===v.n*v.n && v.solution.every(x=>x===0||x===1) && Array.isArray(v.cells) && v.cells.length===v.n*v.n && v.cells.every(x=>[0,1,2].includes(x))) { nonogram=v; if(!Array.isArray(v.history)) v.history=[]; } }
+function newNonogram(difficulty='easy') {
+ const n=({easy:5,medium:10,hard:15})[difficulty], bank=NONOGRAM_BANK[difficulty];
+ const previous=load('nono.last.'+difficulty,-1), choices=bank.map((_,i)=>i).filter(i=>i!==previous), index=choices[Math.floor(Math.random()*choices.length)]; save('nono.last.'+difficulty,index);
+ let sol=[...bank[index]].map(Number); const turns=Math.floor(Math.random()*4), flip=Math.random()<.5;
+ for(let k=0;k<turns;k++) sol=Array.from({length:n*n},(_,i)=>sol[(n-1-i%n)*n+Math.floor(i/n)]);
+ if(flip) sol=Array.from({length:n*n},(_,i)=>sol[Math.floor(i/n)*n+n-1-i%n]);
+ nonogram={difficulty,n,solution:sol,cells:Array(n*n).fill(0),history:[],selected:-1,status:'ready',elapsed:0,moves:0}; save('nonogram',nonogram); resetNonogramZoom(); renderNonogram();
+}
+function restartNonogram(){ if(!nonogram)return; nonogram.cells.fill(0); nonogram.history=[]; nonogram.selected=-1; nonogram.status='ready'; nonogram.elapsed=0; nonogram.moves=0; save('nonogram',nonogram); resetNonogramZoom(); renderNonogram(); }
+function nonoSnapshot(){ nonogram.history.push({cells:[...nonogram.cells],moves:nonogram.moves}); if(nonogram.history.length>100)nonogram.history.shift(); }
+function nonoSet(i,value) {
+ if(!nonogram || nonogram.status==='won' || i<0 || i>=nonogram.cells.length || nonogram.cells[i]===value)return;
+ nonoSnapshot(); nonogram.selected=i; nonogram.cells[i]=value; nonogram.status='playing'; nonogram.moves++;
+ if(settings.nonoHaptics) navigator.vibrate?.(10); clickSound(value===1?520:390,.04);
+ if(nonogram.cells.every((v,k)=>(v===1)===!!nonogram.solution[k])) { nonogram.status='won'; const key='best.nonogram.'+nonogram.difficulty, best=load(key); if(best==null||nonogram.elapsed<best)save(key,nonogram.elapsed); setTimeout(nonoResult,450); }
+ save('nonogram',nonogram); renderNonogram();
+}
+function nonoTap(i){nonoSet(i,nonogram.cells[i]===1?0:1)}
+function nonoMark(i){nonoSet(i,nonogram.cells[i]===2?0:2)}
+function nonoResult(){ if(route!=='nonogram'||nonogram?.status!=='won')return; const n=nonogram.n; const art=nonogram.solution.map(v=>`<i class="${v?'on':''}"></i>`).join(''); dialog(`<div class="dialog-kicker">PUZZLE COMPLETE ? NONOGRAM</div><h2 id="dialog-title">Picture perfect.</h2><div class="nono-result-art" style="--n:${n}" aria-label="Completed picture">${art}</div><div class="result-stats"><div class="result-stat"><strong>${formatTime(nonogram.elapsed)}</strong><small>YOUR TIME</small></div><div class="result-stat"><strong>${nonogram.moves}</strong><small>MOVES</small></div><div class="result-stat"><strong>${difficultyLabel(nonogram.difficulty)}</strong><small>DIFFICULTY</small></div></div><div class="dialog-actions"><button class="secondary-button" data-dialog-action="nono-back">Back</button><button class="secondary-button" data-dialog-action="nono-replay">Replay</button><button class="primary-button" data-dialog-action="new">New puzzle</button></div>`); clickSound(660,.18); }
+function renderNonogram(){
+ if(!nonogram)return; const {n,solution,cells,selected}=nonogram, board=$('#nono-board');
+ const rows=Array.from({length:n},(_,r)=>nonoClues(solution.slice(r*n,(r+1)*n))), cols=Array.from({length:n},(_,c)=>nonoClues(Array.from({length:n},(_,r)=>solution[r*n+c])));
+ const rowWidth=Math.max(...rows.map(a=>a.length)), colHeight=Math.max(...cols.map(a=>a.length));
+ board.style.setProperty('--n',n); board.style.setProperty('--clue-w',`${Math.max(1.4,rowWidth*.65)*nonoCell}px`); board.style.setProperty('--clue-h',`${Math.max(1.4,colHeight*.65)*nonoCell}px`); board.style.setProperty('--cell',nonoCell+'px'); board.style.setProperty('--clue-font',Math.max(9,Math.min(18,nonoCell*.43))+'px');
+ // A line is indicated only if all its cells are explicitly resolved and match its clues.
+ const done=line=>settings.nonoIndicators && line.every(v=>v!==0) && JSON.stringify(nonoClues(line.map(v=>v===1)))===JSON.stringify(line._clues);
+ let html='<div aria-hidden="true"></div>';
+ cols.forEach((clues,c)=>{const line=Array.from({length:n},(_,r)=>cells[r*n+c]); line._clues=clues; html+=`<div class="nono-clue col ${done(line)?'done':''}" aria-label="Column ${c+1}: ${clues.join(', ')}">${clues.map(x=>`<span>${x}</span>`).join('')}</div>`;});
+ rows.forEach((clues,r)=>{const line=cells.slice(r*n,(r+1)*n); line._clues=clues; html+=`<div class="nono-clue ${done(line)?'done':''}" aria-label="Row ${r+1}: ${clues.join(', ')}">${clues.map(x=>`<span>${x}</span>`).join('')}</div>`; for(let c=0;c<n;c++){const i=r*n+c,v=cells[i];html+=`<button class="nono-cell ${v===1?'filled':v===2?'marked':''} ${selected===i?'active':''} ${r===0?'edge-top':''} ${c===0?'edge-left':''} ${(c+1)%5===0?'fifth-col':''} ${(r+1)%5===0?'fifth-row':''}" data-index="${i}" aria-label="Row ${r+1}, column ${c+1}, ${v===1?'filled':v===2?'marked empty':'unknown'}" ${(selected===i || (selected<0 && i===0))?'tabindex="0"':'tabindex="-1"'}>${v===2?'?':''}</button>`; }});
+ board.innerHTML=html; board.classList.toggle('solved',nonogram.status==='won'); updateNonogramTools();
+}
+function updateNonogramTools(){if(!nonogram)return; $('#nono-time').textContent=formatTime(nonogram.elapsed); $('#nono-moves').textContent=nonogram.moves; $('#nono-level').textContent=difficultyLabel(nonogram.difficulty); $('#nono-indicators').checked=settings.nonoIndicators; $('#nono-haptics').checked=settings.nonoHaptics; $('#nono-undo').disabled=!nonogram.history.length||nonogram.status==='won'; $('#nono-erase').disabled=nonogram.selected<0||nonogram.status==='won'; $('#nono-hint').disabled=nonogram.status==='won';}
+const nonoViewport=$('#nono-viewport'), nonoLayer=$('#nono-layer'), nonoPointers=new Map(); let nonoStart=null,nonoPinch=null,nonoGesture=false;
+function applyNonogramTransform(){const rect=nonoLayer.getBoundingClientRect(), w=rect.width, h=rect.height; nonoX=clamp(nonoX,-Math.max(0,(w-nonoViewport.clientWidth)/2)-20,Math.max(0,(w-nonoViewport.clientWidth)/2)+20); nonoY=clamp(nonoY,-Math.max(0,(h-nonoViewport.clientHeight)/2)-20,Math.max(0,(h-nonoViewport.clientHeight)/2)+20); nonoLayer.style.transform=`translate(-50%, -50%) translate(${nonoX}px, ${nonoY}px) scale(${nonoZoom})`;}
+function fitNonogram(){if(!nonogram||route!=='nonogram')return; const n=nonogram.n, rows=Array.from({length:n},(_,r)=>nonoClues(nonogram.solution.slice(r*n,(r+1)*n))), cols=Array.from({length:n},(_,c)=>nonoClues(Array.from({length:n},(_,r)=>nonogram.solution[r*n+c]))); const rw=Math.max(1.4,Math.max(...rows.map(a=>a.length))*.65), ch=Math.max(1.4,Math.max(...cols.map(a=>a.length))*.65); nonoCell=Math.max(10,Math.min(55,Math.floor(Math.min((nonoViewport.clientWidth-20)/(n+rw),(nonoViewport.clientHeight-20)/(n+ch))))); renderNonogram(); applyNonogramTransform();}
+function resetNonogramZoom(){nonoZoom=1;nonoX=0;nonoY=0;requestAnimationFrame(fitNonogram)}
+window.addEventListener('resize',fitNonogram);
+nonoViewport.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button===2){const cell=e.target.closest('.nono-cell');if(cell)nonoMark(+cell.dataset.index);return;} if(e.pointerType==='mouse'&&e.button!==0)return; const cell=e.target.closest('.nono-cell'), p={x:e.clientX,y:e.clientY,index:cell?+cell.dataset.index:null}; nonoPointers.set(e.pointerId,p); try{nonoViewport.setPointerCapture(e.pointerId)}catch{} if(nonoPointers.size===1){nonoGesture=false;nonoStart={...p,id:e.pointerId,time:Date.now(),x0:nonoX,y0:nonoY,moved:false};} else {nonoGesture=true; if(nonoPointers.size===2){const [a,b]=[...nonoPointers.values()];nonoPinch={distance:Math.max(1,pointerDistance(a,b)),center:pointerCenter(a,b),zoom:nonoZoom,x:nonoX,y:nonoY};}}});
+nonoViewport.addEventListener('pointermove',e=>{if(!nonoPointers.has(e.pointerId))return; nonoPointers.set(e.pointerId,{...nonoPointers.get(e.pointerId),x:e.clientX,y:e.clientY}); if(nonoPointers.size>=2&&nonoPinch){const [a,b]=[...nonoPointers.values()], center=pointerCenter(a,b), rect=nonoViewport.getBoundingClientRect(); nonoZoom=clamp(nonoPinch.zoom*pointerDistance(a,b)/nonoPinch.distance,1,5); nonoX=nonoPinch.x+center.x-nonoPinch.center.x+(nonoPinch.center.x-rect.left-rect.width/2)*(1-nonoZoom/nonoPinch.zoom); nonoY=nonoPinch.y+center.y-nonoPinch.center.y+(nonoPinch.center.y-rect.top-rect.height/2)*(1-nonoZoom/nonoPinch.zoom); applyNonogramTransform();return;} if(!nonoStart||nonoStart.id!==e.pointerId)return;const dx=e.clientX-nonoStart.x,dy=e.clientY-nonoStart.y;if(Math.hypot(dx,dy)>9){nonoStart.moved=true;if(nonoZoom>1){nonoX=nonoStart.x0+dx;nonoY=nonoStart.y0+dy;applyNonogramTransform();}}});
+function endNonoPointer(e,cancelled=false){if(!nonoPointers.has(e.pointerId))return;nonoPointers.delete(e.pointerId);if(!cancelled&&nonoStart&&nonoStart.id===e.pointerId&&!nonoStart.moved&&!nonoGesture&&nonoStart.index!==null){if(Date.now()-nonoStart.time>=HOLD_MS)nonoMark(nonoStart.index);else nonoTap(nonoStart.index);} if(nonoPointers.size<2)nonoPinch=null;if(nonoPointers.size===0){nonoStart=null;nonoGesture=false;}else{nonoStart=null;nonoGesture=true;}}
+nonoViewport.addEventListener('pointerup',e=>endNonoPointer(e));nonoViewport.addEventListener('pointercancel',e=>endNonoPointer(e,true));nonoViewport.addEventListener('lostpointercapture',e=>endNonoPointer(e,true));
+$('#nono-board').addEventListener('contextmenu',e=>e.preventDefault());
+$('#nono-board').addEventListener('click',e=>{if(e.detail!==0)return;const c=e.target.closest('.nono-cell');if(c)nonoTap(+c.dataset.index)});
+$('#nono-board').addEventListener('keydown',e=>{const c=e.target.closest('.nono-cell');if(!c||!nonogram)return;const i=+c.dataset.index,n=nonogram.n,r=Math.floor(i/n),col=i%n;if(e.key.startsWith('Arrow')){e.preventDefault();const nr=clamp(r+(e.key==='ArrowDown'?1:e.key==='ArrowUp'?-1:0),0,n-1),nc=clamp(col+(e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0),0,n-1);nonogram.selected=nr*n+nc;renderNonogram();$('#nono-board').querySelector(`[data-index="${nonogram.selected}"]`)?.focus({preventScroll:true});}else if(e.key.toLowerCase()==='x'){e.preventDefault();nonoMark(i);$('#nono-board').querySelector(`[data-index="${i}"]`)?.focus({preventScroll:true});}});
+$('#nono-undo').addEventListener('click',()=>{if(nonogram?.history.length&&nonogram.status!=='won'){Object.assign(nonogram,nonogram.history.pop());nonogram.status='playing';save('nonogram',nonogram);renderNonogram();}closeSettings()});
+$('#nono-erase').addEventListener('click',()=>{nonoSet(nonogram.selected,0);closeSettings()});
+$('#nono-hint').addEventListener('click',()=>{if(!nonogram||nonogram.status==='won')return; let i=nonogram.cells.findIndex((v,k)=>v===1&&!nonogram.solution[k]); if(i<0)i=nonogram.cells.findIndex((v,k)=>nonogram.solution[k]&&v!==1); if(i<0)i=nonogram.cells.findIndex((v,k)=>!nonogram.solution[k]&&v===0); if(i>=0)nonoSet(i,nonogram.solution[i]?1:2);closeSettings()});
+$('#nono-reset-zoom').addEventListener('click',()=>{resetNonogramZoom();closeSettings()});
+$('#nono-restart').addEventListener('click',()=>{restartNonogram();closeSettings()});
+$('#nono-new').addEventListener('click',()=>{newNonogram(nonogram.difficulty);closeSettings()});
+$('#nono-indicators').addEventListener('change',e=>{settings.nonoIndicators=e.target.checked;save('settings',settings);renderNonogram()});
+$('#nono-haptics').addEventListener('change',e=>{settings.nonoHaptics=e.target.checked;save('settings',settings)});
+
+
+/* -------- Wordle: unlimited local rounds, six guesses, duplicate-aware clues --------
+   Guess dictionary: public-domain ENABLE subset, puzzlecottage.com/data/. */
+const WORD_GUESSES = new Set(`AAHED AALII AARGH ABACA ABACI ABACK ABAFT ABAKA ABAMP ABASE ABASH ABATE ABBAS ABBES ABBEY ABBOT ABEAM ABELE ABETS ABHOR ABIDE ABLER ABLES ABMHO ABODE ABOHM ABOIL ABOMA ABOON ABORT ABOUT ABOVE ABRIS ABUSE ABUTS ABUZZ ABYES ABYSM ABYSS ACARI ACERB ACETA ACHED ACHES ACHOO ACIDS ACIDY ACING ACINI ACKEE ACMES ACMIC ACNED ACNES ACOCK ACOLD ACORN ACRED ACRES ACRID ACTED ACTIN ACTOR ACUTE ACYLS ADAGE ADAPT ADDAX ADDED ADDER ADDLE ADEEM ADEPT ADIEU ADIOS ADITS ADMAN ADMEN ADMIT ADMIX ADOBE ADOBO ADOPT ADORE ADORN ADOWN ADOZE ADULT ADUNC ADUST ADYTA ADZES AECIA AEDES AEGIS AEONS AERIE AFARS AFFIX AFIRE AFOOT AFORE AFOUL AFRIT AFTER AGAIN AGAMA AGAPE AGARS AGATE AGAVE AGAZE AGENE AGENT AGERS AGGER AGGIE AGGRO AGHAS AGILE AGING AGIOS AGISM AGIST AGLEE AGLET AGLEY AGLOW AGMAS AGONE AGONS AGONY AGORA AGREE AGRIA AGUES AHEAD AHOLD AHULL AIDED AIDER AIDES AILED AIMED AIMER AIOLI AIRED AIRER AIRNS AIRTH AIRTS AISLE AITCH AIVER AJIVA AJUGA AKEES AKELA AKENE ALACK ALAMO ALAND ALANE ALANG ALANS ALANT ALARM ALARY ALATE ALBAS ALBUM ALCID ALDER ALDOL ALECS ALEFS ALEPH ALERT ALFAS ALGAE ALGAL ALGAS ALGID ALGIN ALGOR ALGUM ALIAS ALIBI ALIEN ALIFS ALIGN ALIKE ALINE ALIST ALIVE ALIYA ALKYD ALKYL ALLAY ALLEE ALLEY ALLOD ALLOT ALLOW ALLOY ALLYL ALMAH ALMAS ALMEH ALMES ALMUD ALMUG ALOES ALOFT ALOHA ALOIN ALONE ALONG ALOOF ALOUD ALPHA ALTAR ALTER ALTHO ALTOS ALULA ALUMS ALWAY AMAHS AMAIN AMASS AMAZE AMBER AMBIT AMBLE AMBOS AMBRY AMEBA AMEER AMEND AMENS AMENT AMIAS AMICE AMICI AMIDE AMIDO AMIDS AMIES AMIGA AMIGO AMINE AMINO AMINS AMIRS AMISS AMITY AMMOS AMNIA AMNIC AMOKS AMOLE AMONG AMORT AMOUR AMPLE AMPLY AMPUL AMUCK AMUSE AMYLS ANCON ANEAR ANELE ANENT ANGAS ANGEL ANGER ANGLE ANGRY ANGST ANILE ANILS ANIMA ANIME ANIMI ANION ANISE ANKHS ANKLE ANKUS ANLAS ANNAL ANNAS ANNEX ANNOY ANNUL ANOAS ANODE ANOLE ANOMY ANSAE ANTAE ANTAS ANTED ANTES ANTIC ANTIS ANTRA ANTRE ANTSY ANVIL AORTA APACE APART APEAK APEEK APERS APERY APHID APHIS APIAN APING APISH APNEA APODS APORT APPAL APPEL APPLE APPLY APRES APRON APSES APSIS APTER APTLY AQUAE AQUAS ARAKS ARBOR ARCED ARCUS ARDEB ARDOR AREAE AREAL AREAS ARECA AREIC ARENA ARETE ARGAL ARGIL ARGLE ARGOL ARGON ARGOT ARGUE ARGUS ARHAT ARIAS ARIEL ARILS ARISE ARLES ARMED ARMER ARMET ARMOR AROID AROMA AROSE ARPEN ARRAS ARRAY ARRIS ARROW ARSES ARSIS ARSON ARTAL ARTEL ARTSY ARUMS ARVAL ARVOS ARYLS ASANA ASCOT ASCUS ASDIC ASHED ASHEN ASHES ASIDE ASKED ASKER ASKEW ASKOI ASKOS ASPEN ASPER ASPIC ASPIS ASSAI ASSAY ASSES ASSET ASTER ASTIR ASYLA ATAPS ATAXY ATILT ATLAS ATMAN ATMAS ATOLL ATOMS ATOMY ATONE ATONY ATOPY ATRIA ATRIP ATTAR ATTIC AUDAD AUDIO AUDIT AUGER AUGHT AUGUR AULIC AUNTS AUNTY AURAE AURAL AURAR AURAS AUREI AURES AURIC AURIS AURUM AUTOS AUXIN AVAIL AVANT AVAST AVENS AVERS AVERT AVGAS AVIAN AVION AVISO AVOID AVOWS AWAIT AWAKE AWARD AWARE AWASH AWFUL AWING AWNED AWOKE AWOLS AXELS AXIAL AXILE AXILS AXING AXIOM AXION AXITE AXLED AXLES AXMAN AXMEN AXONE AXONS AYAHS AYINS AZANS AZIDE AZIDO AZINE AZLON AZOIC AZOLE AZONS AZOTE AZOTH AZURE BAAED BAALS BABAS BABEL BABES BABKA BABOO BABUL BABUS BACCA BACKS BACON BADDY BADGE BADLY BAFFS BAFFY BAGEL BAGGY BAHTS BAILS BAIRN BAITH BAITS BAIZA BAIZE BAKED BAKER BAKES BALAS BALDS BALDY BALED BALER BALES BALKS BALKY BALLS BALLY BALMS BALMY BALSA BANAL BANCO BANDS BANDY BANED BANES BANGS BANJO BANKS BANNS BANTY BARBE BARBS BARDE BARDS BARED BARER BARES BARFS BARGE BARIC BARKS BARKY BARMS BARMY BARNS BARNY BARON BARRE BARYE BASAL BASED BASER BASES BASIC BASIL BASIN BASIS BASKS BASSI BASSO BASSY BASTE BASTS BATCH BATED BATES BATHE BATHS BATIK BATON BATTS BATTU BATTY BAUDS BAULK BAWDS BAWDY BAWLS BAWTY BAYED BAYOU BAZAR BAZOO BEACH BEADS BEADY BEAKS BEAKY BEAMS BEAMY BEANO BEANS BEARD BEARS BEAST BEATS BEAUS BEAUT BEAUX BEBOP BECAP BECKS BEDEL BEDEW BEDIM BEECH BEEFS BEEFY BEEPS BEERS BEERY BEETS BEFIT BEFOG BEGAN BEGAT BEGET BEGIN BEGOT BEGUM BEGUN BEIGE BEIGY BEING BELAY BELCH BELGA BELIE BELLE BELLS BELLY BELOW BELTS BEMAS BEMIX BENCH BENDS BENDY BENES BENNE BENNI BENNY BENTS BERET BERGS BERME BERMS BERRY BERTH BERYL BESET BESOM BESOT BESTS BETAS BETEL BETHS BETON BETTA BEVEL BEVOR BEWIG BEZEL BEZIL BHANG BHOOT BHUTS BIALI BIALY BIBBS BIBLE BICES BIDDY BIDED BIDER BIDES BIDET BIELD BIERS BIFFS BIFFY BIFID BIGHT BIGLY BIGOT BIJOU BIKED BIKER BIKES BIKIE BILBO BILES BILGE BILGY BILKS BILLS BILLY BIMAH BIMAS BIMBO BINAL BINDI BINDS BINES BINGE BINGO BINIT BINTS BIOME BIONT BIOTA BIPED BIPOD BIRCH BIRDS BIRKS BIRLE BIRLS BIRRS BIRSE BIRTH BISES BISKS BISON BITCH BITER BITES BITSY BITTS BITTY BIZES BLABS BLACK BLADE BLAHS BLAIN BLAME BLAMS BLAND BLANK BLARE BLASE BLAST BLATE BLATS BLAWN BLAWS BLAZE BLEAK BLEAR BLEAT BLEBS BLEED BLEEP BLEND BLENT BLESS BLEST BLETS BLIMP BLIMY BLIND BLINI BLINK BLIPS BLISS BLITE BLITZ BLOAT BLOBS BLOCK BLOCS BLOKE BLOND BLOOD BLOOM BLOOP BLOTS BLOWN BLOWS BLOWY BLUBS BLUED BLUER BLUES BLUET BLUEY BLUFF BLUME BLUNT BLURB BLURS BLURT BLUSH BLYPE BOARD BOARS BOART BOAST BOATS BOBBY BOCCE BOCCI BOCHE BOCKS BODED BODES BOFFO BOFFS BOGAN BOGEY BOGGY BOGIE BOGLE BOGUS BOHEA BOILS BOING BOITE BOLAR BOLAS BOLDS BOLES BOLLS BOLOS BOLTS BOLUS BOMBE BOMBS BONDS BONED BONER BONES BONEY BONGO BONGS BONKS BONNE BONNY BONUS BONZE BOOBS BOOBY BOOED BOOGY BOOKS BOOMS BOOMY BOONS BOORS BOOST BOOTH BOOTS BOOTY BOOZE BOOZY BORAL BORAS BORAX BORED BORER BORES BORIC BORNE BORON BORTS BORTY BORTZ BOSKS BOSKY BOSOM BOSON BOSSY BOSUN BOTAS BOTCH BOTEL BOTHY BOTTS BOUGH BOULE BOUND BOURG BOURN BOUSE BOUSY BOUTS BOVID BOWED BOWEL BOWER BOWLS BOWSE BOXED BOXER BOXES BOYAR BOYLA BOYOS BOZOS BRACE BRACH BRACT BRADS BRAES BRAGS BRAID BRAIL BRAIN BRAKE BRAKY BRAND BRANK BRANS BRANT BRASH BRASS BRATS BRAVA BRAVE BRAVI BRAVO BRAWL BRAWN BRAWS BRAXY BRAYS BRAZA BRAZE BREAD BREAK BREAM BREDE BREED BREES BRENS BRENT BREVE BREWS BRIAR BRIBE BRICK BRIDE BRIEF BRIER BRIES BRIGS BRILL BRIMS BRINE BRING BRINK BRINS BRINY BRIOS BRISK BRITS BRITT BROAD BROCK BROIL BROKE BROME BROMO BRONC BROOD BROOK BROOM BROOS BROSE BROSY BROTH BROWN BROWS BRUGH BRUIN BRUIT BRUME BRUNT BRUSH BRUSK BRUTE BUBAL BUBBY BUCKO BUCKS BUDDY BUDGE BUFFI BUFFO BUFFS BUFFY BUGGY BUGLE BUHLS BUHRS BUILD BUILT BULBS BULGE BULGY BULKS BULKY BULLA BULLS BULLY BUMFS BUMPH BUMPS BUMPY BUNCH BUNCO BUNDS BUNDT BUNGS BUNKO BUNKS BUNNS BUNNY BUNTS BUNYA BUOYS BURAN BURAS BURBS BURDS BURET BURGH BURGS BURIN BURKE BURLS BURLY BURNS BURNT BURPS BURRO BURRS BURRY BURSA BURSE BURST BUSBY BUSED BUSES BUSHY BUSKS BUSTS BUSTY BUTCH BUTEO BUTLE BUTTE BUTTS BUTTY BUTUT BUTYL BUXOM BUYER BWANA BYLAW BYRES BYRLS BYSSI BYTES BYWAY CABAL CABBY CABER CABIN CABLE CABOB CACAO CACAS CACHE CACTI CADDY CADES CADET CADGE CADGY CADIS CADRE CAECA CAFES CAFFS CAGED CAGER CAGES CAGEY CAHOW CAIDS CAINS CAIRD CAIRN CAJON CAKED CAKES CAKEY CALFS CALIF CALIX CALKS CALLA CALLS CALMS CALVE CALYX CAMAS CAMEL CAMEO CAMES CAMPI CAMPO CAMPS CAMPY CANAL CANDY CANED CANER CANES CANID CANNA CANNY CANOE CANON CANSO CANST CANTO CANTS CANTY CAPED CAPER CAPES CAPHS CAPON CAPOS CAPUT CARAT CARBO CARBS CARDS CARED CARER CARES CARET CAREX CARGO CARKS CARLE CARLS CARNS CARNY CAROB CAROL CAROM CARPI CARPS CARRS CARRY CARSE CARTE CARTS CARVE CASAS CASED CASES CASKS CASKY CASTE CASTS CASUS CATCH CATER CATES CATTY CAULD CAULK CAULS CAUSE CAVED CAVER CAVES CAVIE CAVIL CAWED CEASE CEBID CECAL CECUM CEDAR CEDED CEDER CEDES CEDIS CEIBA CEILS CELEB CELLA CELLI CELLO CELLS CELOM CELTS CENSE CENTO CENTS CEORL CEPES CERCI CERED CERES CERIA CERIC CEROS CESTA CESTI CETES CHADS CHAFE CHAFF CHAIN CHAIR CHALK CHAMP CHAMS CHANG CHANT CHAOS CHAPE CHAPS CHAPT CHARD CHARE CHARK CHARM CHARR CHARS CHART CHARY CHASE CHASM CHATS CHAWS CHAYS CHEAP CHEAT CHECK CHEEK CHEEP CHEER CHEFS CHELA CHEMO CHERT CHESS CHEST CHETH CHEVY CHEWS CHEWY CHIAO CHIAS CHICK CHICO CHICS CHIDE CHIEF CHIEL CHILD CHILE CHILI CHILL CHIMB CHIME CHIMP CHINA CHINE CHINK CHINO CHINS CHIPS CHIRK CHIRM CHIRO CHIRP CHIRR CHITS CHIVE CHIVY CHOCK CHOIR CHOKE CHOKY CHOLO CHOMP CHOOK CHOPS CHORD CHORE CHOSE CHOTT CHOWS CHUBS CHUCK CHUFA CHUFF CHUGS CHUMP CHUMS CHUNK CHURL CHURN CHURR CHUTE CHYLE CHYME CIBOL CIDER CIGAR CILIA CIMEX CINCH CINES CIONS CIRCA CIRES CIRRI CISCO CISSY CISTS CITED CITER CITES CIVET CIVIC CIVIE CIVIL CIVVY CLACH CLACK CLADE CLADS CLAGS CLAIM CLAMP CLAMS CLANG CLANK CLANS CLAPS CLAPT CLARO CLARY CLASH CLASP CLASS CLAST CLAVE CLAVI CLAWS CLAYS CLEAN CLEAR CLEAT CLEEK CLEFS CLEFT CLEPE CLEPT CLERK CLEWS CLICK CLIFF CLIFT CLIMB CLIME CLINE CLING CLINK CLIPS CLIPT CLOAK CLOCK CLODS CLOGS CLOMB CLOMP CLONE CLONK CLONS CLOOT CLOPS CLOSE CLOTH CLOTS CLOUD CLOUR CLOUT CLOVE CLOWN CLOYS CLOZE CLUBS CLUCK CLUED CLUES CLUMP CLUNG CLUNK COACH COACT COALA COALS COALY COAPT COAST COATI COATS COBBS COBBY COBIA COBLE COBRA COCAS COCCI COCKS COCKY COCOA COCOS CODAS CODEC CODED CODEN CODER CODES CODEX CODON COEDS COFFS COGON COHOG COHOS COIFS COIGN COILS COINS COIRS COKED COKES COLAS COLDS COLED COLES COLIC COLIN COLLY COLOG COLON COLOR COLTS COLZA COMAE COMAL COMAS COMBE COMBO COMBS COMER COMES COMET COMFY COMIC COMIX COMMA COMMY COMPO COMPS COMPT COMTE CONCH CONDO CONED CONES CONEY CONGA CONGE CONGO CONIC CONIN CONKS CONKY CONNS CONTE CONTO CONUS COOCH COOED COOEE COOER COOEY COOFS COOKS COOKY COOLS COOLY COOMB COONS COOPS COOPT COOTS COPAL COPED COPEN COPER COPES COPRA COPSE CORAL CORBY CORDS CORED CORER CORES CORGI CORIA CORKS CORKY CORMS CORNS CORNU CORNY CORPS CORSE COSEC COSES COSET COSEY COSIE COSTA COSTS COTAN COTED COTES COTTA COUCH COUDE COUGH COULD COUNT COUPE COUPS COURT COUTH COVED COVEN COVER COVES COVET COVEY COVIN COWED COWER COWLS COWRY COXAE COXAL COXED COXES COYED COYER COYLY COYPU COZEN COZES COZEY COZIE CRAAL CRABS CRACK CRAFT CRAGS CRAKE CRAMP CRAMS CRANE CRANK CRAPE CRAPS CRASH CRASS CRATE CRAVE CRAWL CRAWS CRAZE CRAZY CREAK CREAM CREDO CREED CREEK CREEL CREEP CREME CREPE CREPT CREPY CRESS CREST CREWS CRIBS CRICK CRIED CRIER CRIES CRIME CRIMP CRIPE CRISP CROAK CROCI CROCK CROCS CROFT CRONE CRONY CROOK CROON CROPS CRORE CROSS CROUP CROWD CROWN CROWS CROZE CRUCK CRUDE CRUDS CRUEL CRUET CRUMB CRUMP CRUOR CRURA CRUSE CRUSH CRUST CRWTH CRYPT CUBBY CUBEB CUBED CUBER CUBES CUBIC CUBIT CUDDY CUFFS CUIFS CUING CUISH CUKES CULCH CULET CULEX CULLS CULLY CULMS CULPA CULTI CULTS CUMIN CUNTS CUPEL CUPID CUPPA CUPPY CURBS CURCH CURDS CURDY CURED CURER CURES CURET CURFS CURIA CURIE CURIO CURLS CURLY CURNS CURRS CURRY CURSE CURST CURVE CURVY CUSEC CUSHY CUSKS CUSPS CUSSO CUTCH CUTER CUTES CUTEY CUTIE CUTIN CUTIS CUTTY CUTUP CYANO CYANS CYCAD CYCAS CYCLE CYCLO CYDER CYLIX CYMAE CYMAR CYMAS CYMES CYMOL CYNIC CYSTS CYTON CZARS DACES DACHA DADAS DADDY DADOS DAFFS DAFFY DAGGA DAGOS DAHLS DAILY DAIRY DAISY DALES DALLY DAMAN DAMAR DAMES DAMNS DAMPS DANCE DANDY DANGS DANIO DARBS DARED DARER DARES DARIC DARKS DARKY DARNS DARTS DASHI DASHY DATED DATER DATES DATOS DATTO DATUM DAUBE DAUBS DAUBY DAUNT DAUTS DAVEN DAVIT DAWED DAWEN DAWKS DAWNS DAWTS DAZED DAZES DEADS DEAIR DEALS DEALT DEANS DEARS DEARY DEASH DEATH DEAVE DEBAR DEBIT DEBTS DEBUG DEBUT DEBYE DECAF DECAL DECAY DECKS DECOR DECOS DECOY DECRY DEDAL DEEDS DEEDY DEEMS DEEPS DEERS DEETS DEFAT DEFER DEFIS DEFOG DEGAS DEGUM DEICE DEIFY DEIGN DEILS DEISM DEIST DEITY DEKED DEKES DEKKO DELAY DELED DELES DELFS DELFT DELIS DELLS DELLY DELTA DELVE DEMES DEMIT DEMOB DEMON DEMOS DEMUR DENES DENIM DENSE DENTS DEOXY DEPOT DEPTH DERAT DERAY DERBY DERMA DERMS DERRY DESEX DESKS DETER DETOX DEUCE DEVAS DEVEL DEVIL DEVON DEWAN DEWAR DEWAX DEWED DEXES DEXIE DHAKS DHALS DHOBI DHOLE DHOTI DHOWS DHUTI DIALS DIARY DIAZO DICED DICER DICES DICEY DICKS DICKY DICOT DICTA DICTY DIDIE DIDOS DIDST DIENE DIETS DIGHT DIGIT DIKED DIKER DIKES DIKEY DILDO DILLS DILLY DIMER DIMES DIMLY DINAR DINED DINER DINES DINGE DINGO DINGS DINGY DINKS DINKY DINTS DIODE DIOLS DIPPY DIPSO DIRER DIRGE DIRKS DIRLS DIRTS DIRTY DISCI DISCO DISCS DISHY DISKS DISME DITAS DITCH DITES DITSY DITTO DITTY DITZY DIVAN DIVAS DIVED DIVER DIVES DIVOT DIVVY DIWAN DIXIT DIZEN DIZZY DJINN DJINS DOATS DOBBY DOBIE DOBLA DOBRA DOCKS DODGE DODGY DODOS DOERS DOEST DOETH DOFFS DOGES DOGEY DOGGO DOGGY DOGIE DOGMA DOILY DOING DOITS DOJOS DOLCE DOLCI DOLED DOLES DOLLS DOLLY DOLMA DOLOR DOLTS DOMAL DOMED DOMES DOMIC DONAS DONEE DONGA DONGS DONNA DONNE DONOR DONSY DONUT DOOLY DOOMS DOOMY DOORS DOOZY DOPAS DOPED DOPER DOPES DOPEY DORKS DORKY DORMS DORMY DORPS DORRS DORSA DORTY DOSED DOSER DOSES DOTAL DOTED DOTER DOTES DOTTY DOUBT DOUCE DOUGH DOUMA DOUMS DOURA DOUSE DOVEN DOVES DOWDY DOWED DOWEL DOWER DOWIE DOWNS DOWNY DOWRY DOWSE DOXIE DOYEN DOYLY DOZED DOZEN DOZER DOZES DRABS DRAFF DRAFT DRAGS DRAIL DRAIN DRAKE DRAMA DRAMS DRANK DRAPE DRATS DRAVE DRAWL DRAWN DRAWS DRAYS DREAD DREAM DREAR DRECK DREED DREES DREGS DREKS DRESS DREST DRIBS DRIED DRIER DRIES DRIFT DRILL DRILY DRINK DRIPS DRIPT DRIVE DROIT DROLL DRONE DROOL DROOP DROPS DROPT DROSS DROUK DROVE DROWN DRUBS DRUGS DRUID DRUMS DRUNK DRUPE DRUSE DRYAD DRYER DRYLY DUADS DUALS DUCAL DUCAT DUCES DUCHY DUCKS DUCKY DUCTS DUDDY DUDED DUDES DUELS DUETS DUFFS DUITS DUKED DUKES DULIA DULLS DULLY DULSE DUMAS DUMBS DUMKA DUMKY DUMMY DUMPS DUMPY DUNAM DUNCE DUNCH DUNES DUNGS DUNGY DUNKS DUNTS DUOMI DUOMO DUPED DUPER DUPES DUPLE DURAL DURAS DURED DURES DURNS DUROC DUROS DURRA DURRS DURST DURUM DUSKS DUSKY DUSTS DUSTY DUTCH DUVET DWARF DWEEB DWELL DWELT DWINE DYADS DYERS DYING DYKED DYKES DYKEY DYNEL DYNES EAGER EAGLE EAGRE EARED EARLS EARLY EARNS EARTH EASED EASEL EASES EASTS EATEN EATER EAVED EAVES EBBED EBBET EBONS EBONY ECHED ECHES ECHOS ECLAT ECRUS EDEMA EDGED EDGER EDGES EDICT EDIFY EDILE EDITS EDUCE EDUCT EERIE EGADS EGERS EGEST EGGAR EGGED EGGER EGRET EIDER EIDOS EIGHT EIKON EJECT EKING ELAIN ELAND ELANS ELATE ELBOW ELDER ELECT ELEGY ELEMI ELFIN ELIDE ELINT ELITE ELOIN ELOPE ELUDE ELUTE ELVER ELVES EMBAR EMBAY EMBED EMBER EMBOW EMCEE EMEER EMEND EMERY EMEUS EMIRS EMITS EMMER EMMET EMOTE EMPTY EMYDE EMYDS ENACT ENATE ENDED ENDER ENDOW ENDUE ENEMA ENEMY ENJOY ENNUI ENOKI ENOLS ENORM ENOWS ENROL ENSKY ENSUE ENTER ENTIA ENTRY ENURE ENVOI ENVOY ENZYM EOSIN EPACT EPEES EPHAH EPHAS EPHOD EPHOR EPICS EPOCH EPODE EPOXY EQUAL EQUID EQUIP ERASE ERECT ERGOT ERICA ERNES ERODE EROSE ERRED ERROR ERSES ERUCT ERUGO ERUPT ERVIL ESCAR ESCOT ESKAR ESKER ESSAY ESSES ESTER ESTOP ETAPE ETHER ETHIC ETHOS ETHYL ETNAS ETUDE ETUIS ETWEE ETYMA EUROS EVADE EVENS EVENT EVERT EVERY EVICT EVILS EVITE EVOKE EWERS EXACT EXALT EXAMS EXCEL EXECS EXERT EXILE EXINE EXIST EXITS EXONS EXPAT EXPEL EXPOS EXTOL EXTRA EXUDE EXULT EXURB EYERS EYING EYRAS EYRES EYRIE EYRIR FABLE FACED FACER FACES FACET FACIA FACTS FADDY FADED FADER FADES FADGE FADOS FAENA FAERY FAGGY FAGIN FAGOT FAILS FAINT FAIRS FAIRY FAITH FAKED FAKER FAKES FAKEY FAKIR FALLS FALSE FAMED FAMES FANCY FANES FANGA FANGS FANNY FANON FANOS FANUM FAQIR FARAD FARCE FARCI FARCY FARDS FARED FARER FARES FARLE FARLS FARMS FAROS FARTS FASTS FATAL FATED FATES FATLY FATSO FATTY FATWA FAUGH FAULD FAULT FAUNA FAUNS FAUVE FAVAS FAVES FAVOR FAVUS FAWNS FAWNY FAXED FAXES FAYED FAZED FAZES FEARS FEASE FEAST FEATS FEAZE FECAL FECES FECKS FEEDS FEELS FEEZE FEIGN FEINT FEIST FELID FELLA FELLS FELLY FELON FELTS FEMES FEMME FEMUR FENCE FENDS FENNY FEODS FEOFF FERAL FERES FERIA FERLY FERMI FERNS FERNY FERRY FESSE FETAL FETAS FETCH FETED FETES FETID FETOR FETUS FEUAR FEUDS FEUED FEVER FEWER FEYER FEYLY FEZES FIARS FIATS FIBER FIBRE FICES FICHE FICHU FICIN FICUS FIDGE FIDOS FIEFS FIELD FIEND FIERY FIFED FIFER FIFES FIFTH FIFTY FIGHT FILAR FILCH FILED FILER FILES FILET FILLE FILLO FILLS FILLY FILMS FILMY FILOS FILTH FILUM FINAL FINCH FINDS FINED FINER FINES FINIS FINKS FINNY FINOS FIORD FIQUE FIRED FIRER FIRES FIRMS FIRNS FIRRY FIRST FIRTH FISCS FISHY FISTS FITCH FITLY FIVER FIVES FIXED FIXER FIXES FIXIT FIZZY FJELD FJORD FLABS FLACK FLAGS FLAIL FLAIR FLAKE FLAKY FLAME FLAMS FLAMY FLANK FLANS FLAPS FLARE FLASH FLASK FLATS FLAWS FLAWY FLAXY FLAYS FLEAM FLEAS FLECK FLEER FLEES FLEET FLESH FLEWS FLEYS FLICK FLICS FLIED FLIER FLIES FLING FLINT FLIPS FLIRT FLITE FLITS FLOAT FLOCK FLOCS FLOES FLOGS FLONG FLOOD FLOOR FLOPS FLORA FLOSS FLOTA FLOUR FLOUT FLOWN FLOWS FLUBS FLUED FLUES FLUFF FLUID FLUKE FLUKY FLUME FLUMP FLUNG FLUNK FLUOR FLUSH FLUTE FLUTY FLUYT FLYBY FLYER FLYTE FOALS FOAMS FOAMY FOCAL FOCUS FOEHN FOGEY FOGGY FOGIE FOHNS FOILS FOINS FOIST FOLDS FOLIA FOLIO FOLKS FOLKY FOLLY FONDS FONDU FONTS FOODS FOOLS FOOTS FOOTY FORAM FORAY FORBS FORBY FORCE FORDO FORDS FORES FORGE FORGO FORKS FORKY FORME FORMS FORTE FORTH FORTS FORTY FORUM FOSSA FOSSE FOULS FOUND FOUNT FOURS FOVEA FOWLS FOXED FOXES FOYER FRAGS FRAIL FRAME FRANC FRANK FRAPS FRASS FRATS FRAUD FRAYS FREAK FREED FREER FREES FREMD FRENA FRERE FRESH FRETS FRIAR FRIED FRIER FRIES FRIGS FRILL FRISE FRISK FRITH FRITS FRITT FRITZ FRIZZ FROCK FROES FROGS FROND FRONS FRONT FRORE FROSH FROST FROTH FROWN FROWS FROZE FRUGS FRUIT FRUMP FRYER FUBSY FUCKS FUCUS FUDGE FUELS FUGAL FUGGY FUGIO FUGLE FUGUE FUGUS FUJIS FULLS FULLY FUMED FUMER FUMES FUMET FUNDI FUNDS FUNGI FUNGO FUNKS FUNKY FUNNY FURAN FURLS FUROR FURRY FURZE FURZY FUSED FUSEE FUSEL FUSES FUSIL FUSSY FUSTY FUTON FUZED FUZEE FUZES FUZIL FUZZY FYCES FYKES FYTTE GABBY GABLE GADDI GADID GADIS GAFFE GAFFS GAGED GAGER GAGES GAILY GAINS GAITS GALAH GALAS GALAX GALEA GALES GALLS GALLY GALOP GAMAS GAMAY GAMBA GAMBE GAMBS GAMED GAMER GAMES GAMEY GAMIC GAMIN GAMMA GAMMY GAMPS GAMUT GANEF GANEV GANGS GANJA GANOF GAOLS GAPED GAPER GAPES GAPPY GARBS GARNI GARTH GASES GASPS GASSY GASTS GATED GATES GATOR GAUDS GAUDY GAUGE GAULT GAUMS GAUNT GAURS GAUSS GAUZE GAUZY GAVEL GAVOT GAWKS GAWKY GAWPS GAWSY GAYAL GAYER GAYLY GAZAR GAZED GAZER GAZES GEARS GECKO GECKS GEEKS GEEKY GEESE GEEST GELDS GELEE GELID GELTS GEMMA GEMMY GEMOT GENES GENET GENIC GENIE GENII GENIP GENOA GENOM GENRE GENRO GENTS GENUA GENUS GEODE GEOID GERAH GERMS GERMY GESSO GESTE GESTS GETAS GETUP GEUMS GHAST GHATS GHAUT GHAZI GHEES GHOST GHOUL GHYLL GIANT GIBED GIBER GIBES GIDDY GIFTS GIGAS GIGHE GIGOT GIGUE GILDS GILLS GILLY GILTS GIMEL GIMME GIMPS GIMPY GINKS GINNY GIPON GIPSY GIRDS GIRLS GIRLY GIRNS GIRON GIROS GIRSH GIRTH GIRTS GISMO GISTS GIVEN GIVER GIVES GIZMO GLACE GLADE GLADS GLADY GLAIR GLAND GLANS GLARE GLARY GLASS GLAZE GLAZY GLEAM GLEAN GLEBA GLEBE GLEDE GLEDS GLEED GLEEK GLEES GLEET GLENS GLEYS GLIAL GLIAS GLIDE GLIFF GLIME GLIMS GLINT GLITZ GLOAM GLOAT GLOBE GLOBS GLOGG GLOMS GLOOM GLOPS GLORY GLOSS GLOST GLOUT GLOVE GLOWS GLOZE GLUED GLUER GLUES GLUEY GLUGS GLUME GLUON GLUTS GLYPH GNARL GNARR GNARS GNASH GNATS GNAWN GNAWS GNOME GOADS GOALS GOATS GOBAN GOBOS GODET GODLY GOERS GOFER GOGOS GOING GOLDS GOLEM GOLFS GOLLY GOMBO GONAD GONEF GONER GONGS GONIA GONIF GONOF GONZO GOODS GOODY GOOEY GOOFS GOOFY GOOKS GOOKY GOONS GOONY GOOPS GOOPY GOOSE GOOSY GORAL GORED GORES GORGE GORPS GORSE GORSY GOUGE GOURD GOUTS GOUTY GOWAN GOWDS GOWKS GOWNS GOXES GOYIM GRAAL GRABS GRACE GRADE GRADS GRAFT GRAIL GRAIN GRAMA GRAMP GRAMS GRANA GRAND GRANS GRANT GRAPE GRAPH GRAPY GRASP GRASS GRATE GRAVE GRAVY GRAYS GRAZE GREAT GREBE GREED GREEK GREEN GREES GREET GREGO GREYS GRIDE GRIDS GRIEF GRIFF GRIFT GRIGS GRILL GRIME GRIMY GRIND GRINS GRIOT GRIPE GRIPS GRIPT GRIPY GRIST GRITH GRITS GROAN GROAT GROGS GROIN GROOM GROPE GROSS GROSZ GROTS GROUP GROUT GROVE GROWL GROWN GROWS GRUBS GRUEL GRUES GRUFF GRUME GRUMP GRUNT GUACO GUANO GUANS GUARD GUARS GUAVA GUCKS GUDES GUESS GUEST GUFFS GUIDE GUIDS GUILD GUILE GUILT GUIRO GUISE GULAG GULAR GULCH GULES GULFS GULFY GULLS GULLY GULPS GULPY GUMBO GUMMA GUMMY GUNKS GUNKY GUNNY GUPPY GURGE GURRY GURSH GURUS GUSHY GUSSY GUSTO GUSTS GUSTY GUTSY GUTTA GUTTY GUYED GUYOT GYBED GYBES GYPSY GYRAL GYRED GYRES GYRON GYROS GYRUS GYVED GYVES HAAFS HAARS HABIT HABUS HACEK HACKS HADAL HADED HADES HADJI HADST HAEMS HAETS HAFIS HAFIZ HAFTS HAHAS HAIKA HAIKS HAIKU HAILS HAIRS HAIRY HAJES HAJIS HAJJI HAKES HAKIM HALED HALER HALES HALID HALLO HALLS HALMA HALMS HALOS HALTS HALVA HALVE HAMAL HAMES HAMMY HAMZA HANCE HANDS HANDY HANGS HANKS HANKY HANSA HANSE HANTS HAOLE HAPAX HAPLY HAPPY HARDS HARDY HARED HAREM HARES HARKS HARLS HARMS HARPS HARPY HARRY HARSH HARTS HASPS HASTE HASTY HATCH HATED HATER HATES HAUGH HAULM HAULS HAUNT HAUTE HAVEN HAVER HAVES HAVOC HAWED HAWKS HAWSE HAYED HAYER HAZAN HAZED HAZEL HAZER HAZES HEADS HEADY HEALS HEAPS HEARD HEARS HEART HEATH HEATS HEAVE HEAVY HEBES HECKS HEDER HEDGE HEDGY HEEDS HEELS HEEZE HEFTS HEFTY HEIGH HEILS HEIRS HEIST HELIO HELIX HELLO HELLS HELMS HELOS HELOT HELPS HELVE HEMAL HEMES HEMIC HEMIN HEMPS HEMPY HENCE HENNA HENRY HENTS HERBS HERBY HERDS HERES HERLS HERMA HERMS HERNS HERON HEROS HERRY HERTZ HESTS HETHS HEUCH HEUGH HEWED HEWER HEXAD HEXED HEXER HEXES HEXYL HICKS HIDED HIDER HIDES HIGHS HIGHT HIKED HIKER HIKES HILAR HILLO HILLS HILLY HILTS HILUM HILUS HINDS HINGE HINNY HINTS HIPPO HIPPY HIRED HIRER HIRES HISSY HISTS HITCH HIVED HIVES HOAGY HOARD HOARS HOARY HOBBY HOBOS HOCKS HOCUS HODAD HOERS HOGAN HOGGS HOICK HOISE HOIST HOKED HOKES HOKEY HOKKU HOKUM HOLDS HOLED HOLES HOLEY HOLKS HOLLA HOLLO HOLLY HOLMS HOLTS HOMED HOMER HOMES HOMEY HOMOS HONAN HONDA HONED HONER HONES HONEY HONGS HONKS HONKY HONOR HOOCH HOODS HOODY HOOEY HOOFS HOOKA HOOKS HOOKY HOOLY HOOPS HOOTS HOOTY HOPED HOPER HOPES HOPPY HORAH HORAL HORAS HORDE HORNS HORNY HORSE HORST HORSY HOSED HOSEL HOSEN HOSES HOSTA HOSTS HOTCH HOTEL HOTLY HOUND HOURI HOURS HOUSE HOVEL HOVER HOWDY HOWES HOWFF HOWFS HOWKS HOWLS HOYAS HOYLE HUBBY HUCKS HUFFS HUFFY HUGER HULAS HULKS HULKY HULLO HULLS HUMAN HUMIC HUMID HUMOR HUMPH HUMPS HUMPY HUMUS HUNCH HUNKS HUNKY HUNTS HURDS HURLS HURLY HURRY HURST HURTS HUSKS HUSKY HUSSY HUTCH HUZZA HYDRA HYDRO HYENA HYING HYLAS HYMEN HYMNS HYOID HYPED HYPER HYPES HYPHA HYPOS HYRAX HYSON IAMBI IAMBS ICHOR ICIER ICILY ICING ICKER ICONS ICTIC ICTUS IDEAL IDEAS IDIOM IDIOT IDLED IDLER IDLES IDOLS IDYLL IDYLS IGLOO IGLUS IHRAM IKATS IKONS ILEAC ILEAL ILEUM ILEUS ILIAC ILIAD ILIAL ILIUM ILLER IMAGE IMAGO IMAMS IMAUM IMBED IMBUE IMIDE IMIDO IMIDS IMINE IMINO IMMIX IMPED IMPEL IMPIS IMPLY INANE INAPT INARM INBYE INCOG INCUR INCUS INDEX INDIE INDOL INDOW INDRI INDUE INEPT INERT INFER INFIX INFOS INFRA INGLE INGOT INION INKED INKER INKLE INLAY INLET INNED INNER INPUT INSET INTER INTIS INTRO INURE INURN INVAR IODIC IODID IODIN IONIC IOTAS IRADE IRATE IRIDS IRING IRKED IROKO IRONE IRONS IRONY ISBAS ISLED ISLES ISLET ISSEI ISSUE ISTLE ITCHY ITEMS ITHER IVIED IVIES IVORY IXIAS IXORA IXTLE IZARS JABOT JACAL JACKS JACKY JADED JADES JAGER JAGGS JAGGY JAGRA JAILS JAKES JALAP JALOP JAMBE JAMBS JAMMY JANES JANTY JAPAN JAPED JAPER JAPES JARLS JATOS JAUKS JAUNT JAUPS JAVAS JAWAN JAWED JAZZY JEANS JEBEL JEEPS JEERS JEFES JEHAD JEHUS JELLS JELLY JEMMY JENNY JERID JERKS JERKY JERRY JESSE JESTS JETES JETON JETTY JEWED JEWEL JIBBS JIBED JIBER JIBES JIFFS JIFFY JIHAD JILLS JILTS JIMMY JIMPY JINGO JINKS JINNI JINNS JISMS JIVED JIVER JIVES JIVEY JNANA JOCKO JOCKS JOEYS JOHNS JOINS JOINT JOIST JOKED JOKER JOKES JOKEY JOLES JOLLY JOLTS JOLTY JONES JORAM JORUM JOTAS JOTTY JOUAL JOUKS JOULE JOUST JOWAR JOWED JOWLS JOWLY JOYED JUBAS JUBES JUDAS JUDGE JUDOS JUGAL JUGUM JUICE JUICY JUJUS JUKED JUKES JULEP JUMBO JUMPS JUMPY JUNCO JUNKS JUNKY JUNTA JUNTO JUPES JUPON JURAL JURAT JUREL JUROR JUSTS JUTES JUTTY KABAB KABAR KABOB KADIS KAFIR KAGUS KAIAK KAIFS KAILS KAINS KAKAS KAKIS KALAM KALES KALIF KALPA KAMES KAMIK KANAS KANES KANJI KAONS KAPAS KAPHS KAPOK KAPPA KAPUT KARAT KARMA KARNS KAROO KARST KARTS KASHA KATAS KAURI KAURY KAVAS KAYAK KAYOS KAZOO KBARS KEBAB KEBAR KEBOB KECKS KEDGE KEEFS KEEKS KEELS KEENS KEEPS KEETS KEEVE KEFIR KEIRS KELEP KELIM KELLY KELPS KELPY KEMPS KEMPT KENAF KENCH KENDO KENOS KEPIS KERBS KERFS KERNE KERNS KERRY KETCH KETOL KEVEL KEVIL KEXES KEYED KHADI KHAFS KHAKI KHANS KHAPH KHATS KHEDA KHETH KHETS KHOUM KIANG KIBBE KIBBI KIBEI KIBES KIBLA KICKS KICKY KIDDO KIDDY KIEFS KIERS KIKES KILIM KILLS KILNS KILOS KILTS KILTY KINAS KINDS KINES KINGS KININ KINKS KINKY KINOS KIOSK KIRKS KIRNS KISSY KISTS KITED KITER KITES KITHE KITHS KITTY KIVAS KIWIS KLONG KLOOF KLUGE KLUTZ KNACK KNAPS KNARS KNAUR KNAVE KNEAD KNEED KNEEL KNEES KNELL KNELT KNIFE KNISH KNITS KNOBS KNOCK KNOLL KNOPS KNOSP KNOTS KNOUT KNOWN KNOWS KNURL KNURS KOALA KOANS KOELS KOHLS KOINE KOLAS KOLOS KONKS KOOKS KOOKY KOPEK KOPHS KOPJE KOPPA KORAI KORAT KORUN KOTOS KOTOW KRAAL KRAFT KRAIT KRAUT KREEP KRILL KRONA KRONE KROON KRUBI KUDOS KUDUS KUDZU KUGEL KUKRI KULAK KUMYS KURTA KURUS KUSSO KVASS KYACK KYAKS KYARS KYATS KYLIX KYRIE KYTES KYTHE LAARI LABEL LABIA LABOR LABRA LACED LACER LACES LACEY LACKS LADED LADEN LADER LADES LADLE LAEVO LAGAN LAGER LAHAR LAICH LAICS LAIGH LAIRD LAIRS LAITH LAITY LAKED LAKER LAKES LAKHS LALLS LAMAS LAMBS LAMBY LAMED LAMER LAMES LAMIA LAMPS LANAI LANCE LANDS LANES LANKY LAPEL LAPIN LAPIS LAPSE LARCH LARDS LARDY LAREE LARES LARGE LARGO LARIS LARKS LARKY LARUM LARVA LASED LASER LASES LASSO LASTS LATCH LATED LATEN LATER LATEX LATHE LATHI LATHS LATHY LATKE LATTE LAUAN LAUDS LAUGH LAURA LAVAS LAVED LAVER LAVES LAWED LAWNS LAWNY LAXER LAXLY LAYED LAYER LAYUP LAZAR LAZED LAZES LEACH LEADS LEADY LEAFS LEAFY LEAKS LEAKY LEANS LEANT LEAPS LEAPT LEARN LEARS LEARY LEASE LEASH LEAST LEAVE LEAVY LEBEN LEDGE LEDGY LEECH LEEKS LEERS LEERY LEETS LEFTS LEFTY LEGAL LEGER LEGES LEGGY LEGIT LEHRS LEHUA LEMAN LEMMA LEMON LEMUR LENDS LENES LENIS LENOS LENSE LENTO LEONE LEPER LEPTA LETCH LETHE LETUP LEUDS LEVEE LEVEL LEVER LEVIN LEWIS LEXES LEXIS LEZZY LIANA LIANE LIANG LIARD LIARS LIBEL LIBER LIBRA LIBRI LICHI LICHT LICIT LICKS LIDAR LIDOS LIEGE LIENS LIERS LIEUS LIEVE LIFER LIFTS LIGAN LIGER LIGHT LIKED LIKEN LIKER LIKES LILAC LILTS LIMAN LIMAS LIMBA LIMBI LIMBO LIMBS LIMBY LIMED LIMEN LIMES LIMEY LIMIT LIMNS LIMOS LIMPA LIMPS LINAC LINDY LINED LINEN LINER LINES LINEY LINGA LINGO LINGS LINGY LININ LINKS LINKY LINNS LINOS LINTS LINTY LINUM LIONS LIPID LIPIN LIPPY LIRAS LIROT LISLE LISPS LISTS LITAI LITAS LITER LITHE LITHO LITRE LIVED LIVEN LIVER LIVES LIVID LIVRE LLAMA LLANO LOACH LOADS LOAFS LOAMS LOAMY LOANS LOATH LOBAR LOBBY LOBED LOBES LOBOS LOCAL LOCHS LOCKS LOCOS LOCUM LOCUS LODEN LODES LODGE LOESS LOFTS LOFTY LOGAN LOGES LOGGY LOGIA LOGIC LOGOI LOGOS LOINS LOLLS LOLLY LONER LONGE LONGS LOOBY LOOED LOOEY LOOFA LOOFS LOOIE LOOKS LOOMS LOONS LOONY LOOPS LOOPY LOOSE LOOTS LOPED LOPER LOPES LOPPY LORAL LORAN LORDS LORES LORIS LORRY LOSEL LOSER LOSES LOSSY LOTAH LOTAS LOTIC LOTOS LOTTE LOTTO LOTUS LOUGH LOUIE LOUIS LOUPE LOUPS LOURS LOURY LOUSE LOUSY LOUTS LOVAT LOVED LOVER LOVES LOWED LOWER LOWES LOWLY LOWSE LOXED LOXES LOYAL LUAUS LUBES LUCES LUCID LUCKS LUCKY LUCRE LUDES LUDIC LUFFA LUFFS LUGED LUGER LUGES LULLS LULUS LUMEN LUMPS LUMPY LUNAR LUNAS LUNCH LUNES LUNET LUNGE LUNGI LUNGS LUNKS LUNTS LUPIN LUPUS LURCH LURED LURER LURES LURID LURKS LUSTS LUSTY LUSUS LUTEA LUTED LUTES LUXES LWEIS LYARD LYART LYASE LYCEA LYCEE LYING LYMPH LYNCH LYRES LYRIC LYSED LYSES LYSIN LYSIS LYSSA LYTIC LYTTA MAARS MABES MACAW MACED MACER MACES MACHE MACHO MACHS MACKS MACLE MACON MACRO MADAM MADLY MADRE MAFIA MAFIC MAGES MAGIC MAGMA MAGOT MAGUS MAHOE MAIDS MAILE MAILL MAILS MAIMS MAINS MAIRS MAIST MAIZE MAJOR MAKAR MAKER MAKES MAKOS MALAR MALES MALIC MALLS MALMS MALMY MALTS MALTY MAMAS MAMBA MAMBO MAMEY MAMIE MAMMA MAMMY MANAS MANED MANES MANGE MANGO MANGY MANIA MANIC MANLY MANNA MANOR MANOS MANSE MANTA MANUS MAPLE MAQUI MARCH MARCS MARES MARGE MARIA MARKS MARLS MARLY MARRY MARSE MARSH MARTS MARVY MASER MASHY MASKS MASON MASSA MASSE MASSY MASTS MATCH MATED MATER MATES MATEY MATHS MATIN MATTE MATTS MATZA MATZO MAUDS MAULS MAUND MAUTS MAUVE MAVEN MAVIE MAVIN MAVIS MAWED MAXES MAXIM MAXIS MAYAN MAYAS MAYBE MAYED MAYOR MAYOS MAYST MAZED MAZER MAZES MBIRA MEADS MEALS MEALY MEANS MEANT MEANY MEATS MEATY MECCA MEDAL MEDIA MEDIC MEDII MEEDS MEETS MEINY MELDS MELEE MELIC MELLS MELON MELTS MEMOS MENAD MENDS MENSA MENSE MENTA MENUS MEOUS MEOWS MERCY MERDE MERER MERES MERGE MERIT MERKS MERLE MERLS MERRY MESAS MESHY MESIC MESNE MESON MESSY METAL METED METER METES METHS METIS METRE METRO MEWED MEWLS MEZES MEZZO MIAOU MIAOW MIASM MIAUL MICAS MICHE MICKS MICRA MICRO MIDDY MIDGE MIDIS MIDST MIENS MIFFS MIFFY MIGGS MIGHT MIKED MIKES MIKRA MILCH MILER MILES MILIA MILKS MILKY MILLE MILLS MILOS MILPA MILTS MILTY MIMED MIMEO MIMER MIMES MIMIC MINAE MINAS MINCE MINCY MINDS MINED MINER MINES MINGY MINIM MINIS MINKE MINKS MINNY MINOR MINTS MINTY MINUS MIRED MIRES MIREX MIRKS MIRKY MIRTH MIRZA MISDO MISER MISES MISOS MISSY MISTS MISTY MITER MITES MITIS MITRE MITTS MIXED MIXER MIXES MIXUP MIZEN MOANS MOATS MOCHA MOCKS MODAL MODEL MODEM MODES MODUS MOGGY MOGUL MOHEL MOHUR MOILS MOIRA MOIRE MOIST MOJOS MOKES MOLAL MOLAR MOLAS MOLDS MOLDY MOLES MOLLS MOLLY MOLTO MOLTS MOMES MOMMA MOMMY MOMUS MONAD MONAS MONDE MONDO MONEY MONGO MONIE MONKS MONOS MONTE MONTH MOOCH MOODS MOODY MOOED MOOLA MOOLS MOONS MOONY MOORS MOORY MOOSE MOOTS MOPED MOPER MOPES MOPEY MORAE MORAL MORAS MORAY MOREL MORES MORNS MORON MORPH MORRO MORSE MORTS MOSEY MOSKS MOSSO MOSSY MOSTE MOSTS MOTEL MOTES MOTET MOTEY MOTHS MOTHY MOTIF MOTOR MOTTE MOTTO MOTTS MOUCH MOUES MOULD MOULT MOUND MOUNT MOURN MOUSE MOUSY MOUTH MOVED MOVER MOVES MOVIE MOWED MOWER MOXAS MOXIE MOZOS MUCID MUCIN MUCKS MUCKY MUCOR MUCRO MUCUS MUDDY MUDRA MUFFS MUFTI MUGGS MUGGY MUHLY MUJIK MULCH MULCT MULED MULES MULEY MULLA MULLS MUMMS MUMMY MUMPS MUMUS MUNCH MUNGO MUNIS MUONS MURAL MURAS MURED MURES MUREX MURID MURKS MURKY MURRA MURRE MURRS MURRY MUSCA MUSED MUSER MUSES MUSHY MUSIC MUSKS MUSKY MUSSY MUSTH MUSTS MUSTY MUTCH MUTED MUTER MUTES MUTON MUTTS MUZZY MYNAH MYNAS MYOID MYOMA MYOPE MYOPY MYRRH MYSID MYTHS MYTHY NAANS NABES NABIS NABOB NACHO NACRE NADAS NADIR NAEVI NAGGY NAIAD NAIFS NAILS NAIRA NAIVE NAKED NALED NAMED NAMER NAMES NANAS NANCE NANCY NANNY NAPES NAPPE NAPPY NARCO NARCS NARDS NARES NARIC NARIS NARKS NARKY NASAL NASTY NATAL NATCH NATES NATTY NAVAL NAVAR NAVEL NAVES NAVVY NAWAB NAZIS NEAPS NEARS NEATH NEATS NECKS NEEDS NEEDY NEEMS NEEPS NEGUS NEIFS NEIGH NEIST NELLY NEMAS NEONS NERDS NERDY NEROL NERTS NERTZ NERVE NERVY NESTS NETOP NETTS NETTY NEUKS NEUME NEUMS NEVER NEVES NEVUS NEWEL NEWER NEWIE NEWLY NEWSY NEWTS NEXUS NGWEE NICAD NICER NICHE NICKS NICOL NIDAL NIDED NIDES NIDUS NIECE NIEVE NIFTY NIGHS NIGHT NIHIL NILLS NIMBI NINES NINJA NINNY NINON NINTH NIPAS NIPPY NISEI NISUS NITER NITES NITID NITON NITRE NITRO NITTY NIVAL NIXED NIXES NIXIE NIZAM NOBBY NOBLE NOBLY NOCKS NODAL NODDY NODES NODUS NOELS NOGGS NOHOW NOILS NOILY NOIRS NOISE NOISY NOLOS NOMAD NOMAS NOMEN NOMES NOMOI NOMOS NONAS NONCE NONES NONET NONYL NOOKS NOOKY NOONS NOOSE NOPAL NORIA NORIS NORMS NORTH NOSED NOSES NOSEY NOTAL NOTCH NOTED NOTER NOTES NOTUM NOUNS NOVAE NOVAS NOVEL NOWAY NOWTS NUBBY NUBIA NUCHA NUDER NUDES NUDGE NUDIE NUDZH NUKED NUKES NULLS NUMBS NUMEN NURDS NURLS NURSE NUTSY NUTTY NYALA NYLON NYMPH OAKEN OAKUM OARED OASES OASIS OASTS OATEN OATER OATHS OAVES OBEAH OBELI OBESE OBEYS OBIAS OBITS OBJET OBOES OBOLE OBOLI OBOLS OCCUR OCEAN OCHER OCHRE OCHRY OCKER OCREA OCTAD OCTAL OCTAN OCTET OCTYL OCULI ODDER ODDLY ODEON ODEUM ODIST ODIUM ODORS ODOUR ODYLE ODYLS OFAYS OFFAL OFFED OFFER OFTEN OFTER OGAMS OGEES OGHAM OGIVE OGLED OGLER OGLES OGRES OHIAS OHING OHMIC OIDIA OILED OILER OINKS OKAPI OKAYS OKEHS OKRAS OLDEN OLDER OLDIE OLEIC OLEIN OLEOS OLEUM OLIOS OLIVE OLLAS OLOGY OMASA OMBER OMBRE OMEGA OMENS OMERS OMITS ONERY ONION ONIUM ONSET ONTIC OOHED OOMPH OORIE OOTID OOZED OOZES OPAHS OPALS OPENS OPERA OPINE OPING OPIUM OPSIN OPTED OPTIC ORACH ORALS ORANG ORATE ORBED ORBIT ORCAS ORCIN ORDER ORDOS OREAD ORGAN ORGIC ORIBI ORIEL ORLES ORLOP ORMER ORNIS ORPIN ORRIS ORTHO ORZOS OSIER OSMIC OSMOL OSSIA OSTIA OTHER OTTAR OTTER OTTOS OUGHT OUNCE OUPHE OUPHS OURIE OUSEL OUSTS OUTBY OUTDO OUTED OUTER OUTGO OUTRE OUZEL OUZOS OVALS OVARY OVATE OVENS OVERS OVERT OVINE OVOID OVOLI OVOLO OVULE OWING OWLET OWNED OWNER OWSEN OXBOW OXEYE OXIDE OXIDS OXIME OXIMS OXLIP OXTER OYERS OZONE PACAS PACED PACER PACES PACHA PACKS PACTS PADDY PADIS PADLE PADRE PADRI PAEAN PAEON PAGAN PAGED PAGER PAGES PAGOD PAIKS PAILS PAINS PAINT PAIRS PAISA PAISE PALEA PALED PALER PALES PALET PALLS PALLY PALMS PALMY PALPI PALPS PALSY PAMPA PANDA PANDY PANED PANEL PANES PANGA PANGS PANIC PANNE PANSY PANTO PANTS PANTY PAPAL PAPAS PAPAW PAPER PAPPI PAPPY PARAS PARCH PARDI PARDS PARDY PARED PAREO PARER PARES PAREU PARGE PARGO PARIS PARKA PARKS PARLE PAROL PARRS PARRY PARSE PARTS PARTY PARVE PARVO PASEO PASES PASHA PASSE PASTA PASTE PASTS PASTY PATCH PATED PATEN PATER PATES PATHS PATIN PATIO PATLY PATSY PATTY PAUSE PAVAN PAVED PAVER PAVES PAVID PAVIN PAVIS PAWED PAWER PAWKY PAWLS PAWNS PAXES PAYED PAYEE PAYER PAYOR PEACE PEACH PEAGE PEAGS PEAKS PEAKY PEALS PEANS PEARL PEARS PEART PEASE PEATS PEATY PEAVY PECAN PECHS PECKS PECKY PEDAL PEDES PEDRO PEEKS PEELS PEENS PEEPS PEERS PEERY PEEVE PEINS PEISE PEKAN PEKES PEKIN PEKOE PELES PELFS PELON PELTS PENAL PENCE PENDS PENES PENGO PENIS PENNA PENNE PENNI PENNY PEONS PEONY PEPLA PEPOS PEPPY PERCH PERDU PERDY PEREA PERIL PERIS PERKS PERKY PERMS PERRY PERSE PESKY PESOS PESTO PESTS PESTY PETAL PETER PETIT PETTI PETTO PETTY PEWEE PEWIT PHAGE PHASE PHIAL PHLOX PHONE PHONO PHONS PHONY PHOTO PHOTS PHPHT PHUTS PHYLA PHYLE PIANO PIANS PIBAL PICAL PICAS PICKS PICKY PICOT PICUL PIECE PIERS PIETA PIETY PIGGY PIGMY PIING PIKAS PIKED PIKER PIKES PIKIS PILAF PILAR PILAU PILAW PILEA PILED PILEI PILES PILIS PILLS PILOT PILUS PIMAS PIMPS PINAS PINCH PINED PINES PINEY PINGO PINGS PINKO PINKS PINKY PINNA PINNY PINON PINOT PINTA PINTO PINTS PINUP PIONS PIOUS PIPAL PIPED PIPER PIPES PIPET PIPIT PIQUE PIRNS PIROG PISCO PISOS PISTE PITAS PITCH PITHS PITHY PITON PIVOT PIXEL PIXES PIXIE PIZZA PLACE PLACK PLAGE PLAID PLAIN PLAIT PLANE PLANK PLANS PLANT PLASH PLASM PLATE PLATS PLATY PLAYA PLAYS PLAZA PLEAD PLEAS PLEAT PLEBE PLEBS PLENA PLEWS PLICA PLIED PLIER PLIES PLINK PLODS PLONK PLOPS PLOTS PLOTZ PLOWS PLOYS PLUCK PLUGS PLUMB PLUME PLUMP PLUMS PLUMY PLUNK PLUSH PLYER POACH POCKS POCKY PODGY PODIA POEMS POESY POETS POGEY POILU POIND POINT POISE POKED POKER POKES POKEY POLAR POLED POLER POLES POLIO POLIS POLKA POLLS POLOS POLYP POLYS POMES POMMY POMPS PONCE PONDS PONES PONGS POOCH POODS POOFS POOFY POOHS POOLS POONS POOPS POORI POOVE POPES POPPA POPPY POPSY PORCH PORED PORES PORGY PORKS PORKY PORNO PORNS PORNY PORTS POSED POSER POSES POSIT POSSE POSTS POTSY POTTO POTTY POUCH POUFF POUFS POULT POUND POURS POUTS POUTY POWER POXED POXES POYOU PRAAM PRAHU PRAMS PRANG PRANK PRAOS PRASE PRATE PRATS PRAUS PRAWN PRAYS PREED PREEN PREES PREPS PRESA PRESE PRESS PREST PREXY PREYS PRICE PRICK PRICY PRIDE PRIED PRIER PRIES PRIGS PRILL PRIMA PRIME PRIMI PRIMO PRIMP PRIMS PRINK PRINT PRION PRIOR PRISE PRISM PRISS PRIVY PRIZE PROAS PROBE PRODS PROEM PROFS PROGS PROLE PROMO PROMS PRONE PRONG PROOF PROPS PROSE PROSO PROSS PROST PROSY PROUD PROVE PROWL PROWS PROXY PRUDE PRUNE PRUTA PRYER PSALM PSEUD PSHAW PSOAE PSOAI PSOAS PSYCH PUBES PUBIC PUBIS PUCES PUCKA PUCKS PUDGY PUDIC PUFFS PUFFY PUGGY PUJAH PUJAS PUKED PUKES PUKKA PULED PULER PULES PULIK PULIS PULLS PULPS PULPY PULSE PUMAS PUMPS PUNAS PUNCH PUNGS PUNKA PUNKS PUNKY PUNNY PUNTO PUNTS PUNTY PUPAE PUPAL PUPAS PUPIL PUPPY PURDA PUREE PURER PURGE PURIN PURIS PURLS PURRS PURSE PURSY PUSES PUSHY PUSSY PUTON PUTTI PUTTO PUTTS PUTTY PYGMY PYINS PYLON PYOID PYRAN PYRES PYRIC PYXES PYXIE PYXIS QAIDS QANAT QOPHS QUACK QUADS QUAFF QUAGS QUAIL QUAIS QUAKE QUAKY QUALE QUALM QUANT QUARE QUARK QUART QUASH QUASI QUASS QUATE QUAYS QUEAN QUEEN QUEER QUELL QUERN QUERY QUEST QUEUE QUEYS QUICK QUIDS QUIET QUIFF QUILL QUILT QUINS QUINT QUIPS QUIPU QUIRE QUIRK QUIRT QUITE QUITS QUODS QUOIN QUOIT QUOTA QUOTE QUOTH QURSH RABAT RABBI RABIC RABID RACED RACER RACES RACKS RACON RADAR RADII RADIO RADIX RADON RAFFS RAFTS RAGAS RAGED RAGEE RAGES RAGGY RAGIS RAIAS RAIDS RAILS RAINS RAINY RAISE RAJAH RAJAS RAJES RAKED RAKEE RAKER RAKES RAKIS RALES RALLY RALPH RAMEE RAMET RAMIE RAMMY RAMPS RAMUS RANCE RANCH RANDS RANDY RANEE RANGE RANGY RANID RANIS RANKS RANTS RAPED RAPER RAPES RAPHE RAPID RARED RARER RARES RASED RASER RASES RASPS RASPY RATAL RATAN RATCH RATED RATEL RATER RATES RATHE RATIO RATOS RATTY RAVED RAVEL RAVEN RAVER RAVES RAVIN RAWER RAWIN RAWLY RAXED RAXES RAYAH RAYAS RAYED RAYON RAZED RAZEE RAZER RAZES RAZOR REACH REACT READD READS READY REALM REALS REAMS REAPS REARM REARS REATA REAVE REBAR REBBE REBEC REBEL REBID REBOP REBUS REBUT REBUY RECAP RECCE RECKS RECON RECTA RECTI RECTO RECUR RECUT REDAN REDDS REDED REDES REDIA REDID REDIP REDLY REDON REDOS REDOX REDRY REDUB REDUX REDYE REEDS REEDY REEFS REEFY REEKS REEKY REELS REEST REEVE REFED REFEL REFER REFIT REFIX REFLY REFRY REGAL REGES REGMA REGNA REHAB REHEM REIFS REIFY REIGN REINK REINS REIVE REKEY RELAX RELAY RELET RELIC RELIT REMAN REMAP REMET REMEX REMIT REMIX RENAL RENDS RENEW RENIG RENIN RENTE RENTS REOIL REPAY REPEG REPEL REPIN REPLY REPOS REPOT REPPS REPRO RERAN RERIG RERUN RESAW RESAY RESEE RESET RESEW RESID RESIN RESOD RESOW RESTS RETAG RETAX RETCH RETEM RETIA RETIE RETRO RETRY REUSE REVEL REVET REVUE REWAN REWAX REWED REWET REWIN REWON REXES RHEAS RHEUM RHINO RHOMB RHUMB RHYME RHYTA RIALS RIANT RIATA RIBBY RIBES RICED RICER RICES RICIN RICKS RIDER RIDES RIDGE RIDGY RIELS RIFER RIFFS RIFLE RIFTS RIGHT RIGID RIGOR RILED RILES RILEY RILLE RILLS RIMED RIMER RIMES RINDS RINGS RINKS RINSE RIOJA RIOTS RIPED RIPEN RIPER RIPES RISEN RISER RISES RISHI RISKS RISKY RISUS RITES RITZY RIVAL RIVED RIVEN RIVER RIVES RIVET RIYAL ROACH ROADS ROAMS ROANS ROARS ROAST ROBED ROBES ROBIN ROBLE ROBOT ROCKS ROCKY RODEO ROGER ROGUE ROILS ROILY ROLES ROLFS ROLLS ROMAN ROMEO ROMPS RONDO ROODS ROOFS ROOKS ROOKY ROOMS ROOMY ROOSE ROOST ROOTS ROOTY ROPED ROPER ROPES ROPEY ROQUE ROSED ROSES ROSET ROSIN ROTAS ROTCH ROTES ROTIS ROTLS ROTOR ROTOS ROTTE ROUEN ROUES ROUGE ROUGH ROUND ROUPS ROUPY ROUSE ROUST ROUTE ROUTH ROUTS ROVED ROVEN ROVER ROVES ROWAN ROWDY ROWED ROWEL ROWEN ROWER ROWTH ROYAL RUANA RUBES RUBLE RUBUS RUCHE RUCKS RUDDS RUDDY RUDER RUERS RUFFE RUFFS RUGAE RUGAL RUGBY RUING RUINS RULED RULER RULES RUMBA RUMEN RUMMY RUMOR RUMPS RUNES RUNGS RUNIC RUNNY RUNTS RUNTY RUPEE RURAL RUSES RUSHY RUSKS RUSTS RUSTY RUTHS RUTIN RUTTY RYKED RYKES RYNDS RYOTS SABED SABER SABES SABIN SABIR SABLE SABOT SABRA SABRE SACKS SACRA SADES SADHE SADHU SADIS SADLY SAFER SAFES SAGAS SAGER SAGES SAGGY SAGOS SAGUM SAHIB SAICE SAIDS SAIGA SAILS SAINS SAINT SAITH SAJOU SAKER SAKES SAKIS SALAD SALAL SALEP SALES SALIC SALLY SALMI SALOL SALON SALPA SALPS SALSA SALTS SALTY SALVE SALVO SAMBA SAMBO SAMEK SAMPS SANDS SANDY SANED SANER SANES SANGA SANGH SANTO SAPID SAPOR SAPPY SARAN SARDS SAREE SARGE SARIN SARIS SARKS SARKY SAROD SAROS SASIN SASSY SATAY SATED SATEM SATES SATIN SATIS SATYR SAUCE SAUCH SAUCY SAUGH SAULS SAULT SAUNA SAURY SAUTE SAVED SAVER SAVES SAVIN SAVOR SAVOY SAVVY SAWED SAWER SAXES SAYER SAYID SAYST SCABS SCADS SCAGS SCALD SCALE SCALL SCALP SCALY SCAMP SCAMS SCANS SCANT SCAPE SCARE SCARF SCARP SCARS SCART SCARY SCATS SCATT SCAUP SCAUR SCENA SCEND SCENE SCENT SCHAV SCHMO SCHUL SCHWA SCION SCOFF SCOLD SCONE SCOOP SCOOT SCOPE SCOPS SCORE SCORN SCOTS SCOUR SCOUT SCOWL SCOWS SCRAG SCRAM SCRAP SCREE SCREW SCRIM SCRIP SCROD SCRUB SCRUM SCUBA SCUDI SCUDO SCUDS SCUFF SCULK SCULL SCULP SCUMS SCUPS SCURF SCUTA SCUTE SCUTS SEALS SEAMS SEAMY SEARS SEATS SEBUM SECCO SECTS SEDAN SEDER SEDGE SEDGY SEDUM SEEDS SEEDY SEEKS SEELS SEELY SEEMS SEEPS SEEPY SEERS SEGNI SEGNO SEGOS SEGUE SEIFS SEINE SEISE SEISM SEIZE SELAH SELFS SELLE SELLS SELVA SEMEN SEMES SEMIS SENDS SENGI SENNA SENOR SENSA SENSE SENTE SENTI SEPAL SEPIA SEPIC SEPOY SEPTA SEPTS SERAC SERAI SERAL SERED SERER SERES SERFS SERGE SERIF SERIN SEROW SERRY SERUM SERVE SERVO SETAE SETAL SETON SETTS SETUP SEVEN SEVER SEWAN SEWAR SEWED SEWER SEXED SEXES SEXTO SEXTS SHACK SHADE SHADS SHADY SHAFT SHAGS SHAHS SHAKE SHAKO SHAKY SHALE SHALL SHALT SHALY SHAME SHAMS SHANK SHAPE SHARD SHARE SHARK SHARN SHARP SHAUL SHAVE SHAWL SHAWM SHAWN SHAWS SHAYS SHEAF SHEAL SHEAR SHEAS SHEDS SHEEN SHEEP SHEER SHEET SHEIK SHELF SHELL SHEND SHENT SHEOL SHERD SHEWN SHEWS SHIED SHIEL SHIER SHIES SHIFT SHILL SHILY SHIMS SHINE SHINS SHINY SHIPS SHIRE SHIRK SHIRR SHIRT SHIST SHITS SHIVA SHIVE SHIVS SHLEP SHOAL SHOAT SHOCK SHOED SHOER SHOES SHOGS SHOJI SHONE SHOOK SHOOL SHOON SHOOS SHOOT SHOPS SHORE SHORL SHORN SHORT SHOTE SHOTS SHOTT SHOUT SHOVE SHOWN SHOWS SHOWY SHOYU SHRED SHREW SHRIS SHRUB SHRUG SHTIK SHUCK SHULN SHULS SHUNS SHUNT SHUSH SHUTE SHUTS SHYER SHYLY SIALS SIBBS SIBYL SICES SICKO SICKS SIDED SIDES SIDLE SIEGE SIEUR SIEVE SIFTS SIGHS SIGHT SIGIL SIGMA SIGNS SIKER SIKES SILDS SILEX SILKS SILKY SILLS SILLY SILOS SILTS SILTY SILVA SIMAR SIMAS SIMPS SINCE SINES SINEW SINGE SINGS SINHS SINKS SINUS SIPED SIPES SIRED SIREE SIREN SIRES SIRRA SIRUP SISAL SISES SISSY SITAR SITED SITES SITUP SITUS SIVER SIXES SIXMO SIXTE SIXTH SIXTY SIZAR SIZED SIZER SIZES SKAGS SKALD SKATE SKATS SKEAN SKEED SKEEN SKEES SKEET SKEGS SKEIN SKELM SKELP SKENE SKEPS SKEWS SKIDS SKIED SKIER SKIES SKIEY SKIFF SKILL SKIMO SKIMP SKIMS SKINK SKINS SKINT SKIPS SKIRL SKIRR SKIRT SKITE SKITS SKIVE SKOAL SKOSH SKUAS SKULK SKULL SKUNK SKYED SKYEY SLABS SLACK SLAGS SLAIN SLAKE SLAMS SLANG SLANK SLANT SLAPS SLASH SLATE SLATS SLATY SLAVE SLAWS SLAYS SLEDS SLEEK SLEEP SLEET SLEPT SLEWS SLICE SLICK SLIDE SLIER SLILY SLIME SLIMS SLIMY SLING SLINK SLIPE SLIPS SLIPT SLITS SLOBS SLOES SLOGS SLOID SLOJD SLOOP SLOPE SLOPS SLOSH SLOTH SLOTS SLOWS SLOYD SLUBS SLUED SLUES SLUFF SLUGS SLUMP SLUMS SLUNG SLUNK SLURB SLURP SLURS SLUSH SLUTS SLYER SLYLY SLYPE SMACK SMALL SMALT SMARM SMART SMASH SMAZE SMEAR SMEEK SMELL SMELT SMERK SMEWS SMILE SMIRK SMITE SMITH SMOCK SMOGS SMOKE SMOKY SMOLT SMOTE SMUTS SNACK SNAFU SNAGS SNAIL SNAKE SNAKY SNAPS SNARE SNARK SNARL SNASH SNATH SNAWS SNEAK SNEAP SNECK SNEDS SNEER SNELL SNIBS SNICK SNIDE SNIFF SNIPE SNIPS SNITS SNOBS SNOGS SNOOD SNOOK SNOOL SNOOP SNOOT SNORE SNORT SNOTS SNOUT SNOWS SNOWY SNUBS SNUCK SNUFF SNUGS SNYES SOAKS SOAPS SOAPY SOARS SOAVE SOBER SOCKO SOCKS SOCLE SODAS SODDY SODIC SODOM SOFAR SOFAS SOFTA SOFTS SOFTY SOGGY SOILS SOJAS SOKES SOKOL SOLAN SOLAR SOLDI SOLDO SOLED SOLEI SOLES SOLID SOLON SOLOS SOLUM SOLUS SOLVE SOMAS SONAR SONDE SONES SONGS SONIC SONLY SONNY SONSY SOOEY SOOKS SOOTH SOOTS SOOTY SOPHS SOPHY SOPOR SOPPY SORAS SORBS SORDS SOREL SORER SORES SORGO SORNS SORRY SORTS SORUS SOTHS SOTOL SOUGH SOUKS SOULS SOUND SOUPS SOUPY SOURS SOUSE SOUTH SOWAR SOWED SOWER SOYAS SOYUZ SOZIN SPACE SPACY SPADE SPADO SPAED SPAES SPAHI SPAIL SPAIT SPAKE SPALE SPALL SPANG SPANK SPANS SPARE SPARK SPARS SPASM SPATE SPATS SPAWN SPAYS SPEAK SPEAN SPEAR SPECK SPECS SPEED SPEEL SPEER SPEIL SPEIR SPELL SPELT SPEND SPENT SPERM SPEWS SPICA SPICE SPICK SPICS SPICY SPIED SPIEL SPIER SPIES SPIFF SPIKE SPIKS SPIKY SPILE SPILL SPILT SPINE SPINS SPINY SPIRE SPIRT SPIRY SPITE SPITS SPITZ SPIVS SPLAT SPLAY SPLIT SPODE SPOIL SPOKE SPOOF SPOOK SPOOL SPOON SPOOR SPORE SPORT SPOTS SPOUT SPRAG SPRAT SPRAY SPREE SPRIG SPRIT SPRUE SPRUG SPUDS SPUED SPUES SPUME SPUMY SPUNK SPURN SPURS SPURT SPUTA SQUAB SQUAD SQUAT SQUAW SQUEG SQUIB SQUID STABS STACK STADE STAFF STAGE STAGS STAGY STAID STAIG STAIN STAIR STAKE STALE STALK STALL STAMP STAND STANE STANG STANK STAPH STARE STARK STARS START STASH STATE STATS STAVE STAYS STEAD STEAK STEAL STEAM STEED STEEK STEEL STEEP STEER STEIN STELA STELE STEMS STENO STEPS STERE STERN STETS STEWS STICH STICK STIED STIES STIFF STILE STILL STILT STIME STIMY STING STINK STINT STIPE STIRK STIRP STIRS STOAE STOAI STOAS STOAT STOBS STOCK STOGY STOIC STOKE STOLE STOMA STOMP STONE STONY STOOD STOOK STOOL STOOP STOPE STOPS STOPT STORE STORK STORM STORY STOSS STOUP STOUR STOUT STOVE STOWP STOWS STRAP STRAW STRAY STREP STREW STRIA STRIP STROP STROW STROY STRUM STRUT STUBS STUCK STUDS STUDY STUFF STULL STUMP STUMS STUNG STUNK STUNS STUNT STUPA STUPE STURT STYED STYES STYLE STYLI STYMY SUAVE SUBAH SUBAS SUBER SUCKS SUCRE SUDDS SUDOR SUDSY SUEDE SUERS SUETS SUETY SUGAR SUGHS SUING SUINT SUITE SUITS SULCI SULFA SULFO SULKS SULKY SULLY SULUS SUMAC SUMMA SUMOS SUMPS SUNNA SUNNS SUNNY SUNUP SUPER SUPES SUPRA SURAH SURAL SURAS SURDS SURER SURFS SURFY SURGE SURGY SURLY SURRA SUSHI SUTRA SUTTA SWABS SWAGE SWAGS SWAIL SWAIN SWALE SWAMI SWAMP SWAMY SWANG SWANK SWANS SWAPS SWARD SWARE SWARF SWARM SWART SWASH SWATH SWATS SWAYS SWEAR SWEAT SWEDE SWEEP SWEER SWEET SWELL SWEPT SWIFT SWIGS SWILL SWIMS SWINE SWING SWINK SWIPE SWIRL SWISH SWISS SWITH SWIVE SWOBS SWOON SWOOP SWOPS SWORD SWORE SWORN SWOTS SWOUN SWUNG SYCEE SYCES SYKES SYLIS SYLPH SYLVA SYNCH SYNCS SYNOD SYNTH SYPHS SYREN SYRUP SYSOP TABBY TABER TABES TABID TABLA TABLE TABOO TABOR TABUN TABUS TACES TACET TACHE TACHS TACIT TACKS TACKY TACOS TACTS TAELS TAFFY TAFIA TAHRS TAIGA TAILS TAINS TAINT TAJES TAKEN TAKER TAKES TAKIN TALAR TALAS TALCS TALER TALES TALKS TALKY TALLY TALON TALUK TALUS TAMAL TAMED TAMER TAMES TAMIS TAMMY TAMPS TANGO TANGS TANGY TANKA TANKS TANSY TANTO TAPAS TAPED TAPER TAPES TAPIR TAPIS TARDO TARDY TARED TARES TARGE TARNS TAROC TAROK TAROS TAROT TARPS TARRE TARRY TARSI TARTS TARTY TASKS TASSE TASTE TASTY TATAR TATER TATES TATTY TAUNT TAUPE TAUTS TAWED TAWER TAWIE TAWNY TAWSE TAXED TAXER TAXES TAXIS TAXON TAXUS TAZZA TAZZE TEACH TEAKS TEALS TEAMS TEARS TEARY TEASE TEATS TECHY TECTA TEDDY TEELS TEEMS TEENS TEENY TEETH TEFFS TEGUA TEIID TEIND TELAE TELES TELEX TELIA TELIC TELLS TELLY TELOI TELOS TEMPI TEMPO TEMPS TEMPT TENCH TENDS TENET TENIA TENON TENOR TENSE TENTH TENTS TENTY TEPAL TEPAS TEPEE TEPID TEPOY TERAI TERCE TERGA TERMS TERNE TERNS TERRA TERRY TERSE TESLA TESTA TESTS TESTY TETHS TETRA TEUCH TEUGH TEWED TEXAS TEXTS THACK THANE THANK THARM THAWS THEBE THECA THEFT THEGN THEIN THEIR THEME THENS THERE THERM THESE THETA THEWS THEWY THICK THIEF THIGH THILL THINE THING THINK THINS THIOL THIRD THIRL THOLE THONG THORN THORO THORP THOSE THOUS THRAW THREE THREW THRIP THROB THROE THROW THRUM THUDS THUGS THUJA THUMB THUMP THUNK THURL THUYA THYME THYMI THYMY TIARA TIBIA TICAL TICKS TIDAL TIDED TIDES TIERS TIFFS TIGER TIGHT TIGON TIKES TIKIS TILAK TILDE TILED TILER TILES TILLS TILTH TILTS TIMED TIMER TIMES TIMID TINCT TINEA TINED TINES TINGE TINGS TINNY TINTS TIPIS TIPPY TIPSY TIRED TIRES TIRLS TIROS TITAN TITER TITHE TITIS TITLE TITRE TITTY TIZZY TOADS TOADY TOAST TODAY TODDY TOFFS TOFFY TOFTS TOFUS TOGAE TOGAS TOGUE TOILE TOILS TOITS TOKAY TOKED TOKEN TOKER TOKES TOLAN TOLAS TOLED TOLES TOLLS TOLUS TOLYL TOMAN TOMBS TOMES TOMMY TONAL TONDI TONDO TONED TONER TONES TONEY TONGA TONGS TONIC TONNE TONUS TOOLS TOONS TOOTH TOOTS TOPAZ TOPED TOPEE TOPER TOPES TOPHE TOPHI TOPHS TOPIC TOPIS TOPOI TOPOS TOQUE TORAH TORAS TORCH TORCS TORES TORIC TORII TOROS TOROT TORSE TORSI TORSK TORSO TORTE TORTS TORUS TOTAL TOTED TOTEM TOTER TOTES TOUCH TOUGH TOURS TOUSE TOUTS TOWED TOWEL TOWER TOWIE TOWNS TOWNY TOXIC TOXIN TOYED TOYER TOYON TOYOS TRACE TRACK TRACT TRADE TRAGI TRAIK TRAIL TRAIN TRAIT TRAMP TRAMS TRANK TRANQ TRANS TRAPS TRAPT TRASH TRASS TRAVE TRAWL TRAYS TREAD TREAT TREED TREEN TREES TREKS TREND TRESS TRETS TREWS TREYS TRIAC TRIAD TRIAL TRIBE TRICE TRICK TRIED TRIER TRIES TRIGO TRIGS TRIKE TRILL TRIMS TRINE TRIOL TRIOS TRIPE TRIPS TRITE TROAK TROCK TRODE TROIS TROKE TROLL TROMP TRONA TRONE TROOP TROOZ TROPE TROTH TROTS TROUT TROVE TROWS TROYS TRUCE TRUCK TRUED TRUER TRUES TRUGS TRULL TRULY TRUMP TRUNK TRUSS TRUST TRUTH TRYMA TRYST TSADE TSADI TSARS TSKED TSUBA TUBAE TUBAL TUBAS TUBBY TUBED TUBER TUBES TUCKS TUFAS TUFFS TUFTS TUFTY TULES TULIP TULLE TUMID TUMMY TUMOR TUMPS TUNAS TUNED TUNER TUNES TUNGS TUNIC TUNNY TUPIK TUQUE TURBO TURDS TURFS TURFY TURKS TURNS TURPS TUSHY TUSKS TUTEE TUTOR TUTTI TUTTY TUTUS TUXES TUYER TWAES TWAIN TWANG TWATS TWEAK TWEED TWEEN TWEET TWERP TWICE TWIER TWIGS TWILL TWINE TWINS TWINY TWIRL TWIRP TWIST TWITS TWIXT TWYER TYEES TYERS TYING TYKES TYNED TYNES TYPAL TYPED TYPES TYPEY TYPIC TYPOS TYPPS TYRED TYRES TYROS TYTHE TZARS UDDER UHLAN UKASE ULAMA ULANS ULCER ULEMA ULNAD ULNAE ULNAR ULNAS ULPAN ULTRA ULVAS UMBEL UMBER UMBOS UMBRA UMIAC UMIAK UMIAQ UMPED UNAIS UNAPT UNARM UNARY UNAUS UNBAN UNBAR UNBID UNBOX UNCAP UNCIA UNCLE UNCOS UNCOY UNCUS UNCUT UNDEE UNDER UNDID UNDUE UNFED UNFIT UNFIX UNGOT UNHAT UNHIP UNIFY UNION UNITE UNITS UNITY UNLAY UNLED UNLET UNLIT UNMAN UNMET UNMEW UNMIX UNPEG UNPEN UNPIN UNRIG UNRIP UNSAY UNSET UNSEW UNSEX UNTIE UNTIL UNWED UNWIT UNWON UNZIP UPBOW UPBYE UPDOS UPDRY UPEND UPLIT UPPED UPPER UPSET URAEI URARE URARI URASE URATE URBAN URBIA UREAL UREAS UREDO UREIC URGED URGER URGES URIAL URINE URSAE USAGE USERS USHER USING USNEA USQUE USUAL USURP USURY UTERI UTILE UTTER UVEAL UVEAS UVULA VACUA VAGAL VAGUE VAGUS VAILS VAIRS VAKIL VALES VALET VALID VALOR VALSE VALUE VALVE VAMPS VANDA VANED VANES VANGS VAPID VAPOR VARAS VARIA VARIX VARNA VARUS VARVE VASAL VASES VASTS VASTY VATIC VATUS VAULT VAUNT VEALS VEALY VEENA VEEPS VEERS VEERY VEGAN VEGIE VEILS VEINS VEINY VELAR VELDS VELDT VELUM VENAE VENAL VENDS VENGE VENIN VENOM VENTS VENUE VERBS VERGE VERSE VERSO VERST VERTS VERTU VERVE VESTA VESTS VETCH VEXED VEXER VEXES VEXIL VIALS VIAND VIBES VICAR VICED VICES VICHY VIDEO VIERS VIEWS VIEWY VIGAS VIGIL VIGOR VILER VILLA VILLI VILLS VIMEN VINAL VINAS VINCA VINED VINES VINIC VINOS VINYL VIOLA VIOLS VIPER VIRAL VIREO VIRES VIRGA VIRID VIRLS VIRTU VIRUS VISAS VISED VISES VISIT VISOR VISTA VITAE VITAL VITTA VIVAS VIVID VIXEN VIZIR VIZOR VOCAL VOCES VODKA VODUN VOGIE VOGUE VOICE VOIDS VOILA VOILE VOLAR VOLED VOLES VOLTA VOLTE VOLTI VOLTS VOLVA VOMER VOMIT VOTED VOTER VOTES VOUCH VOWED VOWEL VOWER VROOM VROUW VROWS VUGGS VUGGY VUGHS VULGO VULVA VYING WACKE WACKO WACKS WACKY WADDY WADED WADER WADES WADIS WAFER WAFFS WAFTS WAGED WAGER WAGES WAGON WAHOO WAIFS WAILS WAINS WAIRS WAIST WAITS WAIVE WAKED WAKEN WAKER WAKES WALED WALER WALES WALKS WALLA WALLS WALLY WALTZ WAMES WAMUS WANDS WANED WANES WANEY WANLY WANTS WARDS WARED WARES WARKS WARMS WARNS WARPS WARTS WARTY WASHY WASPS WASPY WASTE WASTS WATAP WATCH WATER WATTS WAUGH WAUKS WAULS WAVED WAVER WAVES WAVEY WAWLS WAXED WAXEN WAXER WAXES WEALD WEALS WEANS WEARS WEARY WEAVE WEBBY WEBER WECHT WEDEL WEDGE WEDGY WEEDS WEEDY WEEKS WEENS WEENY WEEPS WEEPY WEEST WEETS WEFTS WEIGH WEIRD WEIRS WEKAS WELCH WELDS WELLS WELLY WELSH WELTS WENCH WENDS WENNY WESTS WETLY WHACK WHALE WHAMO WHAMS WHANG WHAPS WHARF WHATS WHAUP WHEAL WHEAT WHEEL WHEEN WHEEP WHELK WHELM WHELP WHENS WHERE WHETS WHEWS WHEYS WHICH WHIDS WHIFF WHIGS WHILE WHIMS WHINE WHINS WHINY WHIPS WHIPT WHIRL WHIRR WHIRS WHISH WHISK WHIST WHITE WHITS WHITY WHIZZ WHOLE WHOMP WHOOF WHOOP WHOPS WHORE WHORL WHORT WHOSE WHOSO WHUMP WICKS WIDDY WIDEN WIDER WIDES WIDOW WIDTH WIELD WIFED WIFES WIFTY WIGAN WIGGY WIGHT WILCO WILDS WILED WILES WILLS WILLY WILTS WIMPS WIMPY WINCE WINCH WINDS WINDY WINED WINES WINEY WINGS WINGY WINKS WINOS WINZE WIPED WIPER WIPES WIRED WIRER WIRES WIRRA WISED WISER WISES WISHA WISPS WISPY WISTS WITAN WITCH WITED WITES WITHE WITHY WITTY WIVED WIVER WIVES WIZEN WIZES WOADS WOALD WODGE WOFUL WOKEN WOLDS WOLFS WOMAN WOMBS WOMBY WOMEN WONKS WONKY WONTS WOODS WOODY WOOED WOOER WOOFS WOOLS WOOLY WOOPS WOOSH WOOZY WORDS WORDY WORKS WORLD WORMS WORMY WORRY WORSE WORST WORTH WORTS WOULD WOUND WOVEN WOWED WRACK WRANG WRAPS WRAPT WRATH WREAK WRECK WRENS WREST WRICK WRIED WRIER WRIES WRING WRIST WRITE WRITS WRONG WROTE WROTH WRUNG WRYER WRYLY WURST WUSSY WYLED WYLES WYNDS WYNNS WYTED WYTES XEBEC XENIA XENIC XENON XERIC XEROX XERUS XYLAN XYLEM XYLOL XYLYL XYSTI XYSTS YACHT YACKS YAFFS YAGER YAGIS YAHOO YAIRD YAMEN YAMUN YANGS YANKS YAPOK YAPON YARDS YARER YARNS YAUDS YAULD YAUPS YAWED YAWLS YAWNS YAWPS YEANS YEARN YEARS YEAST YECCH YECHS YECHY YEGGS YELKS YELLS YELPS YENTA YENTE YERBA YERKS YESES YETIS YETTS YEUKS YEUKY YIELD YIKES YILLS YINCE YIPES YIRDS YIRRS YIRTH YLEMS YOBBO YOCKS YODEL YODHS YODLE YOGAS YOGEE YOGHS YOGIC YOGIN YOGIS YOKED YOKEL YOKES YOLKS YOLKY YOMIM YONIC YONIS YORES YOUNG YOURN YOURS YOUSE YOUTH YOWED YOWES YOWIE YOWLS YUANS YUCAS YUCCA YUCCH YUCKS YUCKY YUGAS YULAN YULES YUMMY YUPON YURTA YURTS ZAIRE ZAMIA ZANZA ZAPPY ZARFS ZAXES ZAYIN ZAZEN ZEALS ZEBEC ZEBRA ZEBUS ZEINS ZERKS ZEROS ZESTS ZESTY ZETAS ZIBET ZILCH ZILLS ZINCS ZINCY ZINEB ZINGS ZINGY ZINKY ZIPPY ZIRAM ZITIS ZIZIT ZLOTE ZLOTY ZOEAE ZOEAL ZOEAS ZOMBI ZONAL ZONED ZONER ZONES ZONKS ZOOID ZOOKS ZOOMS ZOONS ZOOTY ZORIL ZORIS ZOWIE ZYMES`.split(' '));
+const WORD_ANSWERS = `ABOUT ABOVE ABUSE ACTOR ACUTE ADMIT ADOPT ADULT AFTER AGAIN AGENT AGREE AHEAD ALARM ALBUM ALERT ALIEN ALIVE ALLOW ALONE ALONG ALTER AMONG ANGEL ANGER ANGLE ANGRY APART APPLE APPLY ARENA ARGUE ARISE ARRAY ASIDE ASSET AUDIO AVOID AWAKE AWARD AWARE BADGE BAKER BASIC BASIL BEACH BEARD BEAST BEGIN BEING BELLY BELOW BENCH BERRY BIRTH BLACK BLADE BLAME BLANK BLAST BLAZE BLEED BLEND BLESS BLIND BLINK BLOCK BLOOD BLOOM BLOWN BLUER BLUNT BLUSH BOARD BOOST BOOTH BOUND BRAIN BRAND BRAVE BREAD BREAK BREED BRICK BRIDE BRIEF BRING BROAD BROKE BROWN BRUSH BUILD BUILT BUNCH BURST BUYER CABLE CANDY CARRY CATCH CAUSE CHAIN CHAIR CHALK CHAMP CHARM CHASE CHEAP CHECK CHEEK CHEER CHEST CHIEF CHILD CHILL CHINA CHOIR CHOKE CHORD CHORE CHOSE CHUNK CLAIM CLASS CLEAN CLEAR CLERK CLICK CLIMB CLING CLOCK CLOSE CLOTH CLOUD CLOWN COACH COAST COLOR COMET COMFY COMIC CORAL COUCH COULD COUNT COURT COVER CRACK CRAFT CRANE CRASH CRAWL CRAZY CREAM CREEK CREST CRIME CRISP CROSS CROWD CROWN CRUEL CRUSH CURVE CYCLE DAILY DANCE DEALT DEATH DEBUT DELAY DEPTH DIRTY DOUBT DOUGH DRAFT DRAMA DRAWN DREAM DRESS DRIED DRIFT DRILL DRINK DRIVE DROVE DRUNK EAGER EARLY EARTH EIGHT ELBOW ELECT ELITE EMPTY ENJOY ENTER ENTRY EQUAL ERROR EVENT EVERY EXACT EXIST EXTRA FAITH FALSE FANCY FAULT FEAST FENCE FEVER FEWER FIELD FIFTH FIFTY FIGHT FINAL FIRST FLAME FLASH FLEET FLESH FLOAT FLOOD FLOOR FLOUR FLUID FLUSH FOCUS FORCE FORGE FORTH FORTY FORUM FOUND FRAME FRESH FRONT FROST FRUIT FUNNY GIANT GIVEN GLASS GLOBE GLOOM GLORY GLOVE GOING GRACE GRADE GRAIN GRAND GRANT GRAPE GRAPH GRASP GRASS GRAVE GREAT GREEN GREET GRIEF GRILL GRIND GROSS GROUP GROVE GROWN GUARD GUESS GUEST GUIDE GUILT HABIT HAPPY HEART HEAVY HONEY HONOR HORSE HOTEL HOUSE HUMAN HUMOR IDEAL IMAGE IMPLY INDEX INNER INPUT ISSUE JOINT JUDGE JUICE KNIFE KNOCK KNOWN LABEL LARGE LASER LATER LAUGH LAYER LEARN LEAST LEAVE LEMON LEVEL LIGHT LIMIT LIVER LOCAL LOOSE LOVER LOWER LUCKY LUNCH LYING MAGIC MAJOR MAKER MARCH MARRY MATCH MAYBE MAYOR MEDIA MERCY MERGE MERIT MERRY METAL MIGHT MINOR MINUS MIXED MODEL MONEY MONTH MORAL MOTOR MOUNT MOUSE MOUTH MOVIE MUSIC NAKED NAMED NEVER NEWER NIGHT NOBLE NOISE NORTH NOTED NOVEL NURSE OCEAN OFFER OFTEN OLIVE ONION OPERA ORDER OTHER OUGHT OUTER OWNER PAINT PANEL PANIC PAPER PARTY PASTE PATCH PAUSE PEACE PEACH PEARL PENNY PHASE PHONE PHOTO PIANO PIECE PILOT PITCH PIZZA PLACE PLAIN PLANE PLANT PLATE PLAZA POINT POUND POWER PRESS PRICE PRIDE PRIME PRINT PRIOR PRIZE PROOF PROUD PROVE QUEEN QUICK QUIET QUITE QUOTE RADIO RAISE RANGE RAPID RATIO REACH REACT READY REALM REFER RELAX RENEW REPLY RESET RIDER RIDGE RIGHT RIVER ROBOT ROUGH ROUND ROUTE ROYAL RURAL SALAD SAUCE SCALE SCENE SCENT SCOPE SCORE SCOUT SENSE SERVE SEVEN SHADE SHAKE SHALL SHAME SHAPE SHARE SHARK SHARP SHEEP SHEER SHEET SHELF SHELL SHIFT SHINE SHIRT SHOCK SHORE SHORT SHOUT SHOWN SIGHT SINCE SIXTH SIXTY SIZED SKILL SKIRT SLATE SLEEP SLICE SLIDE SLOPE SMALL SMART SMELL SMILE SMOKE SNAKE SOLAR SOLID SOLVE SORRY SOUND SOUTH SPACE SPARE SPEAK SPEED SPELL SPEND SPICE SPILL SPINE SPITE SPLIT SPOKE SPORT STAFF STAGE STAIR STAKE STAMP STAND STARE START STATE STEAM STEEL STEEP STICK STILL STOCK STONE STOOD STORE STORM STORY STRAW STRIP STUCK STUDY STUFF STYLE SUGAR SUITE SUNNY SUPER SWEET SWEPT SWIFT SWING TABLE TAKEN TASTE TEACH TEARS TEETH THANK THEME THERE THICK THIEF THING THINK THIRD THORN THOSE THREE THREW THROW THUMB TIGHT TIMER TIRED TITLE TODAY TOKEN TOPIC TOTAL TOUCH TOUGH TOWER TRACK TRADE TRAIL TRAIN TREAT TREND TRIAL TRIBE TRICK TRIED TRUCK TRULY TRUST TRUTH TWICE UNDER UNION UNITY UNTIL UPPER UPSET URBAN USAGE USUAL VALID VALUE VIDEO VIRUS VISIT VITAL VOICE WASTE WATCH WATER WHEEL WHERE WHICH WHILE WHITE WHOLE WHOSE WOMAN WOMEN WORLD WORRY WORSE WORST WORTH WOULD WOUND WRITE WRONG WROTE YACHT YOUNG YOUTH ZEBRA`.split(' ');
+let wordle = null, wordRevealing = false, wordResultTimer = null;
+function wordFeedback(answer, guess) {
+  const result = Array(5).fill('absent'), remaining = {};
+  for (let i=0; i<5; i++) { if (guess[i] === answer[i]) result[i] = 'correct'; else remaining[answer[i]] = (remaining[answer[i]] || 0) + 1; }
+  for (let i=0; i<5; i++) if (result[i] !== 'correct' && remaining[guess[i]] > 0) { result[i] = 'present'; remaining[guess[i]]--; }
+  return result;
+}
+function restoreWordle() {
+  const v=load('wordle');
+  if (v && WORD_ANSWERS.includes(v.answer) && Array.isArray(v.guesses) && v.guesses.length <= 6 && v.guesses.every(w=>typeof w==='string' && /^[A-Z]{5}$/.test(w)) && typeof v.current==='string' && /^[A-Z]{0,5}$/.test(v.current) && ['playing','won','lost'].includes(v.status)) wordle=v;
+}
+function newWordle() {
+  clearTimeout(wordResultTimer); wordRevealing=false;
+  let bag=load('wordle.bag', []); if (!Array.isArray(bag)) bag=[];
+  bag=bag.filter(w=>WORD_ANSWERS.includes(w));
+  if (!bag.length) { bag=shuffle(WORD_ANSWERS); const previous=load('wordle.last'); if (bag.length>1 && bag[bag.length-1]===previous) [bag[bag.length-1],bag[0]]=[bag[0],bag[bag.length-1]]; }
+  const answer=bag.pop(); save('wordle.bag',bag); save('wordle.last',answer);
+  wordle={answer,guesses:[],current:'',status:'playing'}; save('wordle',wordle); renderWordle();
+}
+function updateWordStats() { const stats=load('wordle.stats',{played:0,wins:0,streak:0}); $('#word-played').textContent=stats.played||0; $('#word-wins').textContent=stats.wins||0; $('#word-streak').textContent=stats.streak||0; }
+function wordResult(state) {
+  if (route!=='wordle' || wordle!==state || state.status==='playing') return;
+  const won=state.status==='won', stats=load('wordle.stats',{played:0,wins:0,streak:0});
+  dialog(`<div class="dialog-kicker">${won?'WORD FOUND':'ROUND COMPLETE'} ? WORDLE</div><h2 id="dialog-title">${won?'Well played.':'Next word, fresh start.'}</h2><p>${won?'You found the word.':'The word was'} <strong>${state.answer}</strong>.</p><div class="result-stats"><div class="result-stat"><strong>${state.guesses.length} / 6</strong><small>GUESSES</small></div><div class="result-stat"><strong>${stats.wins||0}</strong><small>WINS</small></div><div class="result-stat"><strong>${stats.streak||0}</strong><small>STREAK</small></div></div><div class="dialog-actions"><button class="secondary-button" data-dialog-action="word-back">Back</button><button class="primary-button" data-dialog-action="new">New word ${icon('arrow')}</button></div>`);
+  clickSound(won?660:230,.15);
+}
+function renderWordle(revealRow=-1, typed=-1) {
+  if (!wordle) return;
+  const state=wordle, board=$('#word-board'), ranks={absent:1,present:2,correct:3}, keyState={}; let html='';
+  for (let r=0;r<6;r++) {
+    const submitted=r<state.guesses.length, text=submitted?state.guesses[r]:(r===state.guesses.length?state.current:''), feedback=submitted?wordFeedback(state.answer,text):[];
+    if (submitted) for(let c=0;c<5;c++) if(!keyState[text[c]] || ranks[feedback[c]]>ranks[keyState[text[c]]]) keyState[text[c]]=feedback[c];
+    for(let c=0;c<5;c++) { const letter=text[c]||'', result=feedback[c]||'', label=result?({correct:'correct position',present:'in word, different position',absent:'no unmatched copy'})[result]:'not submitted'; html+=`<div class="word-tile ${result} ${r===revealRow?'reveal':''} ${r===typed && c===text.length-1?'typed':''} ${r===state.guesses.length-1?'last-row':''}" style="--reveal-delay:${c*100}ms" aria-label="Guess ${r+1}, letter ${c+1}: ${letter||'empty'}, ${label}">${letter}</div>`; }
+  }
+  board.innerHTML=html; board.classList.remove('won','invalid');
+  const keyboard=$('#word-keyboard'), focusedKey=keyboard.contains(document.activeElement) ? document.activeElement.dataset.wordKey : null; keyboard.innerHTML=['QWERTYUIOP','ASDFGHJKL','ZXCVBNM'].map((line,row)=>`<div class="word-key-row">${row===2?'<button class="word-key wide" data-word-key="ENTER">Enter</button>':''}${[...line].map(k=>`<button class="word-key ${keyState[k]||''}" data-word-key="${k}" aria-label="${k}${keyState[k]?', '+({correct:'correct position',present:'in word, different position',absent:'no unmatched copy'})[keyState[k]]:''}">${k}</button>`).join('')}${row===2?'<button class="word-key wide" data-word-key="BACKSPACE" aria-label="Delete letter">?</button>':''}</div>`).join('');
+  if (focusedKey) keyboard.querySelector(`[data-word-key="${focusedKey}"]`)?.focus({preventScroll:true});
+}
+function wordInput(key) {
+  if (!wordle || wordle.status!=='playing' || wordRevealing || route!=='wordle') return;
+  if(key==='BACKSPACE') { if(wordle.current){ wordle.current=wordle.current.slice(0,-1); save('wordle',wordle); renderWordle(); } return; }
+  if(key==='ENTER') {
+    if(wordle.current.length!==5 || !WORD_GUESSES.has(wordle.current)) { const board=$('#word-board'); board.classList.remove('invalid'); void board.offsetWidth; board.classList.add('invalid'); notify(wordle.current.length!==5?'Enter five letters first.':'That word is not in the word list.'); clickSound(230,.08); return; }
+    const guess=wordle.current, row=wordle.guesses.length; wordle.guesses.push(guess); wordle.current='';
+    if(guess===wordle.answer || wordle.guesses.length===6) {
+      wordle.status=guess===wordle.answer?'won':'lost';
+      const stats=load('wordle.stats',{played:0,wins:0,streak:0}); stats.played=(stats.played||0)+1; if(wordle.status==='won'){stats.wins=(stats.wins||0)+1;stats.streak=(stats.streak||0)+1;}else stats.streak=0; save('wordle.stats',stats);
+    }
+    save('wordle',wordle); wordRevealing=true; renderWordle(row); clickSound(520,.07);
+    const state=wordle, reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    wordResultTimer=setTimeout(()=>{if(wordle!==state)return;wordRevealing=false;if(state.status==='won') { const board=$('#word-board'); board.classList.add('won'); } if(state.status!=='playing') wordResultTimer=setTimeout(()=>wordResult(state),reduced?30:650);},reduced?30:900);
+    return;
+  }
+  if(/^[A-Z]$/.test(key) && wordle.current.length<5){wordle.current+=key; save('wordle',wordle);renderWordle(-1,wordle.guesses.length);clickSound(440,.025);}
+}
+$('#word-keyboard').addEventListener('click',e=>{const button=e.target.closest('[data-word-key]');if(button)wordInput(button.dataset.wordKey)});
+$('#word-new').addEventListener('click',()=>{newWordle();closeSettings()});
+
+
+/* -------- Lights Out: every board is generated from a solvable press pattern -------- */
+const LIGHTS_LEVELS={easy:{size:3,presses:4,min:2},medium:{size:5,presses:9,min:5},hard:{size:6,presses:16,min:9}};
+let lights=null, lightsHint=-1, lightsResultTimer=null;
+function lightsNeighbors(index,n){const row=Math.floor(index/n),col=index%n,result=[index];if(row>0)result.push(index-n);if(row<n-1)result.push(index+n);if(col>0)result.push(index-1);if(col<n-1)result.push(index+1);return result;}
+function toggleLights(board,index,n){for(const i of lightsNeighbors(index,n))board[i]=!board[i];}
+// Gaussian elimination over GF(2). The free variables are enumerated when practical
+// so hints and difficulty checks use a shortest solution, without revealing a board.
+function solveLights(board,n){
+ const count=n*n, rows=Array.from({length:count},(_,i)=>{let mask=0n;for(const j of lightsNeighbors(i,n))mask|=1n<<BigInt(j);if(board[i])mask|=1n<<BigInt(count);return mask;});
+ const pivots=[];let rank=0;
+ for(let col=0;col<count;col++){let pivot=rank;while(pivot<count && !(rows[pivot]&(1n<<BigInt(col))))pivot++;if(pivot===count)continue;[rows[rank],rows[pivot]]=[rows[pivot],rows[rank]];for(let r=0;r<count;r++)if(r!==rank && (rows[r]&(1n<<BigInt(col))))rows[r]^=rows[rank];pivots.push(col);rank++;}
+ const mask=(1n<<BigInt(count))-1n;for(let r=rank;r<count;r++)if(!(rows[r]&mask) && (rows[r]&(1n<<BigInt(count))))return null;
+ const free=Array.from({length:count},(_,i)=>i).filter(i=>!pivots.includes(i));let best=null;const variants=free.length<=12?2**free.length:1;
+ for(let choice=0;choice<variants;choice++){let chosen=0n;free.forEach((col,i)=>{if(choice&(1<<i))chosen|=1n<<BigInt(col)});for(let r=rank-1;r>=0;r--){let parity=Number((rows[r]>>BigInt(count))&1n),bits=rows[r]&chosen;while(bits){parity^=1;bits&=bits-1n;}if(parity)chosen|=1n<<BigInt(pivots[r]);}const solution=[];for(let i=0;i<count;i++)if(chosen&(1n<<BigInt(i)))solution.push(i);if(best===null || solution.length<best.length)best=solution;}
+ return best;
+}
+function validLights(v){const c=LIGHTS_LEVELS[v?.difficulty],count=c?.size*c?.size;return !!c && v.n===c.size && Array.isArray(v.cells) && v.cells.length===count && v.cells.every(x=>typeof x==='boolean') && Array.isArray(v.initial) && v.initial.length===count && v.initial.every(x=>typeof x==='boolean') && Array.isArray(v.history) && v.history.every(i=>Number.isInteger(i)&&i>=0&&i<count) && Number.isFinite(v.elapsed) && Number.isInteger(v.moves) && ['ready','playing','won'].includes(v.status);}
+function restoreLights(){const v=load('lights');if(validLights(v))lights=v;}
+function newLights(difficulty='easy'){
+ clearTimeout(lightsResultTimer);const config=LIGHTS_LEVELS[difficulty]||LIGHTS_LEVELS.easy,n=config.size,previous=load('lights.last.'+difficulty,'');let cells,solution;
+ for(let attempt=0;attempt<150;attempt++){cells=Array(n*n).fill(false);const presses=shuffle(Array.from({length:n*n},(_,i)=>i)).slice(0,config.presses);for(const i of presses)toggleLights(cells,i,n);solution=solveLights(cells,n);if(solution && solution.length>=config.min && cells.map(Number).join('')!==previous)break;}
+ // Each candidate is made by legal moves from all-off; the fallback remains solvable.
+ if(!solution?.length){cells=Array(n*n).fill(false);toggleLights(cells,Math.floor(Math.random()*n*n),n);}
+ save('lights.last.'+difficulty,cells.map(Number).join(''));lights={difficulty,n,cells,initial:[...cells],history:[],moves:0,elapsed:0,status:'ready',selected:0};lightsHint=-1;save('lights',lights);renderLights();
+}
+function restartLights(){if(!lights)return;clearTimeout(lightsResultTimer);lights.cells=[...lights.initial];lights.history=[];lights.moves=0;lights.elapsed=0;lights.status='ready';lightsHint=-1;save('lights',lights);renderLights();}
+function lightsMove(index){
+ if(!lights || lights.status==='won' || index<0 || index>=lights.cells.length)return;
+ const changed=lightsNeighbors(index,lights.n);lights.selected=index;toggleLights(lights.cells,index,lights.n);lights.history.push(index);lights.moves++;lights.status='playing';lightsHint=-1;clickSound(500,.055);
+ if(lights.cells.every(v=>!v)){lights.status='won';const key='best.lights.'+lights.difficulty,best=load(key);if(best==null||lights.moves<best)save(key,lights.moves);const state=lights;lightsResultTimer=setTimeout(()=>lightsResult(state),850);}
+ save('lights',lights);renderLights(changed,index);
+}
+function lightsResult(state){if(route!=='lights'||lights!==state||state.status!=='won')return;const best=load('best.lights.'+state.difficulty);dialog(`<div class="dialog-kicker">PUZZLE COMPLETE ? LIGHTS OUT</div><h2 id="dialog-title">Lights out. Nice work.</h2><p>You found the off switch.</p><div class="result-stats"><div class="result-stat"><strong>${state.moves}</strong><small>MOVES</small></div><div class="result-stat"><strong>${formatTime(state.elapsed)}</strong><small>TIME</small></div><div class="result-stat"><strong>${best}</strong><small>BEST MOVES</small></div></div><div class="dialog-actions"><button class="secondary-button" data-dialog-action="lights-back">Back</button><button class="secondary-button" data-dialog-action="lights-replay">Replay</button><button class="primary-button" data-dialog-action="new">New puzzle ${icon('arrow')}</button></div>`);clickSound(660,.14);}
+function updateLightsTools(){if(!lights)return;$('#lights-undo').disabled=!lights.history.length||lights.status==='won';$('#lights-hint').disabled=lights.status==='won';}
+function renderLights(changed=[],origin=-1){
+ if(!lights)return;const board=$('#lights-board'),n=lights.n,hadFocus=board.contains(document.activeElement);board.style.setProperty('--lights-size',n);board.classList.toggle('solved',lights.status==='won');
+ board.innerHTML=lights.cells.map((on,i)=>{const distance=origin<0?Math.floor(i/n)+i%n:(i===origin?0:1);return `<button class="lights-cell ${on?'on':''} ${changed.includes(i)?'changed':''} ${lightsHint===i?'hint':''}" style="--lights-delay:${distance*35}ms" data-index="${i}" aria-label="Row ${Math.floor(i/n)+1}, column ${i%n+1}, light ${on?'on':'off'}${lightsHint===i?', suggested move':''}" aria-pressed="${on}" tabindex="${lights.selected===i?0:-1}"></button>`}).join('');
+ if(hadFocus)board.querySelector(`[data-index="${lights.selected}"]`)?.focus({preventScroll:true});$('#lights-moves').textContent=lights.moves;$('#lights-time').textContent=formatTime(lights.elapsed);updateLightsTools();
+}
+$('#lights-board').addEventListener('click',e=>{const cell=e.target.closest('.lights-cell');if(cell)lightsMove(+cell.dataset.index)});
+$('#lights-board').addEventListener('keydown',e=>{if(!lights||!e.key.startsWith('Arrow'))return;const cell=e.target.closest('.lights-cell');if(!cell)return;const n=lights.n,i=+cell.dataset.index,r=Math.floor(i/n),c=i%n,nr=Math.max(0,Math.min(n-1,r+(e.key==='ArrowDown'?1:e.key==='ArrowUp'?-1:0))),nc=Math.max(0,Math.min(n-1,c+(e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0)));e.preventDefault();lights.selected=nr*n+nc;renderLights();$('#lights-board').querySelector(`[data-index="${lights.selected}"]`)?.focus({preventScroll:true});});
+$('#lights-undo').addEventListener('click',()=>{if(lights?.history.length&&lights.status!=='won'){const i=lights.history.pop();toggleLights(lights.cells,i,lights.n);lights.moves=Math.max(0,lights.moves-1);lights.selected=i;lightsHint=-1;save('lights',lights);renderLights(lightsNeighbors(i,lights.n),i);}closeSettings()});
+$('#lights-hint').addEventListener('click',()=>{if(!lights||lights.status==='won')return;const solution=solveLights(lights.cells,lights.n);if(solution?.length){lightsHint=solution[0];lights.selected=lightsHint;renderLights();notify('Try the outlined light.');}else notify('No hint available for this board.');closeSettings()});
+$('#lights-restart').addEventListener('click',()=>{restartLights();closeSettings()});
+$('#lights-new').addEventListener('click',()=>{newLights(lights?.difficulty||'easy');closeSettings()});
+
+/* -------- Keyboard support and live timers -------- */
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && !$('#modal-backdrop').hidden) { closeDialog(); return; }
+  if (event.key === 'Escape' && !$('#settings-backdrop').hidden) { closeSettings(); return; }
+  if (!$('#modal-backdrop').hidden) {
+    // Simple focus trap within the modal.
+    if (event.key === 'Tab') {
+      const focusable = [...$('#dialog').querySelectorAll('button:not(:disabled)')];
+      if (!focusable.length) return;
+      const first = focusable[0], last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    }
+    return;
+  }
+  if (!$('#settings-backdrop').hidden) return;
+  if (event.target.matches('select,input,textarea')) return;
+  if (route === 'wordle') { if ($('#word-keyboard').contains(event.target) && (event.key === 'Enter' || event.key === ' ')) return; if (!event.ctrlKey && !event.metaKey && !event.altKey && (/^[a-z]$/i.test(event.key) || event.key === 'Enter' || event.key === 'Backspace')) { event.preventDefault(); wordInput(event.key.toUpperCase()); } return; }
+  if (route === 'sudoku' && sudoku && !['paused','won','lost'].includes(sudoku.status)) {
+    const key = event.key;
+    if (key >= '1' && key <= '9' && !event.ctrlKey && !event.altKey && !event.metaKey) {
+      event.preventDefault(); sudokuAction(+key, event.shiftKey); return;
+    }
+    if (key === 'Backspace' || key === 'Delete' || key === '0') {
+      event.preventDefault(); sudokuAction(0); return;
+    }
+    if (key.toLowerCase() === 'n' && !event.ctrlKey) {
+      event.preventDefault(); $('#sudoku-notes').click(); return;
+    }
+    if (key.toLowerCase() === 'h' && !event.ctrlKey) {
+      event.preventDefault(); sudokuHint(); return;
+    }
+    if ((key.toLowerCase() === 'z' && (event.ctrlKey || event.metaKey)) || key.toLowerCase() === 'u') {
+      event.preventDefault(); sudokuUndo(); return;
+    }
+    if (key.startsWith('Arrow')) {
+      event.preventDefault();
+      const i = Math.max(0, sudoku.selected), r = Math.floor(i / 9), c = i % 9;
+      const next = {
+        ArrowLeft: r * 9 + ((c + 8) % 9), ArrowRight: r * 9 + ((c + 1) % 9),
+        ArrowUp: ((r + 8) % 9) * 9 + c, ArrowDown: ((r + 1) % 9) * 9 + c
+      }[key];
+      if (next != null) {
+        sudoku.selected = next; save('sudoku', sudoku);
+        renderSudoku(); $('#sudoku-board').querySelector(`[data-index="${next}"]`)?.focus({ preventScroll: true });
+      }
+    }
+  } else if (route === 'mines' && mines) {
+    if (event.key.toLowerCase() === 'r' && !event.ctrlKey && !event.metaKey) {
+      event.preventDefault(); newMines(mines.difficulty); return;
+    }
+    // Arrow navigation is scoped to the minefield, so scrolling still works elsewhere.
+    const inField = $('#mines-board').contains(document.activeElement);
+    if (!inField || ['won','lost'].includes(mines.status)) return;
+    if (event.key.startsWith('Arrow')) {
+      event.preventDefault();
+      const r = Math.floor(mines.selected / mines.cols), c = mines.selected % mines.cols;
+      const newRow = Math.max(0, Math.min(mines.rows - 1, r + (event.key === 'ArrowUp' ? -1 : event.key === 'ArrowDown' ? 1 : 0)));
+      const newCol = Math.max(0, Math.min(mines.cols - 1, c + (event.key === 'ArrowLeft' ? -1 : event.key === 'ArrowRight' ? 1 : 0)));
+      mines.selected = newRow * mines.cols + newCol;
+      renderMines(); $('#mines-board').querySelector(`[data-index="${mines.selected}"]`)?.focus({ preventScroll: true });
+    } else if (event.key.toLowerCase() === 'f') { event.preventDefault(); flagMine(mines.selected); }
+    else if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); revealMine(mines.selected); }
+  }
+});
+setInterval(() => {
+  if (document.hidden || !$('#modal-backdrop').hidden || !$('#settings-backdrop').hidden) return;
+  if (route === 'sudoku' && sudoku?.status === 'playing') {
+    sudoku.elapsed++;
+    $('#sudoku-time').textContent = formatTime(sudoku.elapsed);
+    if (sudoku.elapsed % 5 === 0) save('sudoku', sudoku);
+  }
+  if (route === 'nonogram' && nonogram?.status === 'playing') { nonogram.elapsed++; $('#nono-time').textContent = formatTime(nonogram.elapsed); if (nonogram.elapsed % 5 === 0) save('nonogram', nonogram); }
+  if (route === 'lights' && lights?.status === 'playing') { lights.elapsed++; $('#lights-time').textContent=formatTime(lights.elapsed); if (lights.elapsed % 5 === 0) save('lights',lights); }
+  if (route === 'mines' && mines?.status === 'playing') {
+    mines.elapsed++;
+    $('#mines-time').textContent = formatTime(mines.elapsed);
+    if (mines.elapsed % 5 === 0) save('mines', mines);
+  }
+}, 1000);
+window.addEventListener('pagehide', () => {
+  if (sudoku) save('sudoku', sudoku);
+  if (mines) save('mines', mines);
+  if (nonogram) save('nonogram', nonogram);
+  if (wordle) save('wordle', wordle);
+  if (lights) save('lights', lights);
+});
+
+// Route after the UI has been initialized.
+navigate(location.hash.replace('#', '') || 'home');
+
+// A service worker only runs on localhost/HTTPS, not when opened via file://.
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(() => {}));
+}
+
+</script>
+</body>
+</html>
