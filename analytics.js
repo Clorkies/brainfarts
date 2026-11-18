@@ -37,7 +37,7 @@
     const saved=storage('analytics.v1');
     if(!isObject(saved)||saved.version!==1)return empty();
     return {version:1,createdAt:safeInt(saved.createdAt)||Date.now(),totals:isObject(saved.totals)?saved.totals:{},
-      recent:Array.isArray(saved.recent)?saved.recent.filter(x=>isObject(x)&&KEYS.has(x.game)&&Number.isFinite(x.at)).slice(0,150):[]};
+      recent:Array.isArray(saved.recent)?saved.recent.filter(x=>isObject(x)&&KEYS.has(x.game)&&Number.isFinite(x.at)&&x.at>=0&&x.at<=8.64e15).slice(0,150):[]};
   }
   function write(x){try{localStorage.setItem(JOURNAL_KEY,JSON.stringify(x));}catch{}}
   const terminal=s=>s==='won'||s==='lost'||s==='over';
@@ -104,7 +104,7 @@
       return safeInt(points)?safeInt(points).toLocaleString()+' pts':'—';
     }
     if(game==='hanoi'){
-      for(let n=3;n<=7;n++){const b=storage('best.hanoi.'+n);if(b&&Number.isFinite(b.moves))return b.moves+' moves ('+n+' disks)';}
+      for(let n=7;n>=3;n--){const b=storage('best.hanoi.'+n);if(b&&Number.isFinite(b.moves))return b.moves+' moves ('+n+' disks)';}
       return '—';
     }
     if(game==='crossword'){
@@ -193,7 +193,7 @@
         wins:Math.max(safeInt(stats.wins),safeInt(legacy?.wins)),losses:safeInt(stats.losses),lastAt:safeInt(stats.lastAt),
         best:bestOf(game.key)};
     });
-    const all=GAMES.map(g=>{
+    const all=meta.map(g=>{
       const stats=isObject(j.totals[g.key])?j.totals[g.key]:{},legacy=g.key==='wordle'?storage('wordle.stats'):{};
       return {played:Math.max(safeInt(stats.played),safeInt(legacy?.played)),wins:Math.max(safeInt(stats.wins),safeInt(legacy?.wins)),seconds:safeInt(stats.solvedSeconds)};
     });
