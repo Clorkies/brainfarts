@@ -36,8 +36,10 @@
   }
   function setVolume(v){
     volume=clamp(v,0,1);
-    if(bus)bus.gain.setTargetAtTime?.(.5*volume,audio.currentTime,.018);
-    else if(bus)bus.gain.value=.5*volume;
+    if(bus) {
+      if(typeof bus.gain.setTargetAtTime==='function') bus.gain.setTargetAtTime(.5*volume,audio.currentTime,.018);
+      else bus.gain.value=.5*volume;
+    }
   }
   function tone(freq,{at=0,duration=.08,gain=.025,shape='sine',end=0,attack=.003,pan=0}={}){
     if(!audio||!bus)return;
