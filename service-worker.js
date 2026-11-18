@@ -1,5 +1,5 @@
 // Version is stamped automatically by publish.ps1 (hash of all app files).
-const VERSION = 'analytics-aa12d7f6';
+const VERSION = 'sound-v3-472a202e';
 const CACHE = 'brainfarts-' + VERSION;
 const FILES = ['./', './index.html', './sound.js', './crossword-levels.js', './crossword.js', './crossword.css', './wordsearch.js', './wordsearch.css', './shelf.css', './analytics.js', './analytics.css', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png', './favicon.svg', './favicon-32.png'];
 
