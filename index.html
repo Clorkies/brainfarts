@@ -212,22 +212,22 @@ body[data-screen="hanoi"]{height:100dvh;overflow:hidden}
 .hanoi-preview:before{content:"";height:100px;width:9px;border-radius:8px;background:#698f9f;position:absolute;bottom:13px}
 .hanoi-preview i{position:absolute;display:block;width:120px;height:19px;bottom:15px;border-radius:20px;background:#345fb4;box-shadow:inset 0 -4px #0001}
 .hanoi-preview i:nth-child(2){width:100px;bottom:36px;background:#75a1e2}.hanoi-preview i:nth-child(3){width:80px;bottom:57px;background:#ddad69}.hanoi-preview i:nth-child(4){width:60px;bottom:78px;background:#ffdda2}
-.hanoi-content{width:min(100%,800px);margin:auto;flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:clamp(14px,4dvh,40px);padding:12px clamp(12px,4vw,24px) max(18px,env(safe-area-inset-bottom))}
+.hanoi-content{width:min(100%,800px);margin:0 auto;flex:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-start;gap:clamp(10px,2.4dvh,22px);padding:12px clamp(12px,4vw,24px) max(6px,env(safe-area-inset-bottom))}
 .hanoi-score{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:min(100%,550px);margin:0 auto;text-align:center}
 .hanoi-score div{background:var(--blue-faint);border-radius:14px;padding:11px 5px}.hanoi-score small{display:block;font-size:10px;letter-spacing:1px;font-weight:800;color:var(--muted)}.hanoi-score strong{font-size:clamp(21px,5vw,29px);font-variant-numeric:tabular-nums}
-.hanoi-stage{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(5px,2vw,20px);width:100%;height:clamp(205px,42dvh,340px);margin:auto}
+.hanoi-stage{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(5px,2vw,20px);width:100%;height:auto;min-height:0;flex:1 1 auto;order:2;margin:0 auto;align-self:stretch}
 .hanoi-peg{position:relative;min-width:0;border-radius:17px;background:transparent;padding:0;touch-action:none;user-select:none;-webkit-user-select:none;transition:background .15s}.hanoi-peg.selected,.hanoi-peg:active{background:var(--blue-faint)}
 .hanoi-rod{position:absolute;bottom:38px;left:50%;transform:translateX(-50%);height:75%;width:10px;background:#aabbd1;border-radius:8px 8px 0 0}
 .hanoi-base{position:absolute;bottom:30px;left:0;width:100%;height:12px;border-radius:10px;background:#718cab}
 .hanoi-stack{position:absolute;bottom:42px;left:0;right:0;height:calc(100% - 65px);display:flex;flex-direction:column-reverse;justify-content:flex-start;align-items:center;gap:3px;padding:0 3px}
 .hanoi-disk{pointer-events:none;flex:none;display:block;width:var(--w);height:min(32px,calc((100% - 20px) / var(--hanoi-n,7)));border-radius:40px;background:var(--c);box-shadow:inset 0 -4px #14243d25,0 2px 4px #1b30501f;transition:transform .2s}
 .hanoi-peg.selected .hanoi-disk:last-child{transform:translateY(-12px)}.hanoi-peg-label{position:absolute;bottom:0;left:0;right:0;text-align:center;height:30px;color:var(--muted);font-size:13px;font-weight:850}
-.hanoi-caption{text-align:center;font-size:14px;color:var(--muted);margin:0 auto;min-height:40px}
-@media(max-width:600px){.hanoi-stage{height:min(39dvh,300px)}.hanoi-content{gap:15px}.home-game-card--hanoi .home-card-copy{max-width:65%}.home-game-card--hanoi .home-card-copy strong{font-size:clamp(23px,6vw,32px)}.home-game-card--hanoi .hanoi-preview{transform:rotate(6deg) scale(.8)}}
+.hanoi-caption{order:1;flex:0 0 auto;text-align:center;font-size:14px;color:var(--muted);margin:0 auto;min-height:25px}
+@media(max-width:600px){.hanoi-content{gap:clamp(10px,2dvh,18px)}.home-game-card--hanoi .home-card-copy{max-width:65%}.home-game-card--hanoi .home-card-copy strong{font-size:clamp(23px,6vw,32px)}.home-game-card--hanoi .hanoi-preview{transform:rotate(6deg) scale(.8)}}
 .hanoi-peg.drag-over{background:var(--blue-match);outline:2px dashed var(--blue);outline-offset:-5px}
 .hanoi-peg.drag-origin .hanoi-disk:last-child{opacity:.3}
 .hanoi-drag-ghost{position:fixed;z-index:2000;pointer-events:none;transform:translate(-50%,-50%);border-radius:40px;box-shadow:inset 0 -4px #14243d25,0 10px 25px #1b305045;opacity:.96}
-@media(max-height:560px){.hanoi-stage{height:170px}.hanoi-content{gap:7px}}
+@media(max-height:560px){.hanoi-content{gap:7px;padding-top:5px;padding-bottom:3px}.hanoi-caption{min-height:20px}}
 
 </style>
   <title>Brainfarts — Give your brain a little workout</title>
@@ -818,6 +818,22 @@ function hanoiHint(){
  }
  if(path.length){const next=path[0],message='Hint: '+String.fromCharCode(65+next.a)+' → '+String.fromCharCode(65+next.b);closeSettings();notify(message);$('#hanoi-caption').textContent=message;}
 }
+/* Use the whole remaining screen for drop targets, including low thumb releases. */
+function hanoiDropTarget(x,y) {
+ const stage=$('#page-hanoi .hanoi-stage');
+ if(!stage) return null;
+ const rect=stage.getBoundingClientRect();
+ // Accept the entire peg column and 72px of grace below the stage; never
+ // guess a destination when a finger is far outside the playing field.
+ if(x<rect.left || x>rect.right || y<rect.top-18 || y>Math.min(window.innerHeight,rect.bottom+72)) return null;
+ let closest=null,nearest=Infinity;
+ for(const peg of $$('.hanoi-peg')){
+  const box=peg.getBoundingClientRect();
+  const delta=Math.abs(x-(box.left+box.right)/2);
+  if(delta<nearest){nearest=delta;closest=peg;}
+ }
+ return closest;
+}
 /* Two options: tap source + target, or drag a disk between pegs. */
 let hanoiDrag=null,hanoiIgnorePointerClick=false;
 function resetHanoiDrag(){
@@ -854,7 +870,7 @@ $$('[data-hanoi-peg]').forEach(button=>{
   }
   if(drag.active){
    event.preventDefault();drag.ghost.style.left=event.clientX+'px';drag.ghost.style.top=event.clientY+'px';
-   const target=document.elementFromPoint(event.clientX,event.clientY)?.closest('.hanoi-peg');
+   const target=hanoiDropTarget(event.clientX,event.clientY);
    $$('.hanoi-peg').forEach(el=>el.classList.toggle('drag-over',el===target&&el!==button));
   }
  });
@@ -862,7 +878,7 @@ $$('[data-hanoi-peg]').forEach(button=>{
   const drag=hanoiDrag;
   if(!drag||drag.source!==index||drag.id!==event.pointerId)return;
   if(!drag.active){resetHanoiDrag();return;}
-  const target=document.elementFromPoint(event.clientX,event.clientY)?.closest('.hanoi-peg');
+  const target=hanoiDropTarget(event.clientX,event.clientY);
   const dest=target?Number(target.dataset.hanoiPeg):-1,src=drag.source;
   resetHanoiDrag();hanoiIgnorePointerClick=true;event.preventDefault();
   if(dest>=0&&dest<=2&&dest!==src){hanoi.selected=src;hanoiSelect(dest);}
