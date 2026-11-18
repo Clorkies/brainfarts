@@ -43,7 +43,7 @@ function crosswordWord(){
 function crosswordPickWord(id){
  if(!crossword||crossword.status==='won')return;
  const w=crosswordPuzzle().entries.find(w=>w.id===id);if(!w)return;
- crossword.direction=w.dir;crossword.selected=w.cells.find(i=>!crossword.letters[i])??w.cells[0];save('crossword',crossword);renderCrossword();
+ crossword.direction=w.dir;crossword.selected=w.cells.find(i=>!crossword.letters[i])??w.cells[0];save('crossword',crossword);renderCrossword();sfx('crossword.select');
 }
 function crosswordPickCell(i){
  if(!crossword||crossword.status==='won'||!Number.isInteger(i)||i<0||i>=crosswordPuzzle().answer.length||crosswordPuzzle().answer[i]==='#')return;
@@ -52,7 +52,7 @@ function crosswordPickCell(i){
   const other=crossword.direction==='across'?'down':'across';
   if(p.entries.some(w=>w.dir===other&&w.cells.includes(i)))crossword.direction=other;
  }else if(!p.entries.some(w=>w.dir===crossword.direction&&w.cells.includes(i)))crossword.direction=crossword.direction==='across'?'down':'across';
- crossword.selected=i;save('crossword',crossword);renderCrossword();
+ crossword.selected=i;save('crossword',crossword);renderCrossword();sfx('crossword.select');
 }
 function crosswordStepClue(delta){
  if(!crossword||crossword.status==='won')return;
@@ -82,7 +82,7 @@ function crosswordFinished(){
  crossword.status='won';save('crossword',crossword);
  const key='crossword.best.'+crossword.id,best=load(key);
  if(best==null||crossword.elapsed<best)save(key,crossword.elapsed);
- renderCrossword();clickSound(700,.2);confetti();
+ renderCrossword();sfx('win');confetti();
  dialog('<svg class="brand-symbol dialog-brand" aria-hidden="true"><use href="#i-brand"/></svg><div class="dialog-kicker">CROSSWORD COMPLETE</div><h2 id="dialog-title">Words well played.</h2><p>Every crossing clicked into place.</p><div class="result-stats"><div class="result-stat"><strong>'+p.entries.length+'</strong><small>CLUES</small></div><div class="result-stat"><strong>'+formatTime(crossword.elapsed)+'</strong><small>TIME</small></div><div class="result-stat"><strong>'+crossword.revealed.length+'</strong><small>HINTS</small></div></div><div class="dialog-actions"><button class="secondary-button" data-dialog-action="home">All games</button><button class="primary-button" data-dialog-action="crossword-next">Next puzzle '+icon('arrow')+'</button></div>');
  return true;
 }
@@ -90,9 +90,11 @@ function crosswordInput(v){
  if(!crossword||crossword.status==='won')return;
  const w=crosswordWord(),at=w.cells.indexOf(crossword.selected);
  if(v==='Backspace'){
+  sfx('crossword.erase');
   if(crossword.letters[crossword.selected])crossword.letters[crossword.selected]='';
   else if(at>0){crossword.selected=w.cells[at-1];crossword.letters[crossword.selected]='';}
  }else if(/^[A-Z]$/.test(v)){
+  sfx('crossword.type');
   crossword.letters[crossword.selected]=v;if(crossword.status==='ready')crossword.status='playing';
   const next=w.cells.slice(at+1).find(i=>!crossword.letters[i])??w.cells.slice(0,at).find(i=>!crossword.letters[i]);
   if(next!==undefined)crossword.selected=next;
@@ -111,7 +113,7 @@ function crosswordCheck(){
   if(!crossword.letters[i])blanks++;
   else if(crossword.letters[i]!==p.answer[i])crossword.wrong.push(i);
  }
- renderCrossword();
+ renderCrossword();sfx(crossword.wrong.length?'wordle.invalid':'crossword.check');
  notify(crossword.wrong.length?crossword.wrong.length+' letter(s) to rethink':blanks?'Correct so far · '+blanks+' blanks left':'All correct!');
 }
 function crosswordReveal(){
@@ -121,7 +123,7 @@ function crosswordReveal(){
  if(crossword.letters[i]===p.answer[i]){closeSettings();notify('That letter is already correct');return;}
  crossword.letters[i]=p.answer[i];if(!crossword.revealed.includes(i))crossword.revealed.push(i);
  crossword.wrong=[];crossword.selected=i;if(crossword.status==='ready')crossword.status='playing';
- save('crossword',crossword);closeSettings();if(!crosswordFinished())renderCrossword();
+ save('crossword',crossword);closeSettings();sfx('crossword.hint');if(!crosswordFinished())renderCrossword();
 }
 function renderCrossword(){
  if(!crossword)return;
