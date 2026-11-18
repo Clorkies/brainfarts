@@ -217,3 +217,126 @@
 :root[data-theme="dark"] .shelf-card--hanoi{--card-bg:#294e4b;--card-ink:#effffb;--card-sub:#b3d8d1}
 :root[data-theme="dark"] .shelf-card--crossword{--card-bg:#304363;--card-ink:#eef4ff;--card-sub:#bdd0ed}
 :root[data-theme="dark"] .shelf-card--wordsearch{--card-bg:#62493d;--card-ink:#fff3ec;--card-sub:#e2c3b4}
+
+
+/* Brainfarts shelf v4: one gallery, no category headers or numbering.
+   The three mosaics vary card shape only; DOM/game order never changes. */
+#brainfarts-shelf{container-type:inline-size}
+.shelf-page .home-topline{height:68px}
+.shelf-page .shelf-hero{padding:clamp(18px,4vw,40px) 0 clamp(20px,4.5vw,38px)}
+.shelf-page .shelf-hero h1{font-size:clamp(27px,5vw,47px);letter-spacing:-1.75px;line-height:1.16;margin:0;max-width:680px}
+.shelf-grid--all{--shelf-gap:11px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:clamp(132px,calc((100vw - 48px)/2),430px);gap:var(--shelf-gap);align-items:stretch}
+@supports(width:1cqw){.shelf-grid--all{grid-auto-rows:calc((100cqw - var(--shelf-gap))/2)}}
+.shelf-grid--all .shelf-card{min-height:0;min-width:0;grid-column:auto;grid-row:auto}
+.shelf-grid--all .shelf-card:nth-child(1){grid-area:a}
+.shelf-grid--all .shelf-card:nth-child(2){grid-area:b}
+.shelf-grid--all .shelf-card:nth-child(3){grid-area:c}
+.shelf-grid--all .shelf-card:nth-child(4){grid-area:d}
+.shelf-grid--all .shelf-card:nth-child(5){grid-area:e}
+.shelf-grid--all .shelf-card:nth-child(6){grid-area:f}
+.shelf-grid--all .shelf-card:nth-child(7){grid-area:g}
+.shelf-grid--all .shelf-card:nth-child(8){grid-area:h}
+.shelf-grid--all .shelf-card:nth-child(9){grid-area:i}
+.shelf-grid--all .shelf-card:nth-child(10){grid-area:j}
+#brainfarts-shelf[data-layout="a"] .shelf-grid--all{grid-template-areas:"a a" "b c" "d d" "e f" "e g" "h i" "j j"}
+#brainfarts-shelf[data-layout="b"] .shelf-grid--all{grid-template-areas:"a b" "a c" "d d" "e f" "g f" "h i" "j j"}
+#brainfarts-shelf[data-layout="c"] .shelf-grid--all{grid-template-areas:"a a" "b c" "d d" "e f" "g f" "h i" "j j"}
+.shelf-grid--all .shelf-card-top{justify-content:flex-end;min-height:26px}
+.shelf-grid--all .shelf-art{min-height:0}
+.shelf-grid--all .shelf-card-copy{flex:none}
+.shelf-grid--all .shelf-card-copy strong{overflow-wrap:normal}
+.shelf-grid--all .shelf-card--crossword,.shelf-grid--all .shelf-card--wordsearch{aspect-ratio:1}
+.shelf-grid--all .shelf-card--soon{border:1.5px dashed var(--line);min-height:0;aspect-ratio:auto;box-shadow:none;cursor:default}
+.shelf-grid--all .shelf-card--soon:active{transform:none}
+.shelf-grid--all .shelf-card--soon .shelf-soon-center{min-height:0;width:100%;gap:12px}
+.shelf-grid--all .shelf-card--soon .shelf-soon-center .shelf-card-copy{max-width:75%}
+.shelf-grid--all .shelf-card--soon .shelf-card-copy strong{font-size:clamp(23px,4.1vw,37px)}
+.shelf-grid--all .shelf-card--soon .shelf-card-copy small{font-size:clamp(11px,1.5vw,14px)}
+.shelf-grid--all .shelf-card--soon .shelf-soon-icon{height:clamp(56px,9vw,95px)}
+.shelf-grid--all .shelf-card--wordle .shelf-wordle-art{transform:rotate(-4deg)}
+.shelf-grid--all .shelf-card--mines .shelf-mines-art{transform:rotate(-4deg)}
+.shelf-grid--all .shelf-card--hanoi .shelf-art{overflow:visible}
+.shelf-grid--all .shelf-card--crossword .shelf-crossword-art,
+.shelf-grid--all .shelf-card--wordsearch .shelf-wordsearch-art{width:clamp(85px,18vw,170px)}
+@media(min-width:860px){
+ .shelf-grid--all{--shelf-gap:14px;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:clamp(155px,18vw,260px)}
+ @supports(width:1cqw){.shelf-grid--all{grid-auto-rows:calc((100cqw - 3 * var(--shelf-gap))/4)}}
+ #brainfarts-shelf[data-layout="a"] .shelf-grid--all{grid-template-areas:"a a b c" "a a b d" "e e f g" "e e h i" "j j j j"}
+ #brainfarts-shelf[data-layout="b"] .shelf-grid--all{grid-template-areas:"a b c c" "a b d d" "e f g g" "e f h i" "j j j j"}
+ #brainfarts-shelf[data-layout="c"] .shelf-grid--all{grid-template-areas:"a a b c" "d d b e" "f f g g" "h i j j"}
+ .shelf-grid--all .shelf-card{padding:clamp(14px,2.5vw,24px)}
+ .shelf-grid--all .shelf-card-copy strong{font-size:clamp(19px,2.6vw,34px)}
+ .shelf-grid--all .shelf-card--soon .shelf-soon-center{justify-content:space-between;align-items:center}
+}
+@media(max-width:859px){
+ .shelf-grid--all .shelf-card{padding:clamp(10px,2.8vw,18px)}
+ .shelf-grid--all .shelf-card-copy strong{font-size:clamp(16px,4.4vw,29px)}
+ .shelf-grid--all .shelf-card-copy small{font-size:clamp(9px,2.5vw,13px);line-height:1.25}
+ .shelf-grid--all .shelf-card--soon .shelf-card-copy strong{font-size:clamp(23px,5vw,34px)}
+ .shelf-grid--all .shelf-soon-icon{width:auto}
+}
+@media(max-width:390px){
+ .shelf-grid--all .shelf-card{padding:10px}
+ .shelf-grid--all .shelf-card-copy strong{font-size:clamp(15px,4.7vw,20px)}
+ .shelf-grid--all .shelf-card-copy small{font-size:9px}
+ .shelf-grid--all .shelf-card--soon .shelf-card-copy strong{font-size:23px}
+ .shelf-grid--all .shelf-card--soon .shelf-soon-icon{height:55px}
+ .shelf-grid--all .shelf-card--soon .shelf-soon-icon .brand-symbol{width:35px;height:31px}
+}
+/* Miniature game loops: deliberately idle for long beats to avoid visual noise. */
+.shelf-grid--all .shelf-sudoku-art i.blank{position:relative}
+.shelf-grid--all .shelf-sudoku-art i.blank:after{content:attr(data-fill);color:#315b9e;opacity:1;display:block}
+.shelf-grid--all .shelf-mines-art .reveal{position:relative}
+.shelf-grid--all .shelf-mines-art .reveal:after{content:attr(data-clue);display:grid;place-items:center;position:absolute;inset:0;color:#315d9c;opacity:1}
+.shelf-grid--all .shelf-merge-art i:first-child{position:relative}
+.shelf-grid--all .shelf-merge-art i:first-child:after{content:"4";position:absolute;inset:0;display:grid;place-items:center;border-radius:9px;background:#f5d394;color:#704c34;opacity:0}
+.shelf-grid--all .shelf-hanoi-flying-disk{position:absolute;left:16.67%;bottom:62px;width:24%;height:13px;border-radius:100px;background:#f6de9c;transform:translateX(-50%);box-shadow:inset 0 -2px #a57c4522;z-index:3}
+@media(prefers-reduced-motion:no-preference){
+ .shelf-grid--all .shelf-sudoku-art i.blank:after{animation:shelf-fill-cell 8s ease-in-out infinite both}
+ .shelf-grid--all .shelf-sudoku-art i.blank:nth-child(3):after{animation-delay:0s}
+ .shelf-grid--all .shelf-sudoku-art i.blank:nth-child(7):after{animation-delay:.55s}
+ .shelf-grid--all .shelf-sudoku-art i.blank:nth-child(9):after{animation-delay:1.1s}
+ .shelf-grid--all .shelf-sudoku-art i.blank:nth-child(16):after{animation-delay:1.65s}
+ .shelf-grid--all .shelf-mines-art .reveal:after{animation:shelf-mine-open 8s ease-in-out infinite}
+ .shelf-grid--all .shelf-mines-art .reveal:nth-child(7):after{animation-delay:.45s}
+ .shelf-grid--all .shelf-mines-art .reveal:nth-child(11):after{animation-delay:.9s}
+ .shelf-grid--all .shelf-mines-art .flag{animation:shelf-flag-nod 8s ease-in-out infinite}
+ .shelf-grid--all .shelf-wordle-art .guess-one{animation:shelf-first-guess 9s ease-in-out infinite both}
+ .shelf-grid--all .shelf-wordle-art .guess-two{animation:shelf-second-guess 9s ease-in-out infinite both}
+ .shelf-grid--all .shelf-merge-art i:nth-child(2){animation:shelf-tile-merge 7s ease-in-out infinite}
+ .shelf-grid--all .shelf-merge-art i:first-child:after{animation:shelf-tile-result 7s ease-in-out infinite}
+ .shelf-grid--all .shelf-nonogram-art i.on{animation:shelf-pixel-reveal 10s ease-in-out infinite}
+ .shelf-grid--all .shelf-nonogram-art i.on:nth-child(3n){animation-delay:.6s}
+ .shelf-grid--all .shelf-nonogram-art i.on:nth-child(4n){animation-delay:1.1s}
+ .shelf-grid--all .shelf-lights-art i.on{animation:shelf-lights-toggle 8s ease-in-out infinite}
+ .shelf-grid--all .shelf-lights-art i.on:nth-child(odd){animation-delay:.45s}
+ .shelf-grid--all .shelf-hanoi-flying-disk{animation:shelf-hanoi-move 9s ease-in-out infinite}
+ .shelf-grid--all .shelf-crossword-art i:not(.block):nth-child(3n){animation:shelf-crossword-type 9s ease-in-out infinite}
+ .shelf-grid--all .shelf-crossword-art i:not(.block):nth-child(4n){animation:shelf-crossword-type 9s ease-in-out infinite .8s}
+ .shelf-grid--all .shelf-wordsearch-art i.found{animation:shelf-word-find 8s ease-in-out infinite}
+ .shelf-grid--all .shelf-wordsearch-art i.found:nth-child(2){animation-delay:.18s}
+ .shelf-grid--all .shelf-wordsearch-art i.found:nth-child(3){animation-delay:.36s}
+ .shelf-grid--all .shelf-wordsearch-art i.found:nth-child(4){animation-delay:.54s}
+ .shelf-grid--all .shelf-wordsearch-art i.found:nth-child(5){animation-delay:.72s}
+ .shelf-grid--all .shelf-wordsearch-art i.found:nth-child(6){animation-delay:.9s}
+}
+#page-home[hidden] .shelf-grid--all *{animation-play-state:paused!important}
+@keyframes shelf-fill-cell{0%,13%{opacity:0;transform:scale(.5)}21%,87%{opacity:1;transform:scale(1)}96%,100%{opacity:0;transform:scale(.5)}}
+@keyframes shelf-mine-open{0%,14%{opacity:0;transform:scale(.6);background:#cfbd98}22%,84%{opacity:1;transform:scale(1);background:#fffdf7}95%,100%{opacity:0;transform:scale(.6);background:#cfbd98}}
+@keyframes shelf-flag-nod{0%,17%,42%,100%{transform:rotate(0)}27%{transform:rotate(-8deg)}33%{transform:rotate(5deg)}}
+@keyframes shelf-first-guess{0%,5%{opacity:.06;transform:rotateX(-85deg)}14%,89%{opacity:1;transform:rotateX(0)}98%,100%{opacity:.06;transform:rotateX(-85deg)}}
+@keyframes shelf-second-guess{0%,36%{opacity:0;transform:rotateX(-85deg)}46%,88%{opacity:1;transform:rotateX(0)}98%,100%{opacity:0;transform:rotateX(-85deg)}}
+@keyframes shelf-tile-merge{0%,25%{opacity:1;transform:translateX(0)}39%,66%{opacity:0;transform:translateX(-105%)}83%,100%{opacity:1;transform:translateX(0)}}
+@keyframes shelf-tile-result{0%,32%{opacity:0;transform:scale(.9)}42%,66%{opacity:1;transform:scale(1)}84%,100%{opacity:0;transform:scale(.9)}}
+@keyframes shelf-pixel-reveal{0%,7%{background:#faf8ff}18%,82%{background:#614eb0}96%,100%{background:#faf8ff}}
+@keyframes shelf-lights-toggle{0%,24%,73%,100%{background:#f3d574;box-shadow:0 0 9px #f3d5749a}32%,66%{background:#344960;box-shadow:none}}
+@keyframes shelf-hanoi-move{0%,15%,100%{left:16.67%;bottom:62px}26%{left:16.67%;bottom:88px}42%{left:50%;bottom:88px}51%,68%{left:50%;bottom:14px}77%{left:50%;bottom:88px}90%{left:16.67%;bottom:88px}}
+@keyframes shelf-crossword-type{0%,20%{color:transparent}31%,88%{color:#4163a5}96%,100%{color:transparent}}
+@keyframes shelf-word-find{0%,18%,94%,100%{background:#fffaf6;color:#8d5948}28%,82%{background:#ffd682;color:#6e3e20}}
+@media(prefers-reduced-motion:reduce){
+ .shelf-grid--all .shelf-sudoku-art i.blank:after,
+ .shelf-grid--all .shelf-mines-art .reveal:after,
+ .shelf-grid--all .shelf-hanoi-flying-disk,
+ .shelf-grid--all .shelf-merge-art i:first-child:after{animation:none!important}
+ .shelf-grid--all .shelf-merge-art i:first-child:after{opacity:0}
+}
