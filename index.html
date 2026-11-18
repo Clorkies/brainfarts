@@ -231,6 +231,16 @@ body[data-screen="hanoi"]{height:100dvh;overflow:hidden}
 
 /* Disable double-tap zoom without disabling pinch zoom for accessibility. */
 html,body,button,a,[role="button"]{touch-action:manipulation}
+/* Sound settings: responsive, low-friction volume control. */
+.sound-volume-row{display:flex;flex-direction:column;gap:10px;margin:4px 0 13px;padding:2px 0;color:var(--ink);font-size:14px;font-weight:600}
+.sound-volume-row span{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sound-volume-row output{color:var(--muted);font-variant-numeric:tabular-nums;font-size:12px;font-weight:750}
+.sound-volume-row input{width:100%;height:25px;accent-color:var(--blue);cursor:pointer;touch-action:pan-x}
+.sound-preview-button{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px 16px;border-radius:12px;border:1px solid var(--line);background:var(--blue-faint);color:var(--blue-dark);font-size:13px;font-weight:790}
+.sound-preview-button svg{width:17px;height:17px}
+.sound-preview-button:active{transform:scale(.985)}
+.sound-preview-button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){.sound-preview-button{transition:none}}
 </style>
   <link rel="stylesheet" href="./crossword.css">
   <link rel="stylesheet" href="./wordsearch.css">
@@ -581,7 +591,9 @@ html,body,button,a,[role="button"]{touch-action:manipulation}
             <svg aria-hidden="true"><use href="#i-arrow"/></svg>
           </button>
         </div>
-        <div class="settings-section"><h3>Preferences</h3><label class="settings-row"><span>Dark theme</span><input id="theme-toggle" type="checkbox" role="switch"></label><label class="settings-row"><span>Sound effects</span><input id="sound-toggle" type="checkbox" role="switch"></label><label class="settings-row" id="remaining-toggle-row"><span>Show numbers left</span><input id="numbers-left-toggle" type="checkbox" role="switch"></label></div>
+        <div class="settings-section"><h3>Preferences</h3><label class="settings-row"><span>Dark theme</span><input id="theme-toggle" type="checkbox" role="switch"></label><label class="settings-row"><span>Sound effects</span><input id="sound-toggle" type="checkbox" role="switch"></label>
+        <label class="sound-volume-row" id="sound-volume-row" for="sound-volume"><span>Sound volume <output id="sound-volume-value" for="sound-volume">72%</output></span><input type="range" id="sound-volume" min="0" max="100" step="5" value="72" aria-label="Sound effects volume"></label>
+        <button type="button" id="sound-preview" class="sound-preview-button"><svg aria-hidden="true"><use href="#i-volume"/></svg> Preview sound</button><label class="settings-row" id="remaining-toggle-row"><span>Show numbers left</span><input id="numbers-left-toggle" type="checkbox" role="switch"></label></div>
         <div class="settings-section" id="sudoku-game-actions" hidden><h3>Current game</h3><div class="settings-quickstats"><span id="sudoku-progress-label">0%</span><span id="sudoku-filled">0 / 81</span><span id="sudoku-best">—</span></div><div class="settings-actions"><button class="sheet-action" id="sudoku-pause"><svg><use href="#i-pause"/></svg> Pause game</button><button class="sheet-action" id="sudoku-new"><svg><use href="#i-refresh"/></svg> Restart with a new puzzle</button></div></div>
         <div class="settings-section" id="mines-game-actions" hidden><h3>Current game</h3><div class="settings-quickstats"><span id="mines-progress-label">0%</span><span id="mines-best">—</span></div><div class="settings-actions"><button class="sheet-action" id="mines-new"><svg><use href="#i-refresh"/></svg> New minefield</button></div></div>
         <div class="settings-section"><h3>Learn &amp; install</h3><button class="settings-row link-row" id="settings-howto">How to play <svg><use href="#i-arrow"/></svg></button><button class="settings-row link-row" id="install-button">Install Brainfarts <svg><use href="#i-download"/></svg></button></div>
@@ -649,16 +661,21 @@ const settings = load('settings', { theme: 'light', sound: true, showRemaining: 
 settings.theme = settings.theme === 'dark' ? 'dark' : 'light';
 settings.sound = !!settings.sound;
 settings.showRemaining = !!settings.showRemaining;
+settings.soundVolume = Number.isFinite(settings.soundVolume) ? Math.max(0,Math.min(100,Math.round(settings.soundVolume))) : 72;
 
 document.documentElement.dataset.theme = settings.theme;
 
 function sfx(name, options) {
   if (!settings.sound || document.hidden) return;
-  window.BrainfartsSFX?.play(name, options);
+  const engine=window.BrainfartsSFX;
+  engine?.setVolume(settings.soundVolume/100);
+  engine?.play(name, options);
 }
 function clickSound(frequency = 440, duration = .08, type = 'sine') {
   if (!settings.sound || document.hidden) return;
-  window.BrainfartsSFX?.legacy(frequency, duration, type);
+  const engine=window.BrainfartsSFX;
+  engine?.setVolume(settings.soundVolume/100);
+  engine?.legacy(frequency, duration, type);
 }
 
 function notify(message) {
@@ -729,7 +746,7 @@ function showResult(game, won) {
   const title = won ? 'That felt good, right?' : game === 'sudoku' ? 'A little plot twist.' : 'Oops. Found a mine.';
   const description = won ? 'One more puzzle conquered. You made those neurons dance.' : game === 'sudoku' ? 'Three mistakes this time. Every good solve starts with another try.' : 'That mine was sneaky. The next field is yours.';
   dialog(`<span class="dialog-hero-icon" aria-hidden="true">${won ? '<svg class="brand-symbol dialog-brand" aria-hidden="true"><use href="#i-brand"/></svg>' : '◈'}</span><div class="dialog-kicker">${won ? 'PUZZLE COMPLETE' : 'GAME OVER'} · ${label.toUpperCase()}</div><h2 id="dialog-title">${title}</h2><p>${description}</p><div class="result-stats"><div class="result-stat"><strong>${formatTime(state.elapsed)}</strong><small>YOUR TIME</small></div><div class="result-stat"><strong>${best == null ? '—' : formatTime(best)}</strong><small>BEST TIME</small></div><div class="result-stat"><strong>${difficultyLabel(state.difficulty)}</strong><small>DIFFICULTY</small></div></div><div class="dialog-actions"><button class="secondary-button" data-dialog-action="home">All games</button><button class="primary-button" data-dialog-action="new">Play again ${icon('arrow')}</button></div>`);
-  if (won) { confetti(); sfx('win'); }
+  if (won) { confetti(); sfx(game === 'sudoku' ? 'sudoku.win' : 'mines.win'); }
   else if (game === 'sudoku') sfx('loss'); // Mine explosion already sounded.
 }
 
@@ -886,6 +903,10 @@ function updateSettingsUI() {
   document.querySelector('meta[name="theme-color"]').content = settings.theme === 'dark' ? '#1b2737' : '#ffffff';
   $('#theme-toggle').checked = settings.theme === 'dark';
   $('#sound-toggle').checked = settings.sound;
+  $('#sound-volume').value = settings.soundVolume;
+  $('#sound-volume-value').value = settings.soundVolume+'%';
+  $('#sound-volume-row').hidden = !settings.sound;
+  $('#sound-preview').hidden = !settings.sound;
   $('#numbers-left-toggle').checked = settings.showRemaining;
   $('#sudoku-number-pad').classList.toggle('show-left', settings.showRemaining);
 }
@@ -898,6 +919,14 @@ $('#sound-toggle').addEventListener('change', event => {
   save('settings', settings); updateSettingsUI();
   if (settings.sound) sfx('ui.on');
 });
+$('#sound-volume').addEventListener('input', event => {
+  settings.soundVolume=Math.max(0,Math.min(100,Number(event.target.value)||0));
+  $('#sound-volume-value').value=settings.soundVolume+'%';
+  save('settings',settings);
+  window.BrainfartsSFX?.setVolume(settings.soundVolume/100);
+});
+$('#sound-volume').addEventListener('change', () => sfx('ui.preview'));
+$('#sound-preview').addEventListener('click', () => sfx('ui.preview'));
 $('#numbers-left-toggle').addEventListener('change', event => {
   settings.showRemaining = event.target.checked;
   save('settings', settings); updateSettingsUI();
@@ -947,17 +976,17 @@ function renderHanoi(){
 }
 function hanoiSelect(i){
  if(!hanoi||hanoi.status==='won'||i<0||i>2)return;
- if(hanoi.selected===null){if(!hanoi.pegs[i].length){notify('That peg is empty');return;}hanoi.selected=i;renderHanoi();return;}
+ if(hanoi.selected===null){if(!hanoi.pegs[i].length){notify('That peg is empty');return;}hanoi.selected=i;renderHanoi();sfx('hanoi.pick');return;}
  if(hanoi.selected===i){hanoi.selected=null;renderHanoi();return;}
  const from=hanoi.selected,disk=hanoi.pegs[from].at(-1),top=hanoi.pegs[i].at(-1);
  if(top!=null&&top<disk){hanoi.selected=null;renderHanoi();notify('A bigger disk cannot go over a smaller one');sfx('hanoi.invalid');return;}
  hanoi.history.push(hanoi.pegs.map(p=>[...p]));if(hanoi.history.length>128)hanoi.history.shift();
  hanoi.pegs[from].pop();hanoi.pegs[i].push(disk);hanoi.moves++;hanoi.selected=null;
  hanoi.status=hanoi.pegs[2].length===hanoi.n?'won':'playing';
- sfx('hanoi.move', {disk});
+ if(hanoi.status!=='won')sfx('hanoi.move', {disk});
  if(hanoi.status==='won'){const k='best.hanoi.'+hanoi.n,b=load(k);if(!b||hanoi.moves<b.moves||(hanoi.moves===b.moves&&hanoi.elapsed<b.elapsed))save(k,{moves:hanoi.moves,elapsed:hanoi.elapsed});}
  save('hanoi',hanoi);renderHanoi();
- if(hanoi.status==='won'){sfx('win');confetti();dialog('<svg class="brand-symbol dialog-brand" aria-hidden="true"><use href="#i-brand"/></svg><div class="dialog-kicker">TOWER COMPLETE</div><h2 id="dialog-title">A towering achievement.</h2><p>You moved the entire stack, one smart step at a time.</p><div class="result-stats"><div class="result-stat"><strong>'+hanoi.moves+'</strong><small>MOVES</small></div><div class="result-stat"><strong>'+hanoiMinimum()+'</strong><small>MINIMUM</small></div><div class="result-stat"><strong>'+formatTime(hanoi.elapsed)+'</strong><small>YOUR TIME</small></div></div><div class="dialog-actions"><button class="secondary-button" data-dialog-action="home">All games</button><button class="primary-button" data-dialog-action="hanoi-replay">Play again '+icon('arrow')+'</button></div>');}
+ if(hanoi.status==='won'){sfx('hanoi.win');confetti();dialog('<svg class="brand-symbol dialog-brand" aria-hidden="true"><use href="#i-brand"/></svg><div class="dialog-kicker">TOWER COMPLETE</div><h2 id="dialog-title">A towering achievement.</h2><p>You moved the entire stack, one smart step at a time.</p><div class="result-stats"><div class="result-stat"><strong>'+hanoi.moves+'</strong><small>MOVES</small></div><div class="result-stat"><strong>'+hanoiMinimum()+'</strong><small>MINIMUM</small></div><div class="result-stat"><strong>'+formatTime(hanoi.elapsed)+'</strong><small>YOUR TIME</small></div></div><div class="dialog-actions"><button class="secondary-button" data-dialog-action="home">All games</button><button class="primary-button" data-dialog-action="hanoi-replay">Play again '+icon('arrow')+'</button></div>');}
 }
 function updateHanoiTools(){
  if(!hanoi)return;
@@ -1216,7 +1245,9 @@ function sudokuAction(number, forceNote = false) {
   if (finished) finishSudoku();
   save('sudoku', sudoku);
   renderSudoku(i);
-  celebrateSudokuUnits(sudokuCompletedUnits(beforeEntries, i), i);
+  const units=sudokuCompletedUnits(beforeEntries, i);
+  celebrateSudokuUnits(units, i);
+  if(units.length && sudoku.status!=='won' && sudoku.status!=='lost')sfx('sudoku.unit',{count:units.length});
   if (sudoku.status === 'lost') showResult('sudoku', false);
 }
 function finishSudoku() {
@@ -1489,12 +1520,12 @@ function revealMine(index) {
       const flagged = adjacent.filter(i => mines.cells[i].flagged).length;
       if (flagged === cell.count) {
         const covered = adjacent.filter(i => !mines.cells[i].flagged && !mines.cells[i].revealed);
-        if (covered.length) { uncoverMines(covered); sfx('mines.reveal'); }
+        if (covered.length) { uncoverMines(covered); if(mines.status!=='lost'&&mines.status!=='won')sfx(freshlyRevealed.size>=6?'mines.cascade':'mines.reveal'); }
       }
     }
   } else {
     uncoverMines([index]);
-    if (mines.status !== 'lost') sfx('mines.reveal');
+    if (mines.status !== 'lost' && mines.status !== 'won') sfx(freshlyRevealed.size>=6?'mines.cascade':'mines.reveal');
   }
   save('mines', mines); renderMines();
 }
@@ -1694,7 +1725,7 @@ function nonoSet(i,value) {
 }
 function nonoTap(i){nonoSet(i,nonogram.cells[i]===1?0:1)}
 function nonoMark(i){nonoSet(i,nonogram.cells[i]===2?0:2)}
-function nonoResult(){ if(route!=='nonogram'||nonogram?.status!=='won')return; sfx('win'); const n=nonogram.n; const art=nonogram.solution.map(v=>`<i class="${v?'on':''}"></i>`).join(''); dialog(`<div class="dialog-kicker">PUZZLE COMPLETE ? NONOGRAM</div><h2 id="dialog-title">Picture perfect.</h2><div class="nono-result-art" style="--n:${n}" aria-label="Completed picture">${art}</div><div class="result-stats"><div class="result-stat"><strong>${formatTime(nonogram.elapsed)}</strong><small>YOUR TIME</small></div><div class="result-stat"><strong>${nonogram.moves}</strong><small>MOVES</small></div><div class="result-stat"><strong>${difficultyLabel(nonogram.difficulty)}</strong><small>DIFFICULTY</small></div></div><div class="dialog-actions"><button class="secondary-button" data-dialog-action="nono-back">Back</button><button class="secondary-button" data-dialog-action="nono-replay">Replay</button><button class="primary-button" data-dialog-action="new">New puzzle</button></div>`); clickSound(660,.18); }
+function nonoResult(){ if(route!=='nonogram'||nonogram?.status!=='won')return; sfx('nonogram.win'); const n=nonogram.n; const art=nonogram.solution.map(v=>`<i class="${v?'on':''}"></i>`).join(''); dialog(`<div class="dialog-kicker">PUZZLE COMPLETE ? NONOGRAM</div><h2 id="dialog-title">Picture perfect.</h2><div class="nono-result-art" style="--n:${n}" aria-label="Completed picture">${art}</div><div class="result-stats"><div class="result-stat"><strong>${formatTime(nonogram.elapsed)}</strong><small>YOUR TIME</small></div><div class="result-stat"><strong>${nonogram.moves}</strong><small>MOVES</small></div><div class="result-stat"><strong>${difficultyLabel(nonogram.difficulty)}</strong><small>DIFFICULTY</small></div></div><div class="dialog-actions"><button class="secondary-button" data-dialog-action="nono-back">Back</button><button class="secondary-button" data-dialog-action="nono-replay">Replay</button><button class="primary-button" data-dialog-action="new">New puzzle</button></div>`); clickSound(660,.18); }
 function renderNonogram(){
  if(!nonogram)return; const {n,solution,cells,selected}=nonogram, board=$('#nono-board');
  const rows=Array.from({length:n},(_,r)=>nonoClues(solution.slice(r*n,(r+1)*n))), cols=Array.from({length:n},(_,c)=>nonoClues(Array.from({length:n},(_,r)=>solution[r*n+c])));
@@ -1758,7 +1789,7 @@ function wordResult(state) {
   if (route!=='wordle' || wordle!==state || state.status==='playing') return;
   const won=state.status==='won', stats=load('wordle.stats',{played:0,wins:0,streak:0});
   dialog(`<div class="dialog-kicker">${won?'WORD FOUND':'ROUND COMPLETE'} ? WORDLE</div><h2 id="dialog-title">${won?'Well played.':'Next word, fresh start.'}</h2><p>${won?'You found the word.':'The word was'} <strong>${state.answer}</strong>.</p><div class="result-stats"><div class="result-stat"><strong>${state.guesses.length} / 6</strong><small>GUESSES</small></div><div class="result-stat"><strong>${stats.wins||0}</strong><small>WINS</small></div><div class="result-stat"><strong>${stats.streak||0}</strong><small>STREAK</small></div></div><div class="dialog-actions"><button class="secondary-button" data-dialog-action="word-back">Back</button><button class="primary-button" data-dialog-action="new">New word ${icon('arrow')}</button></div>`);
-  sfx(won?'win':'loss');
+  sfx(won?'wordle.win':'wordle.loss');
 }
 function renderWordle(revealRow=-1, typed=-1) {
   if (!wordle) return;
@@ -1825,7 +1856,7 @@ function lightsMove(index){
  if(lights.cells.every(v=>!v)){lights.status='won';const key='best.lights.'+lights.difficulty,best=load(key);if(best==null||lights.moves<best)save(key,lights.moves);const state=lights;lightsResultTimer=setTimeout(()=>lightsResult(state),850);}
  save('lights',lights);renderLights(changed,index);
 }
-function lightsResult(state){if(route!=='lights'||lights!==state||state.status!=='won')return;const best=load('best.lights.'+state.difficulty);dialog(`<div class="dialog-kicker">PUZZLE COMPLETE ? LIGHTS OUT</div><h2 id="dialog-title">Lights out. Nice work.</h2><p>You found the off switch.</p><div class="result-stats"><div class="result-stat"><strong>${state.moves}</strong><small>MOVES</small></div><div class="result-stat"><strong>${formatTime(state.elapsed)}</strong><small>TIME</small></div><div class="result-stat"><strong>${best}</strong><small>BEST MOVES</small></div></div><div class="dialog-actions"><button class="secondary-button" data-dialog-action="lights-back">Back</button><button class="secondary-button" data-dialog-action="lights-replay">Replay</button><button class="primary-button" data-dialog-action="new">New puzzle ${icon('arrow')}</button></div>`);sfx('win');}
+function lightsResult(state){if(route!=='lights'||lights!==state||state.status!=='won')return;const best=load('best.lights.'+state.difficulty);dialog(`<div class="dialog-kicker">PUZZLE COMPLETE ? LIGHTS OUT</div><h2 id="dialog-title">Lights out. Nice work.</h2><p>You found the off switch.</p><div class="result-stats"><div class="result-stat"><strong>${state.moves}</strong><small>MOVES</small></div><div class="result-stat"><strong>${formatTime(state.elapsed)}</strong><small>TIME</small></div><div class="result-stat"><strong>${best}</strong><small>BEST MOVES</small></div></div><div class="dialog-actions"><button class="secondary-button" data-dialog-action="lights-back">Back</button><button class="secondary-button" data-dialog-action="lights-replay">Replay</button><button class="primary-button" data-dialog-action="new">New puzzle ${icon('arrow')}</button></div>`);sfx('lights.win');}
 function updateLightsTools(){if(!lights)return;$('#lights-undo').disabled=!lights.history.length||lights.status==='won';$('#lights-hint').disabled=lights.status==='won';}
 function renderLights(changed=[],origin=-1){
  if(!lights)return;const board=$('#lights-board'),n=lights.n,hadFocus=board.contains(document.activeElement);board.style.setProperty('--lights-size',n);board.classList.toggle('solved',lights.status==='won');
@@ -1928,7 +1959,7 @@ function moveMerge(direction) {
   if (!merge.continued && merge.cells.some(v=>v>=2048)) merge.status='won';
   else if (!mergeCanMove(merge.cells)) merge.status='over';
   save('2048',merge);updateMergeBest();
-  sfx(merge.status==='won'?'win':move.gained>=128?'merge.big':move.gained?'merge.combine':'merge.slide');
+  sfx(merge.status==='won'?'merge.win':merge.status==='over'?'merge.loss':move.gained>=128?'merge.big':move.gained?'merge.combine':'merge.slide');
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const layer=$('#merge-tiles');
   if (reduced || !layer.animate) {renderMerge(spawn,move.merged);return;}
