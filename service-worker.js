@@ -1,5 +1,5 @@
 // Version is stamped automatically by publish.ps1 (hash of all app files).
-const VERSION = 'sound-v3-9ae46f51';
+const VERSION = 'sfx-tactile-help-f89fe653';
 const CACHE = 'brainfarts-' + VERSION;
 const FILES = ['./', './index.html', './sound.js', './crossword-levels.js', './crossword.js', './crossword.css', './wordsearch.js', './wordsearch.css', './shelf.css', './analytics.js', './analytics.css', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png', './favicon.svg', './favicon-32.png'];
 
