@@ -105,10 +105,10 @@ function wsComplete(start,end){
  }
  return true;
 }
-function wsSelect(start,end,drag){
+function wsSelect(start,end,drag,viaPointer=false){
  if(!wordsearch||wordsearch.status==='won')return;
  if(drag){wsComplete(start,end);return;}
- if(wsAnchor===null){wsAnchor=start;wsPreview([start]);sfx('wordsearch.select');return;}
+ if(wsAnchor===null){wsAnchor=start;wsPreview([start]);if(!viaPointer)sfx('wordsearch.select');return;}
  if(wsAnchor===end){wsAnchor=null;wsPreview([]);return;}
  if(!wsComplete(wsAnchor,end)){wsAnchor=end;wsPreview([end]);}
 }
@@ -150,6 +150,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   const index=wsCellAt(e.clientX,e.clientY);if(index===null)return;
   wsGesture={id:e.pointerId,start:index,end:index,moved:false,x:e.clientX,y:e.clientY,lastSoundCell:index};
   board.setPointerCapture?.(e.pointerId);if(wordsearch.status==='ready')wordsearch.status='playing';
+  // Initialize Web Audio on pointerdown; Safari may reject context resume during pointermove.
+  sfx('wordsearch.select');
   wsPreview([index]);e.preventDefault();
  });
  board.addEventListener('pointermove',e=>{
@@ -168,7 +170,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  });
  board.addEventListener('pointerup',e=>{
   const g=wsGesture;if(!g||e.pointerId!==g.id)return;
-  const end=wsCellAt(e.clientX,e.clientY)??g.end;wsGesture=null;wsSelect(g.start,end,g.moved);
+  const end=wsCellAt(e.clientX,e.clientY)??g.end;wsGesture=null;wsSelect(g.start,end,g.moved,true);
   if(!g.moved)renderWordsearch();e.preventDefault();
  });
  board.addEventListener('pointercancel',()=>{wsGesture=null;wsPreview([]);});
