@@ -216,15 +216,18 @@ body[data-screen="hanoi"]{height:100dvh;overflow:hidden}
 .hanoi-score{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:min(100%,550px);margin:0 auto;text-align:center}
 .hanoi-score div{background:var(--blue-faint);border-radius:14px;padding:11px 5px}.hanoi-score small{display:block;font-size:10px;letter-spacing:1px;font-weight:800;color:var(--muted)}.hanoi-score strong{font-size:clamp(21px,5vw,29px);font-variant-numeric:tabular-nums}
 .hanoi-stage{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(5px,2vw,20px);width:100%;height:clamp(205px,42dvh,340px);margin:auto}
-.hanoi-peg{position:relative;min-width:0;border-radius:17px;background:transparent;padding:0;touch-action:manipulation;transition:background .15s}.hanoi-peg.selected,.hanoi-peg:active{background:var(--blue-faint)}
+.hanoi-peg{position:relative;min-width:0;border-radius:17px;background:transparent;padding:0;touch-action:none;user-select:none;-webkit-user-select:none;transition:background .15s}.hanoi-peg.selected,.hanoi-peg:active{background:var(--blue-faint)}
 .hanoi-rod{position:absolute;bottom:38px;left:50%;transform:translateX(-50%);height:75%;width:10px;background:#aabbd1;border-radius:8px 8px 0 0}
 .hanoi-base{position:absolute;bottom:30px;left:0;width:100%;height:12px;border-radius:10px;background:#718cab}
 .hanoi-stack{position:absolute;bottom:42px;left:0;right:0;height:calc(100% - 65px);display:flex;flex-direction:column-reverse;justify-content:flex-start;align-items:center;gap:3px;padding:0 3px}
-.hanoi-disk{flex:none;display:block;width:var(--w);height:clamp(19px,4dvh,32px);border-radius:40px;background:var(--c);box-shadow:inset 0 -4px #14243d25,0 2px 4px #1b30501f;transition:transform .2s}
+.hanoi-disk{pointer-events:none;flex:none;display:block;width:var(--w);height:min(32px,calc((100% - 20px) / var(--hanoi-n,7)));border-radius:40px;background:var(--c);box-shadow:inset 0 -4px #14243d25,0 2px 4px #1b30501f;transition:transform .2s}
 .hanoi-peg.selected .hanoi-disk:last-child{transform:translateY(-12px)}.hanoi-peg-label{position:absolute;bottom:0;left:0;right:0;text-align:center;height:30px;color:var(--muted);font-size:13px;font-weight:850}
 .hanoi-caption{text-align:center;font-size:14px;color:var(--muted);margin:0 auto;min-height:40px}
 @media(max-width:600px){.hanoi-stage{height:min(39dvh,300px)}.hanoi-content{gap:15px}.home-game-card--hanoi .home-card-copy{max-width:65%}.home-game-card--hanoi .home-card-copy strong{font-size:clamp(23px,6vw,32px)}.home-game-card--hanoi .hanoi-preview{transform:rotate(6deg) scale(.8)}}
-@media(max-height:560px){.hanoi-stage{height:170px}.hanoi-content{gap:7px}.hanoi-disk{height:19px}}
+.hanoi-peg.drag-over{background:var(--blue-match);outline:2px dashed var(--blue);outline-offset:-5px}
+.hanoi-peg.drag-origin .hanoi-disk:last-child{opacity:.3}
+.hanoi-drag-ghost{position:fixed;z-index:2000;pointer-events:none;transform:translate(-50%,-50%);border-radius:40px;box-shadow:inset 0 -4px #14243d25,0 10px 25px #1b305045;opacity:.96}
+@media(max-height:560px){.hanoi-stage{height:170px}.hanoi-content{gap:7px}}
 
 </style>
   <title>Brainfarts — Give your brain a little workout</title>
@@ -402,6 +405,7 @@ body[data-screen="hanoi"]{height:100dvh;overflow:hidden}
 <label class="setup-option"><input type="radio" name="setup-hanoi" value="4" ><span><strong>Medium</strong><small>4 disks · Minimum 15 moves</small></span><span class="radio-dot"></span></label>
 <label class="setup-option"><input type="radio" name="setup-hanoi" value="5" ><span><strong>Hard</strong><small>5 disks · Minimum 31 moves</small></span><span class="radio-dot"></span></label>
 <label class="setup-option"><input type="radio" name="setup-hanoi" value="6" ><span><strong>Expert</strong><small>6 disks · Minimum 63 moves</small></span><span class="radio-dot"></span></label>
+<label class="setup-option"><input type="radio" name="setup-hanoi" value="7" ><span><strong>Master</strong><small>7 disks · Minimum 127 moves</small></span><span class="radio-dot"></span></label>
 </div><button class="start-button" id="start-hanoi">Start solving <svg><use href="#i-arrow"/></svg></button><button class="resume-link" id="resume-hanoi" hidden>Resume saved puzzle</button></div></section>
 <section class="page play-page" id="page-hanoi" hidden>
 <header class="screen-header play-header"><button class="bare-icon back-button" data-route="setup-hanoi" aria-label="Back to setup"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">Tower of Hanoi</span><button class="bare-icon settings-open" aria-label="Tower of Hanoi settings"><svg><use href="#i-settings"/></svg></button></header>
@@ -756,21 +760,22 @@ window.setTimeout(() => {
 let hanoi=null;
 function hanoiInitial(n){return {n,pegs:[Array.from({length:n},(_,i)=>n-i),[],[]],moves:0,elapsed:0,selected:null,status:'ready',history:[]};}
 function validHanoi(h){
-  if(!h||![3,4,5,6].includes(h.n)||!Array.isArray(h.pegs)||h.pegs.length!==3||!Array.isArray(h.history)
+  if(!h||![3,4,5,6,7].includes(h.n)||!Array.isArray(h.pegs)||h.pegs.length!==3||!Array.isArray(h.history)
     ||!Number.isSafeInteger(h.moves)||h.moves<0||!Number.isSafeInteger(h.elapsed)||h.elapsed<0||!['ready','playing','won'].includes(h.status))return false;
   const all=h.pegs.flat();
   return all.length===h.n&&new Set(all).size===h.n&&all.every(d=>Number.isInteger(d)&&d>=1&&d<=h.n)
     &&h.pegs.every(p=>Array.isArray(p)&&p.every((d,i)=>i===0||p[i-1]>d));
 }
 function restoreHanoi(){const previous=load('hanoi');hanoi=validHanoi(previous)?previous:hanoiInitial(3);hanoi.selected=null;save('hanoi',hanoi);}
-function newHanoi(n=3){hanoi=hanoiInitial([3,4,5,6].includes(n)?n:3);save('hanoi',hanoi);renderHanoi();}
+function newHanoi(n=3){hanoi=hanoiInitial([3,4,5,6,7].includes(n)?n:3);save('hanoi',hanoi);renderHanoi();}
 function hanoiMinimum(){return 2**hanoi.n-1;}
 function renderHanoi(){
  if(!hanoi)return;
+ $('.hanoi-stage').style.setProperty('--hanoi-n',hanoi.n);
  $('#hanoi-moves').textContent=hanoi.moves;$('#hanoi-minimum').textContent=hanoiMinimum();$('#hanoi-time').textContent=formatTime(hanoi.elapsed);
  $('#hanoi-caption').textContent=hanoi.status==='won'?'Solved. Nice work!':hanoi.selected===null?'Tap a source peg, then a destination.':'Choose a destination peg.';
- const colors=['#f0c36e','#82aaf0','#345fb4','#8580d1','#4e9aab','#c97b79'];
- $('.hanoi-peg').forEach((el,i)=>{const p=hanoi.pegs[i];el.classList.toggle('selected',hanoi.selected===i);
+ const colors=['#f0c36e','#82aaf0','#345fb4','#8580d1','#4e9aab','#c97b79','#81b78e'];
+ $$('.hanoi-peg').forEach((el,i)=>{const p=hanoi.pegs[i];el.classList.toggle('selected',hanoi.selected===i);
   el.setAttribute('aria-label','Peg '+String.fromCharCode(65+i)+': '+(p.length?p.slice().reverse().join(', ')+' top to bottom':'empty'));
   el.querySelector('.hanoi-stack').innerHTML=p.map(d=>'<span class="hanoi-disk" style="--w:'+(29+d/hanoi.n*68)+'%;--c:'+colors[(d-1)%colors.length]+'"></span>').join('');
  });
@@ -813,7 +818,59 @@ function hanoiHint(){
  }
  if(path.length){const next=path[0],message='Hint: '+String.fromCharCode(65+next.a)+' → '+String.fromCharCode(65+next.b);closeSettings();notify(message);$('#hanoi-caption').textContent=message;}
 }
-$('[data-hanoi-peg]').forEach(el=>el.addEventListener('click',()=>hanoiSelect(Number(el.dataset.hanoiPeg))));
+/* Two options: tap source + target, or drag a disk between pegs. */
+let hanoiDrag=null,hanoiIgnorePointerClick=false;
+function resetHanoiDrag(){
+ if(!hanoiDrag)return;
+ hanoiDrag.ghost?.remove();
+ $$('.hanoi-peg').forEach(el=>el.classList.remove('drag-origin','drag-over'));
+ hanoiDrag=null;
+}
+$$('[data-hanoi-peg]').forEach(button=>{
+ const index=Number(button.dataset.hanoiPeg);
+ button.addEventListener('click',event=>{
+  if(hanoiIgnorePointerClick && event.detail!==0){event.preventDefault();event.stopPropagation();hanoiIgnorePointerClick=false;return;}
+  hanoiIgnorePointerClick=false;hanoiSelect(index);
+ });
+ button.addEventListener('pointerdown',event=>{
+  hanoiIgnorePointerClick=false;
+  if(event.button!==0||!hanoi||hanoi.status==='won'||!hanoi.pegs[index].length)return;
+  resetHanoiDrag();
+  hanoiDrag={source:index,id:event.pointerId,x:event.clientX,y:event.clientY,active:false,ghost:null};
+  button.setPointerCapture?.(event.pointerId);
+ });
+ button.addEventListener('pointermove',event=>{
+  const drag=hanoiDrag;
+  if(!drag||drag.source!==index||drag.id!==event.pointerId)return;
+  if(!drag.active && Math.hypot(event.clientX-drag.x,event.clientY-drag.y)>=9){
+   const top=button.querySelector('.hanoi-stack .hanoi-disk:last-child');
+   if(!top){resetHanoiDrag();return;}
+   drag.active=true;
+   const rect=top.getBoundingClientRect(),ghost=document.createElement('span');
+   ghost.className='hanoi-drag-ghost';
+   ghost.style.width=rect.width+'px';ghost.style.height=rect.height+'px';ghost.style.backgroundColor=getComputedStyle(top).backgroundColor;
+   document.body.append(ghost);drag.ghost=ghost;
+   button.classList.add('drag-origin');
+  }
+  if(drag.active){
+   event.preventDefault();drag.ghost.style.left=event.clientX+'px';drag.ghost.style.top=event.clientY+'px';
+   const target=document.elementFromPoint(event.clientX,event.clientY)?.closest('.hanoi-peg');
+   $$('.hanoi-peg').forEach(el=>el.classList.toggle('drag-over',el===target&&el!==button));
+  }
+ });
+ button.addEventListener('pointerup',event=>{
+  const drag=hanoiDrag;
+  if(!drag||drag.source!==index||drag.id!==event.pointerId)return;
+  if(!drag.active){resetHanoiDrag();return;}
+  const target=document.elementFromPoint(event.clientX,event.clientY)?.closest('.hanoi-peg');
+  const dest=target?Number(target.dataset.hanoiPeg):-1,src=drag.source;
+  resetHanoiDrag();hanoiIgnorePointerClick=true;event.preventDefault();
+  if(dest>=0&&dest<=2&&dest!==src){hanoi.selected=src;hanoiSelect(dest);}
+  else if(hanoi){hanoi.selected=null;renderHanoi();}
+ });
+ button.addEventListener('pointercancel',()=>{resetHanoiDrag();hanoiIgnorePointerClick=false;});
+});
+
 $('#hanoi-undo').addEventListener('click',hanoiUndo);$('#hanoi-hint').addEventListener('click',hanoiHint);
 $('#hanoi-restart').addEventListener('click',()=>{closeSettings();newHanoi(hanoi?.n||3);});
 $('#hanoi-new').addEventListener('click',()=>{closeSettings();navigate('setup-hanoi');});
