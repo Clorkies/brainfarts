@@ -1,7 +1,7 @@
 // Version is stamped automatically by publish.ps1 (hash of all app files).
-const VERSION = '71be5487c60d';
+const VERSION = '38e6610e5414';
 const CACHE = 'brainfarts-' + VERSION;
-const FILES = ['./', './index.html', './crossword-levels.js', './crossword.js', './crossword.css', './wordsearch.js', './wordsearch.css', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png', './favicon.svg', './favicon-32.png'];
+const FILES = ['./', './index.html', './crossword-levels.js', './crossword.js', './crossword.css', './wordsearch.js', './wordsearch.css', './shelf.css', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png', './favicon.svg', './favicon-32.png'];
 
 self.addEventListener('install', event => {
   event.waitUntil(
