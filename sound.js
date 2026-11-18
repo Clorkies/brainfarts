@@ -86,6 +86,13 @@
     tone(f,{at,duration:soft?.046:.088,gain,shape:'triangle',end:end||f*.81,pan});
     if(!soft)tap({at,duration:.02,gain:.006,cutoff:2600});
   }
+  // Dampened physical button click: a low-passed felt tap and short, low wood body.
+  // Avoids sharp upper harmonics and long ringing on repeated presses.
+  function thwop({at=0,weight=1,pitch=285}={}){
+    const strength=clamp(weight,.35,1.4);
+    tap({at,duration:.037,gain:.012*strength,cutoff:710});
+    tone(pitch,{at:at+.006,duration:.064,gain:.013*strength,shape:'triangle',end:pitch*.77,attack:.006});
+  }
   function flourish(root=523.25,{at=0,big=false}={}){
     const notes=big?[1,5/4,3/2,2,5/2]:[1,5/4,3/2,2];
     notes.forEach((ratio,i)=>bell(root*ratio,at+i*(big?.087:.066),{gain:i===notes.length-1?.041:.024,decay:i===notes.length-1?.45:.16,pan:(i-(notes.length-1)/2)*.13}));
@@ -95,7 +102,7 @@
   function reward({root=587.33,count=1,final=false}={}){
     // Gently rising two-note answer; longer phrases earn a brighter landing.
     const shift=Math.min(4,Math.max(0,count-1));
-    bell(root,{gain:.03,decay:.15});
+    bell(root,0,{gain:.03,decay:.15});
     bell(root*1.26,.078,{gain:.031,decay:.19});
     bell(root*1.5,.16,{gain:.031,decay:.22});
     if(count>1)bell(root*(1.69+shift*.055),.23,{gain:.027,decay:.29});
@@ -129,7 +136,7 @@
       switch(name){
         case 'ui.on':case 'ui.preview':
           flourish(493.88,{big:false});break;
-        case 'ui.tap':pluck(510,0,{gain:.018,soft:true});break;
+        case 'ui.tap':thwop({weight:.85,pitch:280});break;
         case 'sudoku.place':pluck(460+clamp(Number(options.digit)||0,0,9)*16,0,{gain:.028});break;
         case 'sudoku.erase':pluck(325,0,{gain:.017,soft:true});break;
         case 'sudoku.note':tap({gain:.009,cutoff:2800});bell(783.99,.005,{gain:.016,decay:.085});break;
@@ -137,11 +144,12 @@
         case 'sudoku.hint':reward({root:523.25});break;
         case 'sudoku.error':softFail();break;
         case 'sudoku.win':flourish(523.25,{big:true});break;
-        case 'mines.reveal':tap({gain:.017,cutoff:1600});pluck(340,.008,{gain:.016,soft:true});break;
+        case 'mines.reveal':thwop({weight:.88,pitch:245});break;
         case 'mines.cascade':
-          tap({gain:.019,cutoff:2500,duration:.06});
-          [392,494,587,659].forEach((f,i)=>pluck(f,i*.065,{gain:.019,soft:true}));break;
-        case 'mines.flag':tap({gain:.009,cutoff:3800});pluck(680,.016,{gain:.034});break;
+          thwop({weight:1.05,pitch:240});
+          // Short cushioned tile roll on large clears, not a high-pitched chime.
+          [270,245,230].forEach((f,i)=>tone(f,{at:.035+i*.046,duration:.055,gain:.013,shape:'triangle',end:f*.8}));break;
+        case 'mines.flag':thwop({weight:1.15,pitch:345});break;
         case 'mines.explode':tap({duration:.15,gain:.028,cutoff:700});tone(170,{duration:.28,gain:.026,shape:'triangle',end:85});break;
         case 'mines.win':flourish(587.33,{big:true});break;
         case 'nonogram.fill':tap({gain:.009,cutoff:1500});pluck(523.25,0,{gain:.026,soft:true});break;
@@ -159,8 +167,9 @@
         case 'wordle.win':flourish(659.26,{big:true});break;
         case 'wordle.loss':softFail();break;
         case 'lights.toggle':
-          tone(740,{duration:.11,gain:.014,shape:'sine',end:370});
-          bell(370,.032,{gain:.023,decay:.16});break;
+          // A damped two-stage switch: tactile down-click, then soft latch.
+          thwop({weight:1.07,pitch:230});
+          tap({at:.046,duration:.028,gain:.009,cutoff:560});break;
         case 'lights.win':flourish(587.33,{big:true});break;
         case 'merge.slide':tap({duration:.035,gain:.012,cutoff:1150});pluck(285,0,{gain:.022,soft:true});break;
         case 'merge.combine':
@@ -170,18 +179,18 @@
           reward({root:523.25,count:4});bell(260,.08,{gain:.016,decay:.23});break;
         case 'merge.win':flourish(659.26,{big:true});break;
         case 'merge.loss':softFail();break;
-        case 'hanoi.pick':pluck(370,0,{gain:.016,soft:true});break;
+        case 'hanoi.pick':break; // Original Hanoi had no pickup sound.
         case 'hanoi.move':{
+          // Restored from the pre-v3 sound design: single descending triangle + soft tap.
           const disk=clamp(Number(options.disk)||1,1,7);
-          const f=440+Math.round((8-disk)*33);
-          pluck(f,0,{gain:.026,end:f*.8});
-          bell(f*.75,.065,{gain:.021,decay:.13});break;
+          tone(320+disk*54,{duration:.095,shape:'triangle',gain:.03,end:260+disk*42});
+          tap({duration:.029,cutoff:950,gain:.011});break;
         }
         case 'hanoi.invalid':softFail();break;
         case 'hanoi.win':flourish(493.88,{big:true});break;
-        case 'crossword.type':tap({gain:.008,cutoff:2350});pluck(622.25,0,{gain:.021,soft:true});break;
-        case 'crossword.erase':pluck(310,0,{gain:.017,soft:true});break;
-        case 'crossword.select':pluck(480,0,{gain:.012,soft:true});break;
+        case 'crossword.type':thwop({weight:.76,pitch:305});break;
+        case 'crossword.erase':thwop({weight:.56,pitch:245});break;
+        case 'crossword.select':thwop({weight:.52,pitch:270});break;
         case 'crossword.word':reward({root:493.88,count});break;
         case 'crossword.check':bell(550,0,{gain:.024,decay:.12});bell(740,.07,{gain:.025,decay:.18});break;
         case 'crossword.invalid':softFail();break;
@@ -197,7 +206,8 @@
         }
         case 'wordsearch.miss':tone(345,{duration:.10,gain:.012,end:310,shape:'sine'});break;
         case 'wordsearch.found':
-          reward({root:587.33,count});tap({at:.19,duration:.043,gain:.008,cutoff:3100});break;
+          thwop({weight:.94,pitch:330});
+          reward({root:587.33,count});break;
         case 'wordsearch.hint':bell(493.88,0,{gain:.022,decay:.11});bell(740,.072,{gain:.025,decay:.2});break;
         case 'wordsearch.win':flourish(587.33,{big:true});break;
         case 'win':flourish(523.25,{big:true});break;
