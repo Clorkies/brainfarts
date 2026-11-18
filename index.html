@@ -329,103 +329,70 @@ html,body,button,a,[role="button"]{touch-action:manipulation}
           <svg class="brand-symbol home-mark" aria-hidden="true"><use href="#i-brand"/></svg>
           <span>brainfarts<b>.</b></span>
         </div>
-        <div class="shelf-topline-right">
-          <span class="shelf-presence"><i aria-hidden="true"></i> ONLINE OR OFF. ALWAYS ON.</span>
-          <button id="home-settings-button" class="bare-icon home-settings" aria-label="Settings"><svg><use href="#i-settings"/></svg></button>
-        </div>
+        <button id="home-settings-button" class="bare-icon home-settings" aria-label="Settings"><svg><use href="#i-settings"/></svg></button>
       </header>
       <div class="home-intro shelf-hero">
-        <span class="home-kicker"><i aria-hidden="true"></i> THE POCKET PUZZLE CLUB</span>
-        <h1>Less scrolling.<br><span>More solving.</span></h1>
-        <p>A cozy collection of little brain workouts. Pick your puzzle, find your rhythm, and give your thumbs something better to do.</p>
-        <div class="shelf-hero-bottom"><span>09 games to play</span><span class="dot" aria-hidden="true"></span><span>01 mystery to go</span></div>
-        <span class="shelf-hero-ornament" aria-hidden="true"></span>
+        <h1>A cozy collection of little brain workouts</h1>
       </div>
       <div id="brainfarts-shelf" data-layout="a">
-        <section class="shelf-collection" aria-labelledby="shelf-featured-title">
-          <div class="shelf-section-heading">
-            <div><span class="eyebrow">01 / THE FAVORITES</span><h2 id="shelf-featured-title">Pick your usual.</h2></div>
-            <span class="shelf-section-aside">Four to get you started.</span>
-          </div>
-          <div class="shelf-grid shelf-grid--featured"><button type="button" class="shelf-card shelf-card--sudoku" data-route="setup-sudoku" aria-label="Play Sudoku">
-<span class="shelf-card-top"><span class="shelf-card-index"><b>01</b><span> / NUMBER LOGIC</span></span><span class="shelf-go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
-<span class="shelf-art" aria-hidden="true"><span class="shelf-art-scene"><span class="shelf-sudoku-art"><i>5</i><i>2</i><i class="blank"></i><i>4</i><i>9</i><i class="blank"></i><i>3</i><i class="blank"></i><i class="blank"></i><i>3</i><i>6</i><i class="blank"></i><i>7</i><i class="blank"></i><i class="blank"></i><i>1</i></span></span></span>
+        <div class="shelf-grid shelf-grid--all" aria-label="Choose a puzzle">
+          <button type="button" class="shelf-card shelf-card--sudoku" data-route="setup-sudoku" aria-label="Play Sudoku">
+<span class="shelf-card-top"><span class="shelf-go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
+<span class="shelf-art" aria-hidden="true"><span class="shelf-art-scene"><span class="shelf-sudoku-art"><i>1</i><i class="blank" data-fill="2"></i><i>3</i><i>4</i><i>3</i><i>4</i><i class="blank" data-fill="1"></i><i>2</i><i class="blank" data-fill="2"></i><i>1</i><i>4</i><i>3</i><i>4</i><i>3</i><i>2</i><i class="blank" data-fill="1"></i></span></span></span>
 <span class="shelf-card-copy"><strong>Sudoku</strong><small>Find your flow, one square at a time.</small></span>
 </button>
-<button type="button" class="shelf-card shelf-card--mines" data-route="setup-mines" aria-label="Play Minesweeper">
-<span class="shelf-card-top"><span class="shelf-card-index"><b>02</b><span> / KEEP SHARP</span></span><span class="shelf-go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
-<span class="shelf-art" aria-hidden="true"><span class="shelf-art-scene"><span class="shelf-mines-art"><i class="">1</i><i class="">2</i><i class="flag">⚑</i><i class="cover"></i><i class="">2</i><i class="flag">⚑</i><i class="">3</i><i class="">1</i><i class="cover"></i><i class="">2</i><i class="">1</i><i class="cover"></i><i class="">1</i><i class="cover"></i><i class="cover"></i><i class="cover"></i></span></span></span>
+          <button type="button" class="shelf-card shelf-card--mines" data-route="setup-mines" aria-label="Play Minesweeper">
+<span class="shelf-card-top"><span class="shelf-go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
+<span class="shelf-art" aria-hidden="true"><span class="shelf-art-scene"><span class="shelf-mines-art"><i>1</i><i>2</i><i class="flag">⚑</i><i>1</i><i>1</i><i class="cover"></i><i class="cover reveal" data-clue="2"></i><i>1</i><i>1</i><i>1</i><i class="cover reveal" data-clue="2"></i><i>1</i><i></i><i></i><i>1</i><i class="flag">⚑</i></span></span></span>
 <span class="shelf-card-copy"><strong>Minesweeper</strong><small>Clear the board. Trust the numbers.</small></span>
 </button>
-<button type="button" class="shelf-card shelf-card--wordle" data-route="setup-wordle" aria-label="Play Wordle">
-<span class="shelf-card-top"><span class="shelf-card-index"><b>03</b><span> / WORD PLAY</span></span><span class="shelf-go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
-<span class="shelf-art" aria-hidden="true"><span class="shelf-art-scene"><span class="shelf-wordle-art"><i class="no">C</i><i class="close">R</i><i class="no">A</i><i class="good">N</i><i class="no">E</i><i class="good">S</i><i class="good">L</i><i class="good">A</i><i class="good">T</i><i class="good">E</i></span></span></span>
+          <button type="button" class="shelf-card shelf-card--wordle" data-route="setup-wordle" aria-label="Play Wordle">
+<span class="shelf-card-top"><span class="shelf-go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
+<span class="shelf-art" aria-hidden="true"><span class="shelf-art-scene"><span class="shelf-wordle-art" aria-label="CRANE gets gray gray green gray green; SLATE solves the puzzle"><i class="no guess-one">C</i><i class="no guess-one">R</i><i class="good guess-one">A</i><i class="no guess-one">N</i><i class="good guess-one">E</i><i class="good guess-two">S</i><i class="good guess-two">L</i><i class="good guess-two">A</i><i class="good guess-two">T</i><i class="good guess-two">E</i></span></span></span>
 <span class="shelf-card-copy"><strong>Wordle</strong><small>Five letters, six little chances.</small></span>
 </button>
-<button type="button" class="shelf-card shelf-card--merge" data-route="setup-2048" aria-label="Play 2048">
-<span class="shelf-card-top"><span class="shelf-card-index"><b>04</b><span> / JUST ONE MORE</span></span><span class="shelf-go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
-<span class="shelf-art" aria-hidden="true"><span class="shelf-art-scene"><span class="shelf-merge-art"><i>2</i><i>4</i><i>8</i><i>16</i></span></span></span>
+          <button type="button" class="shelf-card shelf-card--merge" data-route="setup-2048" aria-label="Play 2048">
+<span class="shelf-card-top"><span class="shelf-go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
+<span class="shelf-art" aria-hidden="true"><span class="shelf-art-scene"><span class="shelf-merge-art"><i>2</i><i>2</i><i>4</i><i>8</i></span></span></span>
 <span class="shelf-card-copy"><strong>2048</strong><small>Merge the tiles. Chase the big one.</small></span>
-</button></div>
-        </section>
-        <section class="shelf-collection" aria-labelledby="shelf-more-title">
-          <div class="shelf-section-heading">
-            <div><span class="eyebrow">02 / A LITTLE DIFFERENT</span><h2 id="shelf-more-title">Switch things up.</h2></div>
-            <span class="shelf-section-aside">More ways to think.</span>
-          </div>
-          <div class="shelf-grid shelf-grid--more"><button type="button" class="shelf-card shelf-card--nonogram" data-route="setup-nonogram" aria-label="Play Nonogram">
-<span class="shelf-card-top"><span class="shelf-card-index"><b>05</b><span> / PIXEL LOGIC</span></span><span class="shelf-go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
+</button>
+          <button type="button" class="shelf-card shelf-card--nonogram" data-route="setup-nonogram" aria-label="Play Nonogram">
+<span class="shelf-card-top"><span class="shelf-go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
 <span class="shelf-art" aria-hidden="true"><span class="shelf-art-scene"><span class="shelf-nonogram-art"><i></i><i></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i class="on"></i><i class="on"></i><i></i><i></i></span></span></span>
 <span class="shelf-card-copy"><strong>Nonogram</strong><small>Reveal a picture, one clue at a time.</small></span>
 </button>
-<button type="button" class="shelf-card shelf-card--lights" data-route="setup-lights" aria-label="Play Lights Out">
-<span class="shelf-card-top"><span class="shelf-card-index"><b>06</b><span> / A LITTLE SPARK</span></span><span class="shelf-go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
+          <button type="button" class="shelf-card shelf-card--lights" data-route="setup-lights" aria-label="Play Lights Out">
+<span class="shelf-card-top"><span class="shelf-go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
 <span class="shelf-art" aria-hidden="true"><span class="shelf-art-scene"><span class="shelf-lights-art"><i></i><i class="on"></i><i class="on"></i><i></i><i class="on"></i><i></i><i></i><i class="on"></i><i></i><i class="on"></i><i class="on"></i><i></i><i></i><i class="on"></i><i></i><i class="on"></i></span></span></span>
 <span class="shelf-card-copy"><strong>Lights Out</strong><small>Switch them off. Switch your brain on.</small></span>
 </button>
-<button type="button" class="shelf-card shelf-card--hanoi" data-route="setup-hanoi" aria-label="Play Tower of Hanoi">
-<span class="shelf-card-top"><span class="shelf-card-index"><b>07</b><span> / THINK AHEAD</span></span><span class="shelf-go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
+          <button type="button" class="shelf-card shelf-card--hanoi" data-route="setup-hanoi" aria-label="Play Tower of Hanoi">
+<span class="shelf-card-top"><span class="shelf-go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
 <span class="shelf-art" aria-hidden="true"><span class="shelf-art-scene"><span class="shelf-hanoi-art">
- <span class="shelf-hanoi-peg"><i class="shelf-hanoi-disk"></i><i class="shelf-hanoi-disk"></i><i class="shelf-hanoi-disk"></i><i class="shelf-hanoi-disk"></i></span>
- <span class="shelf-hanoi-peg"></span><span class="shelf-hanoi-peg"></span>
- </span></span></span>
+<span class="shelf-hanoi-peg"><i class="shelf-hanoi-disk"></i><i class="shelf-hanoi-disk"></i><i class="shelf-hanoi-disk"></i></span>
+<span class="shelf-hanoi-peg"></span><span class="shelf-hanoi-peg"></span>
+<i class="shelf-hanoi-flying-disk"></i>
+</span></span></span></span>
 <span class="shelf-card-copy"><strong>Tower of Hanoi</strong><small>Move one disk. Plan a few ahead.</small></span>
-</button></div>
-        </section>
-        <section class="shelf-collection" aria-labelledby="shelf-words-title">
-          <div class="shelf-section-heading">
-            <div><span class="eyebrow">03 / WORD CORNER</span><h2 id="shelf-words-title">One for the word nerds.</h2></div>
-            <span class="shelf-section-aside">Clues, letters, hidden finds.</span>
-          </div>
-          <div class="shelf-grid shelf-grid--words"><button type="button" class="shelf-card shelf-card--crossword" data-route="setup-crossword" aria-label="Play Crossword">
-<span class="shelf-card-top"><span class="shelf-card-index"><b>08</b><span> / ACROSS & DOWN</span></span><span class="shelf-go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
+</button>
+          <button type="button" class="shelf-card shelf-card--crossword" data-route="setup-crossword" aria-label="Play Crossword">
+<span class="shelf-card-top"><span class="shelf-go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
 <span class="shelf-art" aria-hidden="true"><span class="shelf-art-scene"><span class="shelf-crossword-art"><i>C</i><i>O</i><i>G</i><i class="block"></i><i class="block"></i><i>A</i><i>I</i><i>R</i><i class="block"></i><i class="block"></i><i>P</i><i>L</i><i>A</i><i>N</i><i>T</i><i class="block"></i><i class="block"></i><i>S</i><i>I</i><i>R</i><i class="block"></i><i class="block"></i><i>S</i><i>P</i><i>Y</i></span></span></span>
 <span class="shelf-card-copy"><strong>Crossword</strong><small>Tiny clues. Big aha moments.</small></span>
 </button>
-<button type="button" class="shelf-card shelf-card--wordsearch" data-route="setup-wordsearch" aria-label="Play Word Search">
-<span class="shelf-card-top"><span class="shelf-card-index"><b>09</b><span> / HIDDEN WORDS</span></span><span class="shelf-go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
+          <button type="button" class="shelf-card shelf-card--wordsearch" data-route="setup-wordsearch" aria-label="Play Word Search">
+<span class="shelf-card-top"><span class="shelf-go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
 <span class="shelf-art" aria-hidden="true"><span class="shelf-art-scene"><span class="shelf-wordsearch-art"><i class="found">P</i><i class="found">U</i><i class="found">Z</i><i class="found">Z</i><i class="found">L</i><i class="found">E</i><i>T</i><i>A</i><i>N</i><i>E</i><i>D</i><i>O</i><i>O</i><i>C</i><i>R</i><i>A</i><i>N</i><i>T</i><i>L</i><i>M</i><i>S</i><i>K</i><i>P</i><i>X</i><i>I</i><i>C</i><i>E</i><i>R</i><i>E</i><i>D</i><i>W</i><i>O</i><i>W</i><i>L</i><i>I</i><i>N</i></span></span></span>
 <span class="shelf-card-copy"><strong>Word Search</strong><small>Find the words hiding in plain sight.</small></span>
-</button></div>
-        </section>
-        <section class="shelf-collection shelf-collection--soon" aria-label="Last game slot">
-          <div class="shelf-section-heading">
-            <div><span class="eyebrow">04 / THE FINAL SPOT</span><h2>One more to go.</h2></div>
-            <span class="shelf-section-aside">The collection stops at ten.</span>
-          </div>
-          <div class="shelf-card shelf-card--soon" aria-label="Tenth game coming soon">
-            <span class="shelf-card-top">
-              <span class="shelf-card-index"><b>10</b><span> / THE MYSTERY SLOT</span></span>
-              <span class="shelf-go" aria-hidden="true"><svg><use href="#i-sparkle"/></svg></span>
-            </span>
-            <span class="shelf-soon-center">
-              <span class="shelf-card-copy"><strong>Coming soon.</strong><small>Saving the best for last. One final puzzle is on its way.</small></span>
-              <span class="shelf-soon-icon" aria-hidden="true"><svg class="brand-symbol"><use href="#i-brand"/></svg></span>
-            </span>
-          </div>
-        </section>
+</button>
+          <div class="shelf-card shelf-card--soon" aria-label="Coming soon" role="note">
+  <span class="shelf-soon-center">
+    <span class="shelf-card-copy"><strong>Coming soon.</strong><small>More little brain workouts are on their way.</small></span>
+    <span class="shelf-soon-icon" aria-hidden="true"><svg class="brand-symbol"><use href="#i-brand"/></svg></span>
+  </span>
+</div>
+        </div>
       </div>
-      <footer class="shelf-note"><i aria-hidden="true"></i> LESS SCROLLING. MORE SOLVING. EVEN OFFLINE.</footer>
     </section>
 
     <!-- Setup: all difficulty / board-size decisions stay OUT of gameplay. -->
