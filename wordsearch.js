@@ -93,11 +93,11 @@ function wsComplete(start,end){
  wsAnchor=null;
  if(!found){renderWordsearch();return false;}
  found.found=true;wordsearch.status=wordsearch.words.every(w=>w.found)?'won':'playing';
- save('wordsearch',wordsearch);clickSound(570,.09);renderWordsearch();
+ save('wordsearch',wordsearch);sfx('wordsearch.found');renderWordsearch();
  if(wordsearch.status==='won'){
   const key='wordsearch.best.'+wordsearch.level,best=load(key);
   if(best==null||wordsearch.elapsed<best)save(key,wordsearch.elapsed);
-  confetti();
+  confetti();sfx('win');
   dialog('<svg class="brand-symbol dialog-brand" aria-hidden="true"><use href="#i-brand"/></svg><div class="dialog-kicker">WORD SEARCH COMPLETE</div><h2 id="dialog-title">Found them all!</h2><p>Every hidden word, discovered.</p><div class="result-stats"><div class="result-stat"><strong>'+wordsearch.words.length+'</strong><small>WORDS</small></div><div class="result-stat"><strong>'+formatTime(wordsearch.elapsed)+'</strong><small>YOUR TIME</small></div><div class="result-stat"><strong>'+wordsearch.size+'×'+wordsearch.size+'</strong><small>GRID</small></div></div><div class="dialog-actions"><button class="secondary-button" data-dialog-action="home">All games</button><button class="primary-button" data-dialog-action="wordsearch-next">Next puzzle '+icon('arrow')+'</button></div>');
  }
  return true;
@@ -105,9 +105,9 @@ function wsComplete(start,end){
 function wsSelect(start,end,drag){
  if(!wordsearch||wordsearch.status==='won')return;
  if(drag){wsComplete(start,end);return;}
- if(wsAnchor===null){wsAnchor=start;wsPreview([start]);return;}
+ if(wsAnchor===null){wsAnchor=start;wsPreview([start]);sfx('wordsearch.select');return;}
  if(wsAnchor===end){wsAnchor=null;wsPreview([]);return;}
- if(!wsComplete(wsAnchor,end)){wsAnchor=end;wsPreview([end]);}
+ if(!wsComplete(wsAnchor,end)){wsAnchor=end;wsPreview([end]);sfx('wordsearch.select');}
 }
 function wsCellAt(x,y){
  const b=$('#wordsearch-board').getBoundingClientRect(),n=wordsearch?.size;
@@ -132,7 +132,7 @@ function wsHint(){
  const w=wordsearch.words.find(w=>!w.found);if(!w)return;
  wordsearch.hints=(wordsearch.hints||0)+1;save('wordsearch',wordsearch);closeSettings();
  const start=w.cells[0],n=wordsearch.size;
- notify(w.text+' starts at row '+(Math.floor(start/n)+1)+', column '+(start%n+1));
+ sfx('wordsearch.hint');notify(w.text+' starts at row '+(Math.floor(start/n)+1)+', column '+(start%n+1));
 }
 function updateWordsearchTools(){
  if(!wordsearch)return;
