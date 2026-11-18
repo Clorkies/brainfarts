@@ -15,23 +15,24 @@ function crosswordDefinition(id){
  if(across.length!==5||down.length!==5||used.size!==17||[...across,...down].some(w=>!w.clue))throw Error('Invalid crossword '+id);
  return {id,title,answer,across,down,entries:[...across,...down],numbers,open:used.size};
 }
-const CROSSWORD_DATA=CROSSWORD_PACKS.map((_,i)=>crosswordDefinition(i));
+const CROSSWORD_DATA=[...CROSSWORD_PACKS.map((_,i)=>({...crosswordDefinition(i),size:5,difficulty:'easy'})),...CROSSWORD_LARGE_PACKS.map((pack,i)=>crosswordLargeDefinition(pack,CROSSWORD_PACKS.length+i))];
 let crossword=null;
 function crosswordPuzzle(){return CROSSWORD_DATA[crossword.id];}
-function crosswordInitial(id){return {id,letters:Array(25).fill(''),selected:0,direction:'across',elapsed:0,status:'ready',revealed:[],wrong:[]};}
+function crosswordInitial(id){const p=CROSSWORD_DATA[id];return {id,letters:Array(p.answer.length).fill(''),selected:p.answer.findIndex(c=>c!=='#'),direction:'across',elapsed:0,status:'ready',revealed:[],wrong:[]};}
 function validCrossword(p){
- return !!(p&&Number.isInteger(p.id)&&CROSSWORD_DATA[p.id]&&Array.isArray(p.letters)&&p.letters.length===25
+ return !!(p&&Number.isInteger(p.id)&&CROSSWORD_DATA[p.id]&&Array.isArray(p.letters)&&p.letters.length===CROSSWORD_DATA[p.id].answer.length
   &&p.letters.every(c=>typeof c==='string'&&/^[A-Z]?$/.test(c))&&Number.isSafeInteger(p.elapsed)&&p.elapsed>=0
-  &&Number.isInteger(p.selected)&&p.selected>=0&&p.selected<25&&CROSSWORD_DATA[p.id].answer[p.selected]!=='#'
+  &&Number.isInteger(p.selected)&&p.selected>=0&&p.selected<CROSSWORD_DATA[p.id].answer.length&&CROSSWORD_DATA[p.id].answer[p.selected]!=='#'
   &&['across','down'].includes(p.direction)&&['ready','playing','won'].includes(p.status)&&Array.isArray(p.revealed)&&Array.isArray(p.wrong));
 }
 function restoreCrossword(){
  const old=load('crossword');crossword=validCrossword(old)?old:crosswordInitial(0);crossword.wrong=[];save('crossword',crossword);
 }
 function newCrossword(id){crossword=crosswordInitial(id%CROSSWORD_DATA.length);save('crossword',crossword);renderCrossword();}
-function startCrossword(){
- const n=Number(load('crossword.next',0)),id=Number.isInteger(n)&&n>=0?n%CROSSWORD_DATA.length:0;
- newCrossword(id);save('crossword.next',(id+1)%CROSSWORD_DATA.length);
+function startCrossword(difficulty='easy'){
+ const choices=CROSSWORD_DATA.filter(p=>p.difficulty===difficulty).map(p=>p.id);if(!choices.length)return;
+ const key='crossword.next.'+difficulty,n=Number(load(key,0)),index=Number.isInteger(n)&&n>=0?n%choices.length:0;
+ newCrossword(choices[index]);save(key,(index+1)%choices.length);
 }
 function crosswordWord(){
  if(!crossword)return null;
@@ -45,7 +46,7 @@ function crosswordPickWord(id){
  crossword.direction=w.dir;crossword.selected=w.cells.find(i=>!crossword.letters[i])??w.cells[0];save('crossword',crossword);renderCrossword();
 }
 function crosswordPickCell(i){
- if(!crossword||crossword.status==='won'||!Number.isInteger(i)||i<0||i>=25||crosswordPuzzle().answer[i]==='#')return;
+ if(!crossword||crossword.status==='won'||!Number.isInteger(i)||i<0||i>=crosswordPuzzle().answer.length||crosswordPuzzle().answer[i]==='#')return;
  const p=crosswordPuzzle();
  if(crossword.selected===i){
   const other=crossword.direction==='across'?'down':'across';
@@ -66,11 +67,11 @@ function crosswordToggleDirection(){
 }
 function crosswordArrow(key){
  if(!crossword||crossword.status==='won')return;
- const delta={ArrowUp:-5,ArrowDown:5,ArrowLeft:-1,ArrowRight:1}[key];if(!delta)return;
- const row=Math.floor(crossword.selected/5),col=crossword.selected%5;
+ const size=crosswordPuzzle().size,delta={ArrowUp:-size,ArrowDown:size,ArrowLeft:-1,ArrowRight:1}[key];if(!delta)return;
+ const row=Math.floor(crossword.selected/size),col=crossword.selected%size;
  crossword.direction=Math.abs(delta)===1?'across':'down';
- for(let i=crossword.selected+delta;i>=0&&i<25;i+=delta){
-  if(Math.abs(delta)===1&&Math.floor(i/5)!==row || Math.abs(delta)===5&&i%5!==col)break;
+ for(let i=crossword.selected+delta;i>=0&&i<crosswordPuzzle().answer.length;i+=delta){
+  if(Math.abs(delta)===1&&Math.floor(i/size)!==row || Math.abs(delta)===size&&i%size!==col)break;
   if(crosswordPuzzle().answer[i]!=='#'){crossword.selected=i;save('crossword',crossword);break;}
  }
  renderCrossword();
@@ -82,7 +83,7 @@ function crosswordFinished(){
  const key='crossword.best.'+crossword.id,best=load(key);
  if(best==null||crossword.elapsed<best)save(key,crossword.elapsed);
  renderCrossword();clickSound(700,.2);confetti();
- dialog('<svg class="brand-symbol dialog-brand" aria-hidden="true"><use href="#i-brand"/></svg><div class="dialog-kicker">CROSSWORD COMPLETE</div><h2 id="dialog-title">Words well played.</h2><p>Every crossing clicked into place.</p><div class="result-stats"><div class="result-stat"><strong>10</strong><small>CLUES</small></div><div class="result-stat"><strong>'+formatTime(crossword.elapsed)+'</strong><small>TIME</small></div><div class="result-stat"><strong>'+crossword.revealed.length+'</strong><small>HINTS</small></div></div><div class="dialog-actions"><button class="secondary-button" data-dialog-action="home">All games</button><button class="primary-button" data-dialog-action="crossword-next">Next puzzle '+icon('arrow')+'</button></div>');
+ dialog('<svg class="brand-symbol dialog-brand" aria-hidden="true"><use href="#i-brand"/></svg><div class="dialog-kicker">CROSSWORD COMPLETE</div><h2 id="dialog-title">Words well played.</h2><p>Every crossing clicked into place.</p><div class="result-stats"><div class="result-stat"><strong>'+p.entries.length+'</strong><small>CLUES</small></div><div class="result-stat"><strong>'+formatTime(crossword.elapsed)+'</strong><small>TIME</small></div><div class="result-stat"><strong>'+crossword.revealed.length+'</strong><small>HINTS</small></div></div><div class="dialog-actions"><button class="secondary-button" data-dialog-action="home">All games</button><button class="primary-button" data-dialog-action="crossword-next">Next puzzle '+icon('arrow')+'</button></div>');
  return true;
 }
 function crosswordInput(v){
@@ -106,7 +107,7 @@ function crosswordInput(v){
 function crosswordCheck(){
  if(!crossword)return;
  const p=crosswordPuzzle();crossword.wrong=[];let blanks=0;
- for(let i=0;i<25;i++)if(p.answer[i]!=='#'){
+ for(let i=0;i<p.answer.length;i++)if(p.answer[i]!=='#'){
   if(!crossword.letters[i])blanks++;
   else if(crossword.letters[i]!==p.answer[i])crossword.wrong.push(i);
  }
@@ -125,7 +126,10 @@ function crosswordReveal(){
 function renderCrossword(){
  if(!crossword)return;
  const p=crosswordPuzzle(),w=crosswordWord(),word=new Set(w.cells);
- $('#crossword-title').textContent=p.title+' · '+(crossword.id+1)+' / '+CROSSWORD_DATA.length;
+ $('#crossword-title').textContent=p.title+' · '+p.size+'×'+p.size;
+ $('#crossword-board').style.setProperty('--cw-size',p.size);
+ $('#crossword-board').style.setProperty('--cw-font',Math.max(13,Math.round(245/p.size))+'px');
+ $('#crossword-board').style.setProperty('--cw-number',Math.max(7,Math.round(65/p.size))+'px');
  $('#crossword-time').textContent=formatTime(crossword.elapsed);
  $('#crossword-filled').textContent=crossword.letters.filter(Boolean).length+' / '+p.open;
  $('#crossword-clue-label').textContent=w.number+' '+w.dir.toUpperCase();
@@ -134,7 +138,7 @@ function renderCrossword(){
  $('#crossword-board').innerHTML=p.answer.map((c,i)=>{
   if(c==='#')return '<span class="crossword-cell blocked" aria-hidden="true"></span>';
   const cls=['crossword-cell',word.has(i)?'is-word':'',i===crossword.selected?'is-selected':'',crossword.wrong.includes(i)?'is-wrong':'',crossword.revealed.includes(i)?'is-revealed':''].filter(Boolean).join(' ');
-  return '<button type="button" class="'+cls+'" data-crossword-cell="'+i+'" aria-label="Row '+(Math.floor(i/5)+1)+', column '+(i%5+1)+(p.numbers[i]?', number '+p.numbers[i]:'')+(crossword.letters[i]?', '+crossword.letters[i]:'')+'"><span class="crossword-number">'+(p.numbers[i]||'')+'</span><span class="crossword-letter">'+(crossword.letters[i]||'')+'</span></button>';
+  return '<button type="button" class="'+cls+'" data-crossword-cell="'+i+'" aria-label="Row '+(Math.floor(i/p.size)+1)+', column '+(i%p.size+1)+(p.numbers[i]?', number '+p.numbers[i]:'')+(crossword.letters[i]?', '+crossword.letters[i]:'')+'"><span class="crossword-number">'+(p.numbers[i]||'')+'</span><span class="crossword-letter">'+(crossword.letters[i]||'')+'</span></button>';
  }).join('');
 }
 function updateCrosswordTools(){
@@ -150,7 +154,7 @@ function crosswordShowClues(){
  if(!crossword)return;
  closeSettings();const p=crosswordPuzzle();
  const list=dir=>'<h3>'+dir.toUpperCase()+'</h3>'+p[dir].map(w=>'<button data-dialog-action="crossword-pick" data-crossword-word="'+w.id+'"><strong>'+w.number+'.</strong> '+w.clue+'</button>').join('');
- dialog('<div class="dialog-kicker">MINI CROSSWORD · ALL CLUES</div><h2 id="dialog-title">'+p.title+'</h2><div class="crossword-clue-list">'+list('across')+list('down')+'</div><div class="dialog-actions"><button class="secondary-button" data-dialog-action="close">Close</button></div>');
+ dialog('<div class="dialog-kicker">CROSSWORD · ALL CLUES</div><h2 id="dialog-title">'+p.title+'</h2><div class="crossword-clue-list">'+list('across')+list('down')+'</div><div class="dialog-actions"><button class="secondary-button" data-dialog-action="close">Close</button></div>');
 }
 document.addEventListener('DOMContentLoaded',()=>{
  $('#crossword-board').addEventListener('click',e=>{const b=e.target.closest('[data-crossword-cell]');if(b)crosswordPickCell(Number(b.dataset.crosswordCell));});
