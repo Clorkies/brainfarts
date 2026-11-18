@@ -88,16 +88,19 @@ function wsPreview(cells){
 }
 function wsComplete(start,end){
  if(!wordsearch||wordsearch.status==='won')return false;
- const path=wsPath(start,wsSnap(start,end,wordsearch.size),wordsearch.size).join(',');
+ const selected=wsPath(start,wsSnap(start,end,wordsearch.size),wordsearch.size),path=selected.join(',');
  const found=wordsearch.words.find(w=>!w.found&&(w.cells.join(',')===path||[...w.cells].reverse().join(',')===path));
  wsAnchor=null;
- if(!found){renderWordsearch();return false;}
+ if(!found){if(selected.length>=3)sfx('wordsearch.miss');renderWordsearch();return false;}
  found.found=true;wordsearch.status=wordsearch.words.every(w=>w.found)?'won':'playing';
- save('wordsearch',wordsearch);sfx('wordsearch.found');renderWordsearch();
+ save('wordsearch',wordsearch);
+ const count=wordsearch.words.filter(w=>w.found).length;
+ sfx(wordsearch.status==='won'?'wordsearch.win':'wordsearch.found',{count,total:wordsearch.words.length});
+ renderWordsearch();
  if(wordsearch.status==='won'){
   const key='wordsearch.best.'+wordsearch.level,best=load(key);
   if(best==null||wordsearch.elapsed<best)save(key,wordsearch.elapsed);
-  confetti();sfx('win');
+  confetti();
   dialog('<svg class="brand-symbol dialog-brand" aria-hidden="true"><use href="#i-brand"/></svg><div class="dialog-kicker">WORD SEARCH COMPLETE</div><h2 id="dialog-title">Found them all!</h2><p>Every hidden word, discovered.</p><div class="result-stats"><div class="result-stat"><strong>'+wordsearch.words.length+'</strong><small>WORDS</small></div><div class="result-stat"><strong>'+formatTime(wordsearch.elapsed)+'</strong><small>YOUR TIME</small></div><div class="result-stat"><strong>'+wordsearch.size+'×'+wordsearch.size+'</strong><small>GRID</small></div></div><div class="dialog-actions"><button class="secondary-button" data-dialog-action="home">All games</button><button class="primary-button" data-dialog-action="wordsearch-next">Next puzzle '+icon('arrow')+'</button></div>');
  }
  return true;
@@ -107,7 +110,7 @@ function wsSelect(start,end,drag){
  if(drag){wsComplete(start,end);return;}
  if(wsAnchor===null){wsAnchor=start;wsPreview([start]);sfx('wordsearch.select');return;}
  if(wsAnchor===end){wsAnchor=null;wsPreview([]);return;}
- if(!wsComplete(wsAnchor,end)){wsAnchor=end;wsPreview([end]);sfx('wordsearch.select');}
+ if(!wsComplete(wsAnchor,end)){wsAnchor=end;wsPreview([end]);}
 }
 function wsCellAt(x,y){
  const b=$('#wordsearch-board').getBoundingClientRect(),n=wordsearch?.size;
@@ -145,7 +148,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  board.addEventListener('pointerdown',e=>{
   if(!wordsearch||wordsearch.status==='won'||e.button!==0)return;
   const index=wsCellAt(e.clientX,e.clientY);if(index===null)return;
-  wsGesture={id:e.pointerId,start:index,end:index,moved:false,x:e.clientX,y:e.clientY};
+  wsGesture={id:e.pointerId,start:index,end:index,moved:false,x:e.clientX,y:e.clientY,lastSoundCell:index};
   board.setPointerCapture?.(e.pointerId);if(wordsearch.status==='ready')wordsearch.status='playing';
   wsPreview([index]);e.preventDefault();
  });
@@ -154,7 +157,14 @@ document.addEventListener('DOMContentLoaded',()=>{
   const end=wsCellAt(e.clientX,e.clientY);if(end===null)return;
   if(Math.hypot(e.clientX-g.x,e.clientY-g.y)>7)g.moved=true;
   if(end===g.end)return;
-  g.end=end;wsPreview(wsPath(g.start,wsSnap(g.start,end,wordsearch.size),wordsearch.size));e.preventDefault();
+  g.end=end;
+  const path=wsPath(g.start,wsSnap(g.start,end,wordsearch.size),wordsearch.size);
+  const lastCell=path.at(-1);
+  if(g.moved&&path.length>1&&lastCell!==g.lastSoundCell){
+   g.lastSoundCell=lastCell;
+   sfx('wordsearch.trace',{index:path.length-1});
+  }
+  wsPreview(path);e.preventDefault();
  });
  board.addEventListener('pointerup',e=>{
   const g=wsGesture;if(!g||e.pointerId!==g.id)return;
