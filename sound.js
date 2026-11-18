@@ -73,6 +73,7 @@
         case 'ui.on':chord([[580,0,.08,.028],[780,.075,.12,.03]]);break;
         case 'ui.tap':note(530,.048,{to:420,volume:.02});break;
         case 'sudoku.place':note(490,.072,{to:340,shape:'triangle',volume:.033});noise(.028,{cutoff:1200,volume:.009});break;
+        case 'sudoku.erase':note(350,.047,{to:255,volume:.016});break;
         case 'sudoku.note':note(760,.038,{shape:'sine',volume:.022});break;
         case 'sudoku.hint':chord([[620,0,.11,.03],[930,.08,.17,.027]]);break;
         case 'sudoku.error':error();break;
