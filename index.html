@@ -235,6 +235,7 @@ html,body,button,a,[role="button"]{touch-action:manipulation}
   <link rel="stylesheet" href="./crossword.css">
   <link rel="stylesheet" href="./wordsearch.css">
   <link rel="stylesheet" href="./shelf.css">
+  <link rel="stylesheet" href="./analytics.css">
   <title>Brainfarts — Give your brain a little workout</title>
 </head>
 <body>
@@ -505,6 +506,38 @@ html,body,button,a,[role="button"]{touch-action:manipulation}
         <div class="mine-pan-layer" id="mine-pan-layer"><div class="mine-board" id="mines-board" role="grid" aria-label="Minesweeper grid"></div></div>
       </div>
     </section>
+
+    <section class="page analytics-page" id="page-analytics" hidden>
+      <header class="screen-header">
+        <button class="bare-icon back-button" id="analytics-back" aria-label="Back from analytics"><svg><use href="#i-arrow-left"/></svg></button>
+        <span class="screen-title">Your progress</span>
+        <span aria-hidden="true"></span>
+      </header>
+      <div class="analytics-body">
+        <div class="analytics-intro">
+          <div class="analytics-intro-copy">
+            <span class="analytics-eyebrow">YOUR LITTLE WINS</span>
+            <h1>Brainpower, in numbers.</h1>
+            <p>Every puzzle counts. Track your progress, personal bests, and recent games.</p>
+          </div>
+          <label class="analytics-filter-wrap" for="analytics-filter">Show
+            <select id="analytics-filter" aria-label="Filter analytics by game">
+              <option value="all">All games</option>
+              <option value="sudoku">Sudoku</option>
+              <option value="mines">Minesweeper</option>
+              <option value="wordle">Wordle</option>
+              <option value="2048">2048</option>
+              <option value="nonogram">Nonogram</option>
+              <option value="lights">Lights Out</option>
+              <option value="hanoi">Tower of Hanoi</option>
+              <option value="crossword">Crossword</option>
+              <option value="wordsearch">Word Search</option>
+            </select>
+          </label>
+        </div>
+        <div id="analytics-content" aria-live="polite"></div>
+      </div>
+    </section>
   </main>
 
   <!-- Single settings sheet with context-specific toolkit and guides. -->
@@ -539,6 +572,15 @@ html,body,button,a,[role="button"]{touch-action:manipulation}
           <button class="tool-button" id="sudoku-hint"><svg><use href="#i-sparkle"/></svg><span>Hint <small id="hint-count">3</small></span></button>
         </div><p class="settings-info" id="notes-tip" hidden>Tap a number for a guess. Hold for 95 ms to toggle that number as a pencil note. Notes never change the grid size.</p></div>
         <div class="settings-section" id="mines-settings-tools" hidden><h3>Minefield info</h3><div class="sheet-stats"><div><span>Time</span><strong id="mines-time">00:00</strong></div><div><span>Flags left</span><strong id="mines-flags">10</strong></div><div><span>Safe tiles</span><strong id="mines-revealed">0 / 71</strong></div></div><p class="settings-info">Tap to reveal. Hold for 95 ms to flag. Right-click also flags. Pinch to zoom, then drag to move around the board.</p></div>
+
+        <div class="settings-section">
+          <h3>Your progress</h3>
+          <button type="button" id="analytics-open" class="analytics-settings-entry">
+            <span class="analytics-entry-icon" aria-hidden="true"><svg><use href="#i-sparkle"/></svg></span>
+            <span class="analytics-entry-copy"><strong>Analytics &amp; history</strong><small>Games played, personal bests, and recent activity</small></span>
+            <svg aria-hidden="true"><use href="#i-arrow"/></svg>
+          </button>
+        </div>
         <div class="settings-section"><h3>Preferences</h3><label class="settings-row"><span>Dark theme</span><input id="theme-toggle" type="checkbox" role="switch"></label><label class="settings-row"><span>Sound effects</span><input id="sound-toggle" type="checkbox" role="switch"></label><label class="settings-row" id="remaining-toggle-row"><span>Show numbers left</span><input id="numbers-left-toggle" type="checkbox" role="switch"></label></div>
         <div class="settings-section" id="sudoku-game-actions" hidden><h3>Current game</h3><div class="settings-quickstats"><span id="sudoku-progress-label">0%</span><span id="sudoku-filled">0 / 81</span><span id="sudoku-best">—</span></div><div class="settings-actions"><button class="sheet-action" id="sudoku-pause"><svg><use href="#i-pause"/></svg> Pause game</button><button class="sheet-action" id="sudoku-new"><svg><use href="#i-refresh"/></svg> Restart with a new puzzle</button></div></div>
         <div class="settings-section" id="mines-game-actions" hidden><h3>Current game</h3><div class="settings-quickstats"><span id="mines-progress-label">0%</span><span id="mines-best">—</span></div><div class="settings-actions"><button class="sheet-action" id="mines-new"><svg><use href="#i-refresh"/></svg> New minefield</button></div></div>
@@ -562,6 +604,7 @@ html,body,button,a,[role="button"]{touch-action:manipulation}
   <script src="./crossword-levels.js"></script>
   <script src="./crossword.js"></script>
   <script src="./wordsearch.js"></script>
+  <script src="./analytics.js"></script>
   <script>
 /*
  * Brainfarts — Sudoku + Minesweeper, one pocket-first PWA.
@@ -577,8 +620,12 @@ const load = (key, fallback = null) => {
   try { const raw = localStorage.getItem(STORAGE + key); return raw ? JSON.parse(raw) : fallback; }
   catch { return fallback; }
 };
+const ANALYTICS_GAME_KEYS = new Set(['sudoku','mines','nonogram','wordle','lights','2048','hanoi','crossword','wordsearch']);
 const save = (key, value) => {
+  const track = ANALYTICS_GAME_KEYS.has(key);
+  const previous = track ? load(key) : null;
   try { localStorage.setItem(STORAGE + key, JSON.stringify(value)); } catch { /* Private-mode storage may be unavailable. */ }
+  if (track) window.BrainfartsAnalytics?.observe(key, previous, value);
 };
 const shuffle = arr => {
   const a = [...arr];
@@ -594,6 +641,7 @@ const formatTime = seconds => seconds >= 3600
   : `${pad(Math.floor(seconds / 60))}:${pad(seconds % 60)}`;
 const difficultyLabel = s => s.charAt(0).toUpperCase() + s.slice(1);
 let route = 'home';
+let analyticsReturnRoute = 'home';
 let soundContext = null;
 let toastTimer = null;
 let installPrompt = null;
@@ -724,7 +772,7 @@ if (shelfEl) {
 }
 
 /* -------- Game selection, routing, settings, install -------- */
-const GAME_ROUTES = ['home','setup-sudoku','setup-mines','setup-nonogram','setup-wordle','setup-lights','setup-2048','setup-hanoi','hanoi','setup-crossword','crossword','setup-wordsearch','wordsearch','2048','sudoku','mines','nonogram','wordle','lights'];
+const GAME_ROUTES = ['home','analytics','setup-sudoku','setup-mines','setup-nonogram','setup-wordle','setup-lights','setup-2048','setup-hanoi','hanoi','setup-crossword','crossword','setup-wordsearch','wordsearch','2048','sudoku','mines','nonogram','wordle','lights'];
 const gameForRoute = r => r.includes('2048') ? '2048' : r.includes('sudoku') ? 'sudoku' : r.includes('mines') ? 'mines' : r.includes('nonogram') ? 'nonogram' : r.includes('wordle') ? 'wordle' : r.includes('lights') ? 'lights' : r.includes('hanoi') ? 'hanoi' : r.includes('crossword') ? 'crossword' : r.includes('wordsearch') ? 'wordsearch' : null;
 function navigate(next) {
   if (!GAME_ROUTES.includes(next)) next = 'home';
@@ -733,6 +781,7 @@ function navigate(next) {
   document.body.dataset.screen = next;
   if (location.hash !== '#' + next) history.pushState(null, '', '#' + next);
   $$('.page').forEach(p => { p.hidden = p.id !== 'page-' + next; });
+  if (next === 'analytics') window.BrainfartsAnalytics?.render($('#analytics-filter').value);
   if (next === 'sudoku' || next === 'setup-sudoku') {
     if (!sudoku) restoreOrCreateSudoku();
     $('#resume-sudoku').hidden = ['won','lost'].includes(sudoku.status);
@@ -752,7 +801,7 @@ function navigate(next) {
   if (next === 'crossword' || next === 'setup-crossword') { if (!crossword) restoreCrossword(); $('#resume-crossword').hidden = crossword.status === 'won' || !crossword.letters.some(Boolean); if (next === 'crossword') renderCrossword(); }
   if (next === 'wordsearch' || next === 'setup-wordsearch') { if (!wordsearch) restoreWordsearch(); $('#resume-wordsearch').hidden = wordsearch.status === 'won' || (wordsearch.status === 'ready' && !wordsearch.words.some(w=>w.found)); if (next === 'wordsearch') renderWordsearch(); }
   if (next === '2048' || next === 'setup-2048') { if (!merge) restoreMerge(); $('#resume-2048').hidden = !merge; if (next === '2048') { if (!merge) newMerge(); renderMerge(); } }
-  document.title = next === 'home' ? 'Brainfarts — Give your brain a little workout' : `${gameForRoute(next) === '2048' ? '2048' : gameForRoute(next) === 'mines' ? 'Minesweeper' : gameForRoute(next) === 'nonogram' ? 'Nonogram' : gameForRoute(next) === 'wordle' ? 'Wordle' : gameForRoute(next) === 'lights' ? 'Lights Out' : gameForRoute(next) === 'hanoi' ? 'Tower of Hanoi' : gameForRoute(next) === 'crossword' ? 'Crossword' : gameForRoute(next) === 'wordsearch' ? 'Word Search' : 'Sudoku'} · Brainfarts`;
+  document.title = next === 'analytics' ? 'Your progress · Brainfarts' : next === 'home' ? 'Brainfarts — Give your brain a little workout' : `${gameForRoute(next) === '2048' ? '2048' : gameForRoute(next) === 'mines' ? 'Minesweeper' : gameForRoute(next) === 'nonogram' ? 'Nonogram' : gameForRoute(next) === 'wordle' ? 'Wordle' : gameForRoute(next) === 'lights' ? 'Lights Out' : gameForRoute(next) === 'hanoi' ? 'Tower of Hanoi' : gameForRoute(next) === 'crossword' ? 'Crossword' : gameForRoute(next) === 'wordsearch' ? 'Word Search' : 'Sudoku'} · Brainfarts`;
   if (next !== 'sudoku' && next !== 'mines' && next !== 'nonogram' && next !== 'wordle' && next !== 'lights' && next !== 'hanoi' && next !== 'crossword' && next !== 'wordsearch' && next !== '2048') window.scrollTo({ top: 0, behavior: 'instant' });
 }
 $$('[data-route]').forEach(el => el.addEventListener('click', event => {
@@ -818,6 +867,14 @@ function openSettings() {
   $('.settings-sheet').focus();
 }
 $$('.settings-open, #home-settings-button').forEach(button => button.addEventListener('click', openSettings));
+$('#analytics-open').addEventListener('click', () => {
+  analyticsReturnRoute = route === 'analytics' ? 'home' : route;
+  closeSettings();
+  $('#analytics-filter').value='all';
+  navigate('analytics');
+});
+$('#analytics-back').addEventListener('click', () => navigate(analyticsReturnRoute));
+$('#analytics-filter').addEventListener('change', e => window.BrainfartsAnalytics?.render(e.target.value));
 $('#settings-close').addEventListener('click', closeSettings);
 $('#settings-backdrop').addEventListener('click', e => { if (e.target === $('#settings-backdrop')) closeSettings(); });
 $('#settings-howto').addEventListener('click', () => {
