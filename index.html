@@ -823,17 +823,12 @@ function hanoiDropTarget(x,y) {
  const stage=$('#page-hanoi .hanoi-stage');
  if(!stage) return null;
  const rect=stage.getBoundingClientRect();
- // Keep the pegs at their normal visual height, but accept drag releases
- // anywhere below their tops in the same column, down to the viewport edge.
- // This is a hit-testing change only: no rods or disks are stretched.
- if(x<rect.left || x>rect.right || y<rect.top-18 || y>window.innerHeight) return null;
- let closest=null,nearest=Infinity;
- for(const peg of $$('.hanoi-peg')){
-  const box=peg.getBoundingClientRect();
-  const delta=Math.abs(x-(box.left+box.right)/2);
-  if(delta<nearest){nearest=delta;closest=peg;}
- }
- return closest;
+ // The visual pegs stay compact. Invisible hit columns run from the LEFT edge
+ // of the viewport to the RIGHT edge, and all the way to the bottom.
+ // Resolve the drop from the screen thirds, including the gaps outside the board.
+ if(!Number.isFinite(x)||!Number.isFinite(y)||x<0||x>window.innerWidth||y<rect.top-18||y>window.innerHeight) return null;
+ const index=Math.min(2,Math.floor(x / window.innerWidth * 3));
+ return $$('.hanoi-peg')[index] || null;
 }
 /* Two options: tap source + target, or drag a disk between pegs. */
 let hanoiDrag=null,hanoiIgnorePointerClick=false;
