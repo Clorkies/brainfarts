@@ -204,6 +204,28 @@
 @keyframes shelf-in{from{opacity:0;transform:translateY(11px)}to{opacity:1;transform:translateY(0)}}
 @keyframes home-glow{from{filter:brightness(.82)}to{filter:brightness(1.22)}}
 
+
+body[data-screen="hanoi"]{height:100dvh;overflow:hidden}
+.home-game-card--hanoi{--card-bg:#dcecf2;--card-ink:#223e54;--card-sub:#5d7c8e}
+:root[data-theme="dark"] .home-game-card--hanoi{--card-bg:#315060;--card-ink:#f5fdff;--card-sub:#c4dce5}
+.hanoi-preview{position:relative;width:154px;height:124px;display:flex;justify-content:center;align-items:flex-end;padding-bottom:15px;transform:rotate(6deg)}
+.hanoi-preview:before{content:"";height:100px;width:9px;border-radius:8px;background:#698f9f;position:absolute;bottom:13px}
+.hanoi-preview i{position:absolute;display:block;width:120px;height:19px;bottom:15px;border-radius:20px;background:#345fb4;box-shadow:inset 0 -4px #0001}
+.hanoi-preview i:nth-child(2){width:100px;bottom:36px;background:#75a1e2}.hanoi-preview i:nth-child(3){width:80px;bottom:57px;background:#ddad69}.hanoi-preview i:nth-child(4){width:60px;bottom:78px;background:#ffdda2}
+.hanoi-content{width:min(100%,800px);margin:auto;flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:clamp(14px,4dvh,40px);padding:12px clamp(12px,4vw,24px) max(18px,env(safe-area-inset-bottom))}
+.hanoi-score{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:min(100%,550px);margin:0 auto;text-align:center}
+.hanoi-score div{background:var(--blue-faint);border-radius:14px;padding:11px 5px}.hanoi-score small{display:block;font-size:10px;letter-spacing:1px;font-weight:800;color:var(--muted)}.hanoi-score strong{font-size:clamp(21px,5vw,29px);font-variant-numeric:tabular-nums}
+.hanoi-stage{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(5px,2vw,20px);width:100%;height:clamp(205px,42dvh,340px);margin:auto}
+.hanoi-peg{position:relative;min-width:0;border-radius:17px;background:transparent;padding:0;touch-action:manipulation;transition:background .15s}.hanoi-peg.selected,.hanoi-peg:active{background:var(--blue-faint)}
+.hanoi-rod{position:absolute;bottom:38px;left:50%;transform:translateX(-50%);height:75%;width:10px;background:#aabbd1;border-radius:8px 8px 0 0}
+.hanoi-base{position:absolute;bottom:30px;left:0;width:100%;height:12px;border-radius:10px;background:#718cab}
+.hanoi-stack{position:absolute;bottom:42px;left:0;right:0;height:calc(100% - 65px);display:flex;flex-direction:column-reverse;justify-content:flex-start;align-items:center;gap:3px;padding:0 3px}
+.hanoi-disk{flex:none;display:block;width:var(--w);height:clamp(19px,4dvh,32px);border-radius:40px;background:var(--c);box-shadow:inset 0 -4px #14243d25,0 2px 4px #1b30501f;transition:transform .2s}
+.hanoi-peg.selected .hanoi-disk:last-child{transform:translateY(-12px)}.hanoi-peg-label{position:absolute;bottom:0;left:0;right:0;text-align:center;height:30px;color:var(--muted);font-size:13px;font-weight:850}
+.hanoi-caption{text-align:center;font-size:14px;color:var(--muted);margin:0 auto;min-height:40px}
+@media(max-width:600px){.hanoi-stage{height:min(39dvh,300px)}.hanoi-content{gap:15px}.home-game-card--hanoi .home-card-copy{max-width:65%}.home-game-card--hanoi .home-card-copy strong{font-size:clamp(23px,6vw,32px)}.home-game-card--hanoi .hanoi-preview{transform:rotate(6deg) scale(.8)}}
+@media(max-height:560px){.hanoi-stage{height:170px}.hanoi-content{gap:7px}.hanoi-disk{height:19px}}
+
 </style>
   <title>Brainfarts — Give your brain a little workout</title>
 </head>
@@ -306,7 +328,7 @@
         <h1>Little games.<br><span>Big brain energy.</span></h1>
         <p>Less scrolling. More solving. Pick a puzzle and get lost in something good.</p>
       </div>
-      <div class="home-sectionbar"><span>THE GAME SHELF <b>06</b></span><small>Choose your next challenge</small></div>
+      <div class="home-sectionbar"><span>THE GAME SHELF <b>07</b></span><small>Choose your next challenge</small></div>
       <div class="home-cards">
         <button class="home-game-card home-game-card--feature" data-route="setup-sudoku" aria-label="Choose Sudoku difficulty">
           <span class="home-card-top"><span>01 <i>/</i> THE CLASSIC</span><span class="home-card-arrow" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
@@ -339,6 +361,10 @@
           <span class="home-art merge-art" aria-hidden="true"><span class="merge-art-grid"><i>2</i><i>4</i><i>8</i><i>2048</i></span></span>
           <span class="home-card-copy"><strong>2048</strong><small>Slide. Combine. Keep going.</small></span>
         </button>
+        <button class="home-game-card home-game-card--hanoi home-game-card--wide" data-route="setup-hanoi" aria-label="Play Tower of Hanoi">
+<span class="home-card-top"><span>07 <i>/</i> BIG BRAIN MOVES</span><span class="home-card-arrow" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
+<span class="home-art hanoi-art" aria-hidden="true"><span class="hanoi-preview"><i></i><i></i><i></i><i></i></span></span>
+<span class="home-card-copy"><strong>Tower of Hanoi</strong><small>One disk at a time. Move the whole tower.</small></span></button>
       </div>
       <footer class="home-foot"><span aria-hidden="true">●</span> YOUR BRAIN, YOUR PACE. WORKS OFFLINE.</footer>
     </section>
@@ -369,6 +395,23 @@
     <section class="page play-page" id="page-2048" hidden><header class="screen-header play-header"><button class="bare-icon back-button" data-route="setup-2048" aria-label="Back to 2048 setup"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">2048</span><button class="bare-icon settings-open" aria-label="2048 settings"><svg><use href="#i-settings"/></svg></button></header><div class="merge-content"><div class="merge-scores"><div class="merge-score"><span>SCORE</span><strong id="merge-score">0</strong></div><div class="merge-score"><span>BEST</span><strong id="merge-best">0</strong></div><button id="merge-undo" aria-label="Undo last 2048 move"><svg><use href="#i-undo"/></svg><span>Undo</span></button></div><div class="merge-board" id="merge-board" tabindex="0" role="group" aria-label="2048 board" aria-describedby="merge-instructions merge-board-description"><div class="merge-slots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="merge-tiles" id="merge-tiles" aria-hidden="true"></div><div class="visually-hidden" id="merge-board-description"></div></div><div class="merge-footer"><p class="merge-status" id="merge-status" role="status" aria-live="polite" aria-atomic="true"></p><button class="merge-continue" id="merge-continue" hidden>Keep playing</button><button class="merge-continue" id="merge-again" hidden>New game</button><div class="merge-directions" role="group" aria-label="Move tiles"><button data-merge-dir="left" aria-label="Move tiles left"><svg><use href="#i-arrow-left"/></svg></button><button data-merge-dir="up" aria-label="Move tiles up"><svg style="transform:rotate(-90deg)"><use href="#i-arrow"/></svg></button><button data-merge-dir="down" aria-label="Move tiles down"><svg style="transform:rotate(90deg)"><use href="#i-arrow"/></svg></button><button data-merge-dir="right" aria-label="Move tiles right"><svg><use href="#i-arrow"/></svg></button></div><span id="merge-instructions" class="visually-hidden">Swipe or use arrow keys to slide tiles. Direction buttons are also available. Matching tiles merge once per move. Reach 2048 to win.</span></div></div></section>
     <section class="page setup-page" id="page-setup-lights" hidden><header class="screen-header"><button class="bare-icon back-button" data-route="home" aria-label="Back to games"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">Lights Out</span><button class="bare-icon settings-open" aria-label="Settings"><svg><use href="#i-settings"/></svg></button></header><div class="setup-body"><div class="setup-badge">LOGIC ? LIGHTS OUT</div><h1>Find the off switch.</h1><p>Every tap changes a light and its neighbors. Can you turn them all off?</p><div class="setup-section-label">CHOOSE DIFFICULTY</div><div class="setup-options" role="radiogroup" aria-label="Lights Out difficulty"><label class="setup-option"><input type="radio" name="setup-lights" value="easy" checked><span><strong>Easy</strong><small>3 ? 3 ? A quick warm-up</small></span><span class="radio-dot"></span></label><label class="setup-option"><input type="radio" name="setup-lights" value="medium" ><span><strong>Medium</strong><small>5 ? 5 ? A little more thought</small></span><span class="radio-dot"></span></label><label class="setup-option"><input type="radio" name="setup-lights" value="hard" ><span><strong>Hard</strong><small>6 ? 6 ? A deeper challenge</small></span><span class="radio-dot"></span></label></div><button class="start-button" id="start-lights">Play <svg><use href="#i-arrow"/></svg></button><button class="resume-link" id="resume-lights" hidden>Resume saved puzzle</button></div></section>
     <section class="page play-page" id="page-lights" hidden><header class="screen-header play-header"><button class="bare-icon back-button" data-route="setup-lights" aria-label="Back to Lights Out setup"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">Lights Out</span><button class="bare-icon settings-open" aria-label="Lights Out settings"><svg><use href="#i-settings"/></svg></button></header><div class="lights-content"><div class="lights-meta"><div><span>Moves</span><strong id="lights-moves">0</strong></div><div><span>Time</span><strong id="lights-time">00:00</strong></div></div><div class="lights-board" id="lights-board" role="group" aria-label="Lights Out board"></div><p class="lights-caption">Turn every light off.</p></div></section>
+<section class="page setup-page" id="page-setup-hanoi" hidden>
+<header class="screen-header"><button class="bare-icon back-button" data-route="home" aria-label="Back to games"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">Tower of Hanoi</span><button class="bare-icon settings-open" aria-label="Settings"><svg><use href="#i-settings"/></svg></button></header>
+<div class="setup-body"><div class="setup-badge">SPATIAL LOGIC · THREE PEGS</div><h1>One disk at a time.</h1><p>Move the entire stack from peg A to C. You can never place a bigger disk on a smaller one.</p><div class="setup-section-label">CHOOSE YOUR CHALLENGE</div><div class="setup-options" role="radiogroup" aria-label="Tower of Hanoi level">
+<label class="setup-option"><input type="radio" name="setup-hanoi" value="3" checked><span><strong>Easy</strong><small>3 disks · Minimum 7 moves</small></span><span class="radio-dot"></span></label>
+<label class="setup-option"><input type="radio" name="setup-hanoi" value="4" ><span><strong>Medium</strong><small>4 disks · Minimum 15 moves</small></span><span class="radio-dot"></span></label>
+<label class="setup-option"><input type="radio" name="setup-hanoi" value="5" ><span><strong>Hard</strong><small>5 disks · Minimum 31 moves</small></span><span class="radio-dot"></span></label>
+<label class="setup-option"><input type="radio" name="setup-hanoi" value="6" ><span><strong>Expert</strong><small>6 disks · Minimum 63 moves</small></span><span class="radio-dot"></span></label>
+</div><button class="start-button" id="start-hanoi">Start solving <svg><use href="#i-arrow"/></svg></button><button class="resume-link" id="resume-hanoi" hidden>Resume saved puzzle</button></div></section>
+<section class="page play-page" id="page-hanoi" hidden>
+<header class="screen-header play-header"><button class="bare-icon back-button" data-route="setup-hanoi" aria-label="Back to setup"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">Tower of Hanoi</span><button class="bare-icon settings-open" aria-label="Tower of Hanoi settings"><svg><use href="#i-settings"/></svg></button></header>
+<div class="hanoi-content">
+<div class="hanoi-score"><div><small>MOVES</small><strong id="hanoi-moves">0</strong></div><div><small>MINIMUM</small><strong id="hanoi-minimum">7</strong></div><div><small>TIME</small><strong id="hanoi-time">00:00</strong></div></div>
+<div class="hanoi-stage" role="group" aria-label="Hanoi pegs: tap a source peg then a destination">
+<button class="hanoi-peg" data-hanoi-peg="0" aria-label="Peg A"><span class="hanoi-rod"></span><span class="hanoi-stack"></span><span class="hanoi-base"></span><span class="hanoi-peg-label">A</span></button><button class="hanoi-peg" data-hanoi-peg="1" aria-label="Peg B"><span class="hanoi-rod"></span><span class="hanoi-stack"></span><span class="hanoi-base"></span><span class="hanoi-peg-label">B</span></button><button class="hanoi-peg" data-hanoi-peg="2" aria-label="Peg C"><span class="hanoi-rod"></span><span class="hanoi-stack"></span><span class="hanoi-base"></span><span class="hanoi-peg-label">C</span></button>
+</div>
+<p class="hanoi-caption" id="hanoi-caption" role="status" aria-live="polite">Tap the source peg, then your destination.</p>
+</div></section>
     <!-- Sudoku play: ONE focused view; zero navigation, sidebars, or footers. -->
     <section class="page play-page sudoku-page" id="page-sudoku" hidden>
       <header class="screen-header play-header"><button class="bare-icon back-button" data-route="setup-sudoku" aria-label="Back to Sudoku setup"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title" id="sudoku-title">Sudoku</span><button class="bare-icon settings-open" aria-label="Sudoku settings"><svg><use href="#i-settings"/></svg></button></header>
@@ -393,6 +436,11 @@
     <section class="settings-sheet" role="dialog" aria-modal="true" aria-labelledby="settings-title" tabindex="-1">
       <header class="sheet-header"><h2 id="settings-title">Settings</h2><button class="bare-icon" id="settings-close" aria-label="Close settings"><svg><use href="#i-close"/></svg></button></header>
       <div class="settings-scroll">
+<div class="settings-section" id="hanoi-settings" hidden><h3>Tower of Hanoi toolkit</h3>
+<div class="tool-grid"><button class="tool-button" id="hanoi-undo"><svg><use href="#i-undo"/></svg><span>Undo</span></button><button class="tool-button" id="hanoi-hint"><svg><use href="#i-sparkle"/></svg><span>Hint</span></button></div>
+<p class="settings-info">Tap a source peg then a destination peg. Move only the top disk, and never put a large disk on a smaller one. Keyboard: 1/2/3 or A/B/C.</p>
+<div class="sheet-stats"><div><span>Moves</span><strong id="hanoi-settings-moves">0</strong></div><div><span>Best moves</span><strong id="hanoi-best-moves">—</strong></div><div><span>Best time</span><strong id="hanoi-best-time">—</strong></div></div>
+<div class="settings-actions"><button class="sheet-action" id="hanoi-restart"><svg><use href="#i-refresh"/></svg> Restart puzzle</button><button class="sheet-action" id="hanoi-new"><svg><use href="#i-sparkle"/></svg> Change difficulty</button></div></div>
         <div class="settings-section" id="merge-settings" hidden><h3>2048 toolkit</h3><p class="settings-info">Swipe or use the arrow keys. Equal tiles merge once per move. Keep an empty space or two, and build toward 2048. Undo is available above the board.</p><div class="settings-actions"><button class="sheet-action" id="merge-restart"><svg><use href="#i-refresh"/></svg> Restart game</button><button class="sheet-action" id="merge-new"><svg><use href="#i-sparkle"/></svg> New game</button></div></div>
         <div class="settings-section" id="lights-settings" hidden><h3>Lights Out toolkit</h3><div class="tool-grid"><button class="tool-button" id="lights-undo"><svg><use href="#i-undo"/></svg><span>Undo</span></button><button class="tool-button" id="lights-hint"><svg><use href="#i-sparkle"/></svg><span>Hint</span></button></div><p class="settings-info">Tap a light to switch it and its up, down, left and right neighbors. Turn every light off to win.</p><div class="settings-actions"><button class="sheet-action" id="lights-restart"><svg><use href="#i-refresh"/></svg> Restart puzzle</button><button class="sheet-action" id="lights-new"><svg><use href="#i-sparkle"/></svg> New puzzle</button></div></div>
         <div class="settings-section" id="word-settings" hidden><h3>Wordle</h3><div class="sheet-stats"><div><span>Played</span><strong id="word-played">0</strong></div><div><span>Wins</span><strong id="word-wins">0</strong></div><div><span>Streak</span><strong id="word-streak">0</strong></div></div><p class="settings-info">Guess a five-letter word in six tries. Green is in the correct spot; gold is elsewhere; gray is absent. Letters may repeat.</p><div class="settings-actions"><button class="sheet-action" id="word-new"><svg><use href="#i-refresh"/></svg> New word</button></div></div>
@@ -511,6 +559,7 @@ function closeDialog() {
   document.body.classList.remove('body-no-scroll');
 }
 const RULES = {
+  hanoi:{title:'Tower of Hanoi, made simple.',subtitle:'Move the tower from A to C.',steps:['Move only one disk at a time: the top disk from any peg.','Never place a larger disk on a smaller disk.','Tap a peg to select, then another peg to move. Keyboard keys 1, 2, 3 or A, B, C work too.','The minimum move count is 2ⁿ − 1. Undo and a next-move Hint are available in Settings.']},
   '2048': { title: '2048, made simple.', subtitle: 'A little space goes a long way.', steps: ['Swipe up, down, left or right to slide every tile in that direction. Arrow keys, WASD and the direction buttons work too.', 'Two equal tiles touching in the direction of travel merge into one. Each tile can merge only once per move. The merged value is added to your score.', 'A new 2 or 4 appears after each move that changes the board. Reach a 2048 tile to win, then keep playing if you like.', 'The game ends when the board is full and no neighbors match. Undo restores your last move, including the new tile. Progress and best score are saved on this device.'] },
   sudoku: {
     title: 'Sudoku, made simple.', subtitle: 'Nine rows. Nine columns. Nine 3 × 3 boxes. One of each number in every group.',
@@ -560,6 +609,7 @@ $('#dialog-content').addEventListener('click', event => {
   const action = button.dataset.dialogAction;
   closeDialog();
   if (action === 'new') { if (route === 'sudoku') newSudoku(sudoku.difficulty); else if (route === 'mines') newMines(mines.difficulty); else if (route === 'nonogram') newNonogram(nonogram.difficulty); else if (route === 'wordle') newWordle(); else if (route === 'lights') newLights(lights.difficulty); }
+  if (action === 'hanoi-replay') { newHanoi(hanoi?.count||3); navigate('hanoi'); }
   if (action === 'merge-new-confirm') { newMerge(); navigate('2048'); }
   if (action === 'merge-restart-confirm') restartMerge();
   if (action === 'nono-replay') restartNonogram();
@@ -572,8 +622,8 @@ $('#dialog-content').addEventListener('click', event => {
 $$('[data-help]').forEach(button => button.addEventListener('click', () => showHelp(button.dataset.help)));
 
 /* -------- Game selection, routing, settings, install -------- */
-const GAME_ROUTES = ['home','setup-sudoku','setup-mines','setup-nonogram','setup-wordle','setup-lights','setup-2048','2048','sudoku','mines','nonogram','wordle','lights'];
-const gameForRoute = r => r.includes('2048') ? '2048' : r.includes('sudoku') ? 'sudoku' : r.includes('mines') ? 'mines' : r.includes('nonogram') ? 'nonogram' : r.includes('wordle') ? 'wordle' : r.includes('lights') ? 'lights' : null;
+const GAME_ROUTES = ['home','setup-sudoku','setup-mines','setup-nonogram','setup-wordle','setup-lights','setup-2048','setup-hanoi','hanoi','2048','sudoku','mines','nonogram','wordle','lights'];
+const gameForRoute = r => r.includes('2048') ? '2048' : r.includes('sudoku') ? 'sudoku' : r.includes('mines') ? 'mines' : r.includes('nonogram') ? 'nonogram' : r.includes('wordle') ? 'wordle' : r.includes('lights') ? 'lights' : r.includes('hanoi') ? 'hanoi' : null;
 function navigate(next) {
   if (!GAME_ROUTES.includes(next)) next = 'home';
   closeSettings();
@@ -596,9 +646,10 @@ function navigate(next) {
   if (next === 'nonogram' || next === 'setup-nonogram') { if (!nonogram) restoreNonogram(); $('#resume-nonogram').hidden = !nonogram || nonogram.status === 'won'; if (next === 'nonogram') { if (!nonogram) newNonogram('easy'); renderNonogram(); requestAnimationFrame(fitNonogram); } }
   if (next === 'wordle' || next === 'setup-wordle') { if (!wordle) restoreWordle(); $('#resume-wordle').hidden = !wordle || wordle.status !== 'playing'; if (next === 'wordle') { if (!wordle) newWordle(); renderWordle(); } }
   if (next === 'lights' || next === 'setup-lights') { if (!lights) restoreLights(); $('#resume-lights').hidden = !lights || lights.status === 'won'; if (next === 'lights') { if (!lights) newLights('easy'); renderLights(); } }
+  if (next === 'hanoi' || next === 'setup-hanoi') { if (!hanoi) restoreHanoi(); $('#resume-hanoi').hidden = hanoi.status === 'won'; if (next === 'hanoi') renderHanoi(); }
   if (next === '2048' || next === 'setup-2048') { if (!merge) restoreMerge(); $('#resume-2048').hidden = !merge; if (next === '2048') { if (!merge) newMerge(); renderMerge(); } }
-  document.title = next === 'home' ? 'Brainfarts — Give your brain a little workout' : `${gameForRoute(next) === '2048' ? '2048' : gameForRoute(next) === 'mines' ? 'Minesweeper' : gameForRoute(next) === 'nonogram' ? 'Nonogram' : gameForRoute(next) === 'wordle' ? 'Wordle' : gameForRoute(next) === 'lights' ? 'Lights Out' : 'Sudoku'} · Brainfarts`;
-  if (next !== 'sudoku' && next !== 'mines' && next !== 'nonogram' && next !== 'wordle' && next !== 'lights' && next !== '2048') window.scrollTo({ top: 0, behavior: 'instant' });
+  document.title = next === 'home' ? 'Brainfarts — Give your brain a little workout' : `${gameForRoute(next) === '2048' ? '2048' : gameForRoute(next) === 'mines' ? 'Minesweeper' : gameForRoute(next) === 'nonogram' ? 'Nonogram' : gameForRoute(next) === 'wordle' ? 'Wordle' : gameForRoute(next) === 'lights' ? 'Lights Out' : gameForRoute(next) === 'hanoi' ? 'Tower of Hanoi' : 'Sudoku'} · Brainfarts`;
+  if (next !== 'sudoku' && next !== 'mines' && next !== 'nonogram' && next !== 'wordle' && next !== 'lights' && next !== 'hanoi' && next !== '2048') window.scrollTo({ top: 0, behavior: 'instant' });
 }
 $$('[data-route]').forEach(el => el.addEventListener('click', event => {
   if (el.tagName === 'A') event.preventDefault();
@@ -606,6 +657,8 @@ $$('[data-route]').forEach(el => el.addEventListener('click', event => {
 }));
 window.addEventListener('hashchange', () => navigate(location.hash.slice(1) || 'home'));
 
+$('#start-hanoi').addEventListener('click',()=>{newHanoi(Number($('input[name="setup-hanoi"]:checked').value));navigate('hanoi');});
+$('#resume-hanoi').addEventListener('click',()=>navigate('hanoi'));
 $('#start-sudoku').addEventListener('click', () => {
   const difficulty = $('input[name="setup-sudoku"]:checked').value;
   newSudoku(difficulty); navigate('sudoku');
@@ -630,6 +683,8 @@ function closeSettings() {
   document.body.classList.remove('sheet-open');
 }
 function openSettings() {
+  $('#hanoi-settings').hidden = route !== 'hanoi';
+  if(route==='hanoi') updateHanoiTools();
   $('#merge-settings').hidden = route !== '2048';
   const isSudoku = route === 'sudoku';
   const isMines = route === 'mines';
@@ -695,6 +750,80 @@ window.setTimeout(() => {
   $('#splash').classList.add('dismissed');
   window.setTimeout(() => $('#splash').remove(), 390);
 }, splashDelay);
+
+
+/* Tower of Hanoi - solved via legal disk moves, persisted independently. */
+let hanoi=null;
+function hanoiInitial(n){return {n,pegs:[Array.from({length:n},(_,i)=>n-i),[],[]],moves:0,elapsed:0,selected:null,status:'ready',history:[]};}
+function validHanoi(h){
+  if(!h||![3,4,5,6].includes(h.n)||!Array.isArray(h.pegs)||h.pegs.length!==3||!Array.isArray(h.history)
+    ||!Number.isSafeInteger(h.moves)||h.moves<0||!Number.isSafeInteger(h.elapsed)||h.elapsed<0||!['ready','playing','won'].includes(h.status))return false;
+  const all=h.pegs.flat();
+  return all.length===h.n&&new Set(all).size===h.n&&all.every(d=>Number.isInteger(d)&&d>=1&&d<=h.n)
+    &&h.pegs.every(p=>Array.isArray(p)&&p.every((d,i)=>i===0||p[i-1]>d));
+}
+function restoreHanoi(){const previous=load('hanoi');hanoi=validHanoi(previous)?previous:hanoiInitial(3);hanoi.selected=null;save('hanoi',hanoi);}
+function newHanoi(n=3){hanoi=hanoiInitial([3,4,5,6].includes(n)?n:3);save('hanoi',hanoi);renderHanoi();}
+function hanoiMinimum(){return 2**hanoi.n-1;}
+function renderHanoi(){
+ if(!hanoi)return;
+ $('#hanoi-moves').textContent=hanoi.moves;$('#hanoi-minimum').textContent=hanoiMinimum();$('#hanoi-time').textContent=formatTime(hanoi.elapsed);
+ $('#hanoi-caption').textContent=hanoi.status==='won'?'Solved. Nice work!':hanoi.selected===null?'Tap a source peg, then a destination.':'Choose a destination peg.';
+ const colors=['#f0c36e','#82aaf0','#345fb4','#8580d1','#4e9aab','#c97b79'];
+ $('.hanoi-peg').forEach((el,i)=>{const p=hanoi.pegs[i];el.classList.toggle('selected',hanoi.selected===i);
+  el.setAttribute('aria-label','Peg '+String.fromCharCode(65+i)+': '+(p.length?p.slice().reverse().join(', ')+' top to bottom':'empty'));
+  el.querySelector('.hanoi-stack').innerHTML=p.map(d=>'<span class="hanoi-disk" style="--w:'+(29+d/hanoi.n*68)+'%;--c:'+colors[(d-1)%colors.length]+'"></span>').join('');
+ });
+}
+function hanoiSelect(i){
+ if(!hanoi||hanoi.status==='won'||i<0||i>2)return;
+ if(hanoi.selected===null){if(!hanoi.pegs[i].length){notify('That peg is empty');return;}hanoi.selected=i;renderHanoi();return;}
+ if(hanoi.selected===i){hanoi.selected=null;renderHanoi();return;}
+ const from=hanoi.selected,disk=hanoi.pegs[from].at(-1),top=hanoi.pegs[i].at(-1);
+ if(top!=null&&top<disk){hanoi.selected=null;renderHanoi();notify('A bigger disk cannot go over a smaller one');return;}
+ hanoi.history.push(hanoi.pegs.map(p=>[...p]));if(hanoi.history.length>128)hanoi.history.shift();
+ hanoi.pegs[from].pop();hanoi.pegs[i].push(disk);hanoi.moves++;hanoi.selected=null;
+ hanoi.status=hanoi.pegs[2].length===hanoi.n?'won':'playing';
+ clickSound(390+(hanoi.n-disk)*40,.075);
+ if(hanoi.status==='won'){const k='best.hanoi.'+hanoi.n,b=load(k);if(!b||hanoi.moves<b.moves||(hanoi.moves===b.moves&&hanoi.elapsed<b.elapsed))save(k,{moves:hanoi.moves,elapsed:hanoi.elapsed});}
+ save('hanoi',hanoi);renderHanoi();
+ if(hanoi.status==='won'){confetti();dialog('<svg class="brand-symbol dialog-brand" aria-hidden="true"><use href="#i-brand"/></svg><div class="dialog-kicker">TOWER COMPLETE</div><h2 id="dialog-title">A towering achievement.</h2><p>You moved the entire stack, one smart step at a time.</p><div class="result-stats"><div class="result-stat"><strong>'+hanoi.moves+'</strong><small>MOVES</small></div><div class="result-stat"><strong>'+hanoiMinimum()+'</strong><small>MINIMUM</small></div><div class="result-stat"><strong>'+formatTime(hanoi.elapsed)+'</strong><small>YOUR TIME</small></div></div><div class="dialog-actions"><button class="secondary-button" data-dialog-action="home">All games</button><button class="primary-button" data-dialog-action="hanoi-replay">Play again '+icon('arrow')+'</button></div>');}
+}
+function updateHanoiTools(){
+ if(!hanoi)return;
+ $('#hanoi-undo').disabled=!hanoi.history.length||hanoi.status==='won';$('#hanoi-hint').disabled=hanoi.status==='won';
+ $('#hanoi-settings-moves').textContent=hanoi.moves;
+ const best=load('best.hanoi.'+hanoi.n);
+ $('#hanoi-best-moves').textContent=best?best.moves:'—';$('#hanoi-best-time').textContent=best?formatTime(best.elapsed):'—';
+}
+function hanoiUndo(){if(!hanoi||!hanoi.history.length||hanoi.status==='won')return;hanoi.pegs=hanoi.history.pop();hanoi.moves--;hanoi.selected=null;hanoi.status=hanoi.moves?'playing':'ready';save('hanoi',hanoi);renderHanoi();updateHanoiTools();}
+function hanoiHint(){
+ if(!hanoi||hanoi.status==='won')return;
+ // Breadth-first search guarantees the next move on the shortest remaining path.
+ const encode=pegs=>Array.from({length:hanoi.n},(_,i)=>pegs.findIndex(p=>p.includes(i+1))).join('');
+ const target='2'.repeat(hanoi.n),start=encode(hanoi.pegs),queue=[hanoi.pegs.map(p=>[...p])],seen=new Set([start]),parent=new Map(),path=[];
+ for(let k=0;k<queue.length;k++){
+  const state=queue[k],id=encode(state);
+  if(id===target){let cur=id;while(cur!==start){const edge=parent.get(cur);path.unshift(edge);cur=edge.prev;}break;}
+  for(let a=0;a<3;a++)for(let b=0;b<3;b++){
+   if(a===b||!state[a].length)continue;const disk=state[a].at(-1),top=state[b].at(-1);if(top!=null&&top<disk)continue;
+   const next=state.map(p=>[...p]);next[a].pop();next[b].push(disk);const nid=encode(next);
+   if(!seen.has(nid)){seen.add(nid);parent.set(nid,{prev:id,a,b});queue.push(next);}
+  }
+ }
+ if(path.length){const next=path[0],message='Hint: '+String.fromCharCode(65+next.a)+' → '+String.fromCharCode(65+next.b);closeSettings();notify(message);$('#hanoi-caption').textContent=message;}
+}
+$('[data-hanoi-peg]').forEach(el=>el.addEventListener('click',()=>hanoiSelect(Number(el.dataset.hanoiPeg))));
+$('#hanoi-undo').addEventListener('click',hanoiUndo);$('#hanoi-hint').addEventListener('click',hanoiHint);
+$('#hanoi-restart').addEventListener('click',()=>{closeSettings();newHanoi(hanoi?.n||3);});
+$('#hanoi-new').addEventListener('click',()=>{closeSettings();navigate('setup-hanoi');});
+document.addEventListener('keydown',event=>{
+ if(route!=='hanoi'||!$('#modal-backdrop').hidden||!$('#settings-backdrop').hidden||event.ctrlKey||event.metaKey||event.altKey)return;
+ const i={'1':0,'2':1,'3':2,'a':0,'b':1,'c':2}[event.key.toLowerCase()];
+ if(i!==undefined){event.preventDefault();hanoiSelect(i);}
+ else if(event.key==='Escape'&&hanoi.selected!==null){hanoi.selected=null;renderHanoi();}
+ else if((event.key==='Backspace'||event.key.toLowerCase()==='u')&&hanoi.history.length){event.preventDefault();hanoiUndo();}
+});
 
 /* -------- Sudoku: unique-solution puzzle generator -------- */
 const SUDOKU_CLUES = { easy: 42, medium: 35, hard: 29 };
@@ -1668,6 +1797,7 @@ document.addEventListener('keydown', event => {
 });
 setInterval(() => {
   if (document.hidden || !$('#modal-backdrop').hidden || !$('#settings-backdrop').hidden) return;
+  if (route === 'hanoi' && hanoi?.status === 'playing') { hanoi.elapsed++; $('#hanoi-time').textContent=formatTime(hanoi.elapsed); if(hanoi.elapsed%5===0) save('hanoi',hanoi); }
   if (route === 'sudoku' && sudoku?.status === 'playing') {
     sudoku.elapsed++;
     $('#sudoku-time').textContent = formatTime(sudoku.elapsed);
@@ -1682,6 +1812,7 @@ setInterval(() => {
   }
 }, 1000);
 window.addEventListener('pagehide', () => {
+  if (hanoi) save('hanoi', hanoi);
   if (sudoku) save('sudoku', sudoku);
   if (mines) save('mines', mines);
   if (nonogram) save('nonogram', nonogram);
