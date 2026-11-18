@@ -625,7 +625,7 @@ const save = (key, value) => {
   const track = ANALYTICS_GAME_KEYS.has(key);
   const previous = track ? load(key) : null;
   try { localStorage.setItem(STORAGE + key, JSON.stringify(value)); } catch { /* Private-mode storage may be unavailable. */ }
-  if (track) window.BrainfartsAnalytics?.observe(key, previous, value);
+  if (track) { try { window.BrainfartsAnalytics?.observe(key, previous, value); } catch { /* Optional analytics can never interrupt gameplay. */ } }
 };
 const shuffle = arr => {
   const a = [...arr];
