@@ -124,7 +124,8 @@ function renderWordsearch(){
  const grid=$('#wordsearch-board');grid.style.setProperty('--ws-size',size);grid.style.setProperty('--ws-font',Math.max(10,Math.round(330/size))+'px');
  grid.innerHTML=board.map((c,i)=>'<button type="button" class="ws-cell'+(found.has(i)?' found':'')+'" data-ws-cell="'+i+'" aria-label="Row '+(Math.floor(i/size)+1)+', column '+(i%size+1)+', '+c+'">'+c+'</button>').join('');
  $('#wordsearch-words').innerHTML=words.map(w=>'<span class="ws-word'+(w.found?' found':'')+'">'+w.text+'</span>').join('');
- $('#wordsearch-instructions').textContent=wordsearch.status==='won'?'All found!':'Drag over a word, or tap its first and last letters.';
+ $('#wordsearch-instructions').textContent=wordsearch.status==='won'?'All found!':wsAnchor!==null?'Now tap the last letter of your word.':'Drag over a word, or tap its first and last letters.';
+ if(wsAnchor!==null)wsPreview([wsAnchor]);
 }
 function wsHint(){
  if(!wordsearch||wordsearch.status==='won')return;
