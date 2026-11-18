@@ -77,14 +77,15 @@
     const active=activated(game,state),prior=activated(game,previous),now=Date.now(),journal=read();
     const t=isObject(journal.totals[game])?journal.totals[game]:{played:0,wins:0,losses:0,solvedSeconds:0,lastAt:0};
     const start=active&&!prior;
-    const finished=terminal(state.status)&&(!isObject(previous)||!terminal(previous.status)||previous.status!==state.status);
+    const finished=terminal(state.status)&&(!isObject(previous)||!terminal(previous.status)||previous.status!==state.status)
+      && !(game==='2048' && state.status==='over' && state.continued);
     if(!start&&!finished&&!active)return;
     if(!start&&!finished&&now-safeInt(t.lastAt)<45000)return;
     if(start){t.played=safeInt(t.played)+1;journal.recent.unshift({game,at:now,kind:'started',level:levelOf(game,state),detail:details(game,state)});}
     if(finished){
       // A terminal game restored from pre-analytics storage must not invent an old result.
       // Reached here only after a new state transition.
-      if(!start&&!prior)t.played=safeInt(t.played)+1;
+      if(!start && safeInt(t.played)<=safeInt(t.wins)+safeInt(t.losses))t.played=safeInt(t.played)+1;
       if(state.status==='won'){t.wins=safeInt(t.wins)+1;t.solvedSeconds=safeInt(t.solvedSeconds)+safeInt(state.elapsed);}
       else t.losses=safeInt(t.losses)+1;
       journal.recent.unshift({game,at:now,kind:state.status==='won'?'won':'lost',level:levelOf(game,state),detail:details(game,state)});
@@ -110,7 +111,7 @@
       const bests=[];
       for(let i=0;i<40;i++){const seconds=storage('crossword.best.'+i);if(Number.isFinite(seconds)&&seconds>=0)bests.push({i,seconds});}
       if(!bests.length)return '—';
-      bests.sort((a,b)=>a.seconds-b.seconds);return shortTime(bests[0].seconds)+' ('+(bests[0].i+1)+'st puzzle)';
+      bests.sort((a,b)=>a.seconds-b.seconds);return shortTime(bests[0].seconds)+' (puzzle #'+(bests[0].i+1)+')';
     }
     if(game==='wordsearch'){
       for(const level of ['hard','medium','easy']){
