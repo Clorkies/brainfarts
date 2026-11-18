@@ -1,0 +1,26 @@
+/* Word Search · phone-first, selectable in eight straight-line directions. */
+body[data-screen="wordsearch"]{height:100dvh;overflow:hidden}
+.home-game-card--wordsearch{--card-bg:#d9ede9;--card-ink:#28483f;--card-sub:#5b8176}
+:root[data-theme="dark"] .home-game-card--wordsearch{--card-bg:#30554c;--card-ink:#eafaf5;--card-sub:#b3d8ce}
+.ws-preview{display:grid;grid-template-columns:repeat(7,18px);grid-template-rows:repeat(5,18px);gap:2px;background:#2f6457;padding:6px;border:2px solid #2f6457;border-radius:9px;transform:rotate(-7deg);box-shadow:0 12px 22px #1d493522;transition:transform .3s}
+.ws-preview i{display:grid;place-items:center;font-style:normal;color:#3e675d;background:#f9fffc;font-weight:850;font-size:10px}
+.ws-preview i.found{background:#a2dccb;color:#1b5745}
+.home-game-card--wordsearch .home-art{display:flex;align-items:center;justify-content:center}
+.home-game-card--wordsearch:hover .ws-preview{transform:rotate(0deg) translateY(-3px)}
+.ws-content{flex:1;min-height:0;width:min(100%,650px);margin:0 auto;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:clamp(7px,1.5dvh,13px);padding:8px clamp(10px,3vw,22px) max(14px,env(safe-area-inset-bottom))}
+.ws-meta{width:100%;max-width:520px;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.ws-meta>span:first-child{font-size:15px;font-weight:820;color:var(--ink)}
+.ws-meta strong{color:var(--blue);font-weight:850}
+.ws-board{--ws-size:10;display:grid;grid-template-columns:repeat(var(--ws-size),minmax(0,1fr));grid-template-rows:repeat(var(--ws-size),minmax(0,1fr));gap:1px;padding:2px;flex:0 1 auto;width:min(100%,calc(100dvh - 320px),540px);min-height:0;aspect-ratio:1;background:#768c9c;border:1px solid #768c9c;border-radius:9px;user-select:none;-webkit-user-select:none;touch-action:none}
+.ws-cell{min-width:0;min-height:0;border:0;border-radius:1px;padding:0;background:var(--panel);color:var(--ink);font-size:var(--ws-font,20px);line-height:1;font-weight:770;display:grid;place-items:center;touch-action:none;user-select:none;-webkit-user-select:none}
+.ws-cell.found{background:#a5d8c2;color:#215a44}
+.ws-cell.preview{background:#8daef5!important;color:#fff!important;box-shadow:inset 0 0 0 1px #315ba5;z-index:1}
+.ws-caption{font-size:12px;color:var(--muted);line-height:1.3;min-height:20px;margin:0;text-align:center}
+.ws-words{width:min(100%,540px);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px 10px;align-content:start;overflow-y:auto;min-height:0;max-height:24dvh;padding:6px 4px}
+.ws-word{font-size:clamp(10px,2.7vw,13px);font-weight:780;letter-spacing:.5px;color:var(--ink);min-width:0;overflow-wrap:anywhere;text-align:center}
+.ws-word.found{color:#458a72;text-decoration:line-through;text-decoration-thickness:2px;opacity:.68}
+@media(min-width:640px){.ws-words{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 16px}.ws-board{width:min(100%,calc(100dvh - 290px),540px)}}
+@media(max-width:600px){.home-game-card--wordsearch .home-card-copy{max-width:61%}.home-game-card--wordsearch .home-card-copy strong{font-size:clamp(25px,6vw,32px)}.home-game-card--wordsearch .ws-preview{transform:rotate(-7deg) scale(.81)}.ws-content{gap:9px}.ws-board{width:min(100%,calc(100dvh - 325px),425px)}}
+@media(max-height:710px){.ws-content{gap:5px;padding-top:3px}.ws-board{width:min(100%,calc(100dvh - 285px),420px)}.ws-words{max-height:21dvh;gap:4px}.ws-caption{min-height:14px}}
+@media(max-height:500px) and (orientation:landscape){.ws-content{width:min(100%,850px);display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto 1fr;gap:5px 14px;padding:2px 12px}.ws-board{grid-column:1;grid-row:1/span 3;width:min(calc(100dvh - 90px),330px)}.ws-meta{grid-column:2;grid-row:1}.ws-words{grid-column:2;grid-row:3;max-height:52dvh;grid-template-columns:repeat(3,minmax(0,1fr))}.ws-caption{grid-column:2;grid-row:2}.ws-word{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.ws-preview{transition:none}}
