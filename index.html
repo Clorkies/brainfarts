@@ -229,8 +229,11 @@ body[data-screen="hanoi"]{height:100dvh;overflow:hidden}
 .hanoi-drag-ghost{position:fixed;z-index:2000;pointer-events:none;transform:translate(-50%,-50%);border-radius:40px;box-shadow:inset 0 -4px #14243d25,0 10px 25px #1b305045;opacity:.96}
 @media(max-height:560px){.hanoi-stage{height:170px}.hanoi-content{gap:7px}}
 
+/* Disable double-tap zoom without disabling pinch zoom for accessibility. */
+html,body,button,a,[role="button"]{touch-action:manipulation}
 </style>
   <link rel="stylesheet" href="./crossword.css">
+  <link rel="stylesheet" href="./wordsearch.css">
   <title>Brainfarts — Give your brain a little workout</title>
 </head>
 <body>
@@ -332,7 +335,7 @@ body[data-screen="hanoi"]{height:100dvh;overflow:hidden}
         <h1>Little games.<br><span>Big brain energy.</span></h1>
         <p>Less scrolling. More solving. Pick a puzzle and get lost in something good.</p>
       </div>
-      <div class="home-sectionbar"><span>THE GAME SHELF <b>08</b></span><small>Choose your next challenge</small></div>
+      <div class="home-sectionbar"><span>THE GAME SHELF <b>09</b></span><small>Choose your next challenge</small></div>
       <div class="home-cards">
         <button class="home-game-card home-game-card--feature" data-route="setup-sudoku" aria-label="Choose Sudoku difficulty">
           <span class="home-card-top"><span>01 <i>/</i> THE CLASSIC</span><span class="home-card-arrow" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
@@ -373,6 +376,12 @@ body[data-screen="hanoi"]{height:100dvh;overflow:hidden}
           <span class="home-card-top"><span>08 <i>/</i> WORD PLAY</span><span class="home-card-arrow" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
           <span class="home-art crossword-art" aria-hidden="true"><span class="crossword-preview"><i class="">C</i><i class="">O</i><i class="">G</i><i class="is-block"></i><i class="is-block"></i><i class="">A</i><i class="">I</i><i class="">R</i><i class="is-block"></i><i class="is-block"></i><i class="">P</i><i class="">L</i><i class="">A</i><i class="">N</i><i class="">T</i><i class="is-block"></i><i class="is-block"></i><i class="">S</i><i class="">I</i><i class="">R</i><i class="is-block"></i><i class="is-block"></i><i class="">S</i><i class="">P</i><i class="">Y</i></span></span>
           <span class="home-card-copy"><strong>Crossword</strong><small>Across, down, and a little aha moment.</small></span>
+        </button>
+
+        <button class="home-game-card home-game-card--wordsearch home-game-card--wide" data-route="setup-wordsearch" aria-label="Play Word Search">
+          <span class="home-card-top"><span>09 <i>/</i> HIDDEN IN PLAIN SIGHT</span><span class="home-card-arrow" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></span>
+          <span class="home-art" aria-hidden="true"><span class="ws-preview"><i class="found">P</i><i class="found">U</i><i class="found">Z</i><i class="found">Z</i><i class="found">L</i><i class="found">E</i><i class="found">S</i><i>S</i><i>U</i><i>N</i><i>K</i><i>I</i><i>T</i><i>E</i><i>L</i><i>E</i><i>A</i><i>F</i><i>W</i><i>O</i><i>W</i><i>G</i><i>A</i><i>M</i><i>E</i><i>X</i><i>Y</i><i>Z</i><i>S</i><i>E</i><i>A</i><i>R</i><i>C</i><i>H</i><i>X</i></span></span>
+          <span class="home-card-copy"><strong>Word Search</strong><small>Circle the words hiding in the grid.</small></span>
         </button>
       </div>
       <footer class="home-foot"><span aria-hidden="true">●</span> YOUR BRAIN, YOUR PACE. WORKS OFFLINE.</footer>
@@ -424,8 +433,14 @@ body[data-screen="hanoi"]{height:100dvh;overflow:hidden}
 </div></section>
     <section class="page setup-page" id="page-setup-crossword" hidden>
       <header class="screen-header"><button class="bare-icon back-button" data-route="home" aria-label="Back to games"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">Crossword</span><button class="bare-icon settings-open" aria-label="Settings"><svg><use href="#i-settings"/></svg></button></header>
-      <div class="setup-body"><div class="setup-badge">WORD LOGIC · MINI CROSSWORDS</div><h1>A little word play.</h1><p>Ten clues. Five rows. A few minutes of good brain work. Fill across and down so every letter clicks into place.</p>
-        <div class="setup-options"><div class="setup-option"><span><strong>5 × 5 mini</strong><small>Eight original puzzles · Play at your pace</small></span><span class="setup-badge">08</span></div></div>
+      <div class="setup-body"><div class="setup-badge">WORD LOGIC · CROSSWORD COLLECTION</div><h1>Cross your words.</h1>
+        <p>From quick mini grids to deep challenges. Solve crossing clues across and down.</p><div class="setup-section-label">CHOOSE GRID SIZE</div>
+        <div class="setup-options" role="radiogroup" aria-label="Crossword difficulty">
+          <label class="setup-option"><input type="radio" name="setup-crossword" value="easy" checked><span><strong>Easy · 5×5</strong><small>8 mini puzzles · A quick brain break</small></span><span class="radio-dot"></span></label>
+          <label class="setup-option"><input type="radio" name="setup-crossword" value="medium"><span><strong>Medium · 7×7</strong><small>3 puzzles · Longer crossing words</small></span><span class="radio-dot"></span></label>
+          <label class="setup-option"><input type="radio" name="setup-crossword" value="hard"><span><strong>Hard · 9×9</strong><small>3 puzzles · Bigger grids</small></span><span class="radio-dot"></span></label>
+          <label class="setup-option"><input type="radio" name="setup-crossword" value="expert"><span><strong>Expert · 11×11</strong><small>3 puzzles · Deep focus</small></span><span class="radio-dot"></span></label>
+        </div>
         <button class="start-button" id="start-crossword">New crossword <svg><use href="#i-arrow"/></svg></button>
         <button class="resume-link" id="resume-crossword" hidden>Resume saved crossword</button>
       </div>
@@ -442,6 +457,27 @@ body[data-screen="hanoi"]{height:100dvh;overflow:hidden}
         </div>
         <div class="crossword-tools"><button id="crossword-toggle" aria-label="Switch Across and Down"><svg><use href="#i-refresh"/></svg><span id="crossword-direction">Across</span></button><button id="crossword-check"><svg><use href="#i-check"/></svg>Check</button><button id="crossword-erase"><svg><use href="#i-eraser"/></svg>Erase</button></div>
         <div id="crossword-keyboard" class="crossword-keyboard" role="group" aria-label="Crossword on-screen keyboard"></div>
+      </div>
+    </section>
+    <section class="page setup-page" id="page-setup-wordsearch" hidden>
+      <header class="screen-header"><button class="bare-icon back-button" data-route="home" aria-label="Back to games"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">Word Search</span><button class="bare-icon settings-open" aria-label="Settings"><svg><use href="#i-settings"/></svg></button></header>
+      <div class="setup-body"><div class="setup-badge">WORD HUNT · HIDDEN WORDS</div><h1>Look a little closer.</h1><p>Find words hidden horizontally, vertically, diagonally, and backwards. Drag across letters or tap the endpoints.</p>
+        <div class="setup-section-label">CHOOSE DIFFICULTY</div><div class="setup-options" role="radiogroup" aria-label="Word Search difficulty">
+          <label class="setup-option"><input type="radio" name="setup-wordsearch" value="easy" checked><span><strong>Easy · 10×10</strong><small>8 words · A quick warm-up</small></span><span class="radio-dot"></span></label>
+          <label class="setup-option"><input type="radio" name="setup-wordsearch" value="medium"><span><strong>Medium · 14×14</strong><small>12 words · More to uncover</small></span><span class="radio-dot"></span></label>
+          <label class="setup-option"><input type="radio" name="setup-wordsearch" value="hard"><span><strong>Hard · 18×18</strong><small>16 words · Like a classic word hunt</small></span><span class="radio-dot"></span></label>
+        </div>
+        <button class="start-button" id="start-wordsearch">Start searching <svg><use href="#i-arrow"/></svg></button>
+        <button class="resume-link" id="resume-wordsearch" hidden>Resume saved search</button>
+      </div>
+    </section>
+    <section class="page play-page" id="page-wordsearch" hidden>
+      <header class="screen-header play-header"><button class="bare-icon back-button" data-route="setup-wordsearch" aria-label="Back to Word Search setup"><svg><use href="#i-arrow-left"/></svg></button><span class="screen-title">Word Search</span><button class="bare-icon settings-open" aria-label="Word Search settings"><svg><use href="#i-settings"/></svg></button></header>
+      <div class="ws-content">
+        <div class="ws-meta"><span id="wordsearch-title">Summer Days</span><span><strong id="wordsearch-count">0 / 8</strong> <span aria-hidden="true">·</span> <span id="wordsearch-time">00:00</span></span></div>
+        <div id="wordsearch-board" class="ws-board" role="group" aria-label="Find hidden words in the letter grid"></div>
+        <p class="ws-caption" id="wordsearch-instructions">Drag across a word or tap its first and last letters.</p>
+        <div class="ws-words" id="wordsearch-words" aria-label="Words to find"></div>
       </div>
     </section>
     <!-- Sudoku play: ONE focused view; zero navigation, sidebars, or footers. -->
@@ -473,6 +509,11 @@ body[data-screen="hanoi"]{height:100dvh;overflow:hidden}
 <p class="settings-info">Tap a source peg then a destination peg. Move only the top disk, and never put a large disk on a smaller one. Keyboard: 1/2/3 or A/B/C.</p>
 <div class="sheet-stats"><div><span>Moves</span><strong id="hanoi-settings-moves">0</strong></div><div><span>Best moves</span><strong id="hanoi-best-moves">—</strong></div><div><span>Best time</span><strong id="hanoi-best-time">—</strong></div></div>
 <div class="settings-actions"><button class="sheet-action" id="hanoi-restart"><svg><use href="#i-refresh"/></svg> Restart puzzle</button><button class="sheet-action" id="hanoi-new"><svg><use href="#i-sparkle"/></svg> Change difficulty</button></div></div>
+        <div class="settings-section" id="wordsearch-settings" hidden><h3>Word Search toolkit</h3>
+          <p class="settings-info">Find words in all eight directions, including backwards and diagonally. Drag across letters or tap the first and last letter to select.</p>
+          <div class="sheet-stats"><div><span>Found</span><strong id="wordsearch-settings-count">0 / 8</strong></div><div><span>Hints</span><strong id="wordsearch-settings-hints">0</strong></div><div><span>Best time</span><strong id="wordsearch-best-time">—</strong></div></div>
+          <div class="settings-actions"><button class="sheet-action" id="wordsearch-hint"><svg><use href="#i-sparkle"/></svg> Hint</button><button class="sheet-action" id="wordsearch-new"><svg><use href="#i-refresh"/></svg> New word search</button></div>
+        </div>
         <div class="settings-section" id="crossword-settings" hidden>
           <h3>Crossword toolkit</h3>
           <p class="settings-info">Tap a cell to choose a word, then tap it again to switch Across and Down. Use the clue arrows or the on-screen keyboard to solve.</p>
@@ -509,7 +550,9 @@ body[data-screen="hanoi"]{height:100dvh;overflow:hidden}
   </div>
   <div class="modal-backdrop" id="modal-backdrop" hidden><div class="dialog" id="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title"><button class="dialog-close bare-icon" id="dialog-close" aria-label="Close dialog"><svg><use href="#i-close"/></svg></button><div id="dialog-content"></div></div></div>
   <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+  <script src="./crossword-levels.js"></script>
   <script src="./crossword.js"></script>
+  <script src="./wordsearch.js"></script>
   <script>
 /*
  * Brainfarts — Sudoku + Minesweeper, one pocket-first PWA.
@@ -598,7 +641,8 @@ function closeDialog() {
   document.body.classList.remove('body-no-scroll');
 }
 const RULES = {
-  crossword:{title:'Crossword, made simple.',subtitle:'Ten clues. Two directions. One little grid.',steps:['Tap a white cell to select its across word. Tap the same cell again to toggle to down.','The arrows move between clues. Type with the on-screen keyboard or your physical keyboard.','Check highlights incorrect letters without revealing the answers. Reveal a single letter in Settings.','Fill all 17 squares correctly to win. Your puzzle, time, and best score are saved on this device.']},
+  wordsearch:{title:'Word Search, made simple.',subtitle:'Find hidden words in a grid.',steps:['Look for every listed word running horizontally, vertically or diagonally, forwards or backwards.','Press and drag from the first letter to the last, or tap the two endpoints.','Found words light up and are crossed off the list. You can request a starting-position hint from Settings.','Finish all the words to win. Your unfinished puzzle is saved for later.']},
+  crossword:{title:'Crossword, made simple.',subtitle:'Across, down and lots of intersecting words.',steps:['Choose a 5×5, 7×7, 9×9 or 11×11 grid on the setup screen.','Tap a white cell to select a word, then tap again to switch across and down. Use the clue arrows or the keyboard to move.','Check highlights mistakes without giving away answers. Reveal one letter in Settings if you need a hint.','Fill the complete grid to win. Your puzzle and personal best time are saved locally.']},
   hanoi:{title:'Tower of Hanoi, made simple.',subtitle:'Move the tower from A to C.',steps:['Move only one disk at a time: the top disk from any peg.','Never place a larger disk on a smaller disk.','Tap a peg to select, then another peg to move. Keyboard keys 1, 2, 3 or A, B, C work too.','The minimum move count is 2ⁿ − 1. Undo and a next-move Hint are available in Settings.']},
   '2048': { title: '2048, made simple.', subtitle: 'A little space goes a long way.', steps: ['Swipe up, down, left or right to slide every tile in that direction. Arrow keys, WASD and the direction buttons work too.', 'Two equal tiles touching in the direction of travel merge into one. Each tile can merge only once per move. The merged value is added to your score.', 'A new 2 or 4 appears after each move that changes the board. Reach a 2048 tile to win, then keep playing if you like.', 'The game ends when the board is full and no neighbors match. Undo restores your last move, including the new tile. Progress and best score are saved on this device.'] },
   sudoku: {
@@ -649,7 +693,8 @@ $('#dialog-content').addEventListener('click', event => {
   const action = button.dataset.dialogAction;
   closeDialog();
   if (action === 'new') { if (route === 'sudoku') newSudoku(sudoku.difficulty); else if (route === 'mines') newMines(mines.difficulty); else if (route === 'nonogram') newNonogram(nonogram.difficulty); else if (route === 'wordle') newWordle(); else if (route === 'lights') newLights(lights.difficulty); }
-  if (action === 'crossword-next') { startCrossword();navigate('crossword'); }
+  if (action === 'crossword-next') { startCrossword(crosswordPuzzle().difficulty);navigate('crossword'); }
+  if (action === 'wordsearch-next') { newWordsearch(wordsearch?.level||'easy');navigate('wordsearch'); }
   if (action === 'crossword-pick') { crosswordPickWord(button.dataset.crosswordWord); }
   if (action === 'hanoi-replay') { newHanoi(hanoi?.count||3); navigate('hanoi'); }
   if (action === 'merge-new-confirm') { newMerge(); navigate('2048'); }
@@ -664,8 +709,8 @@ $('#dialog-content').addEventListener('click', event => {
 $$('[data-help]').forEach(button => button.addEventListener('click', () => showHelp(button.dataset.help)));
 
 /* -------- Game selection, routing, settings, install -------- */
-const GAME_ROUTES = ['home','setup-sudoku','setup-mines','setup-nonogram','setup-wordle','setup-lights','setup-2048','setup-hanoi','hanoi','setup-crossword','crossword','2048','sudoku','mines','nonogram','wordle','lights'];
-const gameForRoute = r => r.includes('2048') ? '2048' : r.includes('sudoku') ? 'sudoku' : r.includes('mines') ? 'mines' : r.includes('nonogram') ? 'nonogram' : r.includes('wordle') ? 'wordle' : r.includes('lights') ? 'lights' : r.includes('hanoi') ? 'hanoi' : r.includes('crossword') ? 'crossword' : null;
+const GAME_ROUTES = ['home','setup-sudoku','setup-mines','setup-nonogram','setup-wordle','setup-lights','setup-2048','setup-hanoi','hanoi','setup-crossword','crossword','setup-wordsearch','wordsearch','2048','sudoku','mines','nonogram','wordle','lights'];
+const gameForRoute = r => r.includes('2048') ? '2048' : r.includes('sudoku') ? 'sudoku' : r.includes('mines') ? 'mines' : r.includes('nonogram') ? 'nonogram' : r.includes('wordle') ? 'wordle' : r.includes('lights') ? 'lights' : r.includes('hanoi') ? 'hanoi' : r.includes('crossword') ? 'crossword' : r.includes('wordsearch') ? 'wordsearch' : null;
 function navigate(next) {
   if (!GAME_ROUTES.includes(next)) next = 'home';
   closeSettings();
@@ -690,9 +735,10 @@ function navigate(next) {
   if (next === 'lights' || next === 'setup-lights') { if (!lights) restoreLights(); $('#resume-lights').hidden = !lights || lights.status === 'won'; if (next === 'lights') { if (!lights) newLights('easy'); renderLights(); } }
   if (next === 'hanoi' || next === 'setup-hanoi') { if (!hanoi) restoreHanoi(); $('#resume-hanoi').hidden = hanoi.status === 'won'; if (next === 'hanoi') renderHanoi(); }
   if (next === 'crossword' || next === 'setup-crossword') { if (!crossword) restoreCrossword(); $('#resume-crossword').hidden = crossword.status === 'won' || !crossword.letters.some(Boolean); if (next === 'crossword') renderCrossword(); }
+  if (next === 'wordsearch' || next === 'setup-wordsearch') { if (!wordsearch) restoreWordsearch(); $('#resume-wordsearch').hidden = wordsearch.status === 'won' || (wordsearch.status === 'ready' && !wordsearch.words.some(w=>w.found)); if (next === 'wordsearch') renderWordsearch(); }
   if (next === '2048' || next === 'setup-2048') { if (!merge) restoreMerge(); $('#resume-2048').hidden = !merge; if (next === '2048') { if (!merge) newMerge(); renderMerge(); } }
-  document.title = next === 'home' ? 'Brainfarts — Give your brain a little workout' : `${gameForRoute(next) === '2048' ? '2048' : gameForRoute(next) === 'mines' ? 'Minesweeper' : gameForRoute(next) === 'nonogram' ? 'Nonogram' : gameForRoute(next) === 'wordle' ? 'Wordle' : gameForRoute(next) === 'lights' ? 'Lights Out' : gameForRoute(next) === 'hanoi' ? 'Tower of Hanoi' : gameForRoute(next) === 'crossword' ? 'Crossword' : 'Sudoku'} · Brainfarts`;
-  if (next !== 'sudoku' && next !== 'mines' && next !== 'nonogram' && next !== 'wordle' && next !== 'lights' && next !== 'hanoi' && next !== 'crossword' && next !== '2048') window.scrollTo({ top: 0, behavior: 'instant' });
+  document.title = next === 'home' ? 'Brainfarts — Give your brain a little workout' : `${gameForRoute(next) === '2048' ? '2048' : gameForRoute(next) === 'mines' ? 'Minesweeper' : gameForRoute(next) === 'nonogram' ? 'Nonogram' : gameForRoute(next) === 'wordle' ? 'Wordle' : gameForRoute(next) === 'lights' ? 'Lights Out' : gameForRoute(next) === 'hanoi' ? 'Tower of Hanoi' : gameForRoute(next) === 'crossword' ? 'Crossword' : gameForRoute(next) === 'wordsearch' ? 'Word Search' : 'Sudoku'} · Brainfarts`;
+  if (next !== 'sudoku' && next !== 'mines' && next !== 'nonogram' && next !== 'wordle' && next !== 'lights' && next !== 'hanoi' && next !== 'crossword' && next !== 'wordsearch' && next !== '2048') window.scrollTo({ top: 0, behavior: 'instant' });
 }
 $$('[data-route]').forEach(el => el.addEventListener('click', event => {
   if (el.tagName === 'A') event.preventDefault();
@@ -700,7 +746,9 @@ $$('[data-route]').forEach(el => el.addEventListener('click', event => {
 }));
 window.addEventListener('hashchange', () => navigate(location.hash.slice(1) || 'home'));
 
-$('#start-crossword').addEventListener('click',()=>{startCrossword();navigate('crossword');});
+$('#start-crossword').addEventListener('click',()=>{startCrossword($('input[name="setup-crossword"]:checked').value);navigate('crossword');});
+$('#start-wordsearch').addEventListener('click',()=>{newWordsearch($('input[name="setup-wordsearch"]:checked').value);navigate('wordsearch');});
+$('#resume-wordsearch').addEventListener('click',()=>navigate('wordsearch'));
 $('#resume-crossword').addEventListener('click',()=>navigate('crossword'));
 $('#start-hanoi').addEventListener('click',()=>{newHanoi(Number($('input[name="setup-hanoi"]:checked').value));navigate('hanoi');});
 $('#resume-hanoi').addEventListener('click',()=>navigate('hanoi'));
@@ -728,6 +776,8 @@ function closeSettings() {
   document.body.classList.remove('sheet-open');
 }
 function openSettings() {
+  $('#wordsearch-settings').hidden = route !== 'wordsearch';
+  if (route === 'wordsearch') updateWordsearchTools();
   $('#crossword-settings').hidden = route !== 'crossword';
   if(route==='crossword') updateCrosswordTools();
   $('#hanoi-settings').hidden = route !== 'hanoi';
@@ -1910,6 +1960,7 @@ document.addEventListener('keydown', event => {
 });
 setInterval(() => {
   if (document.hidden || !$('#modal-backdrop').hidden || !$('#settings-backdrop').hidden) return;
+  if (route === 'wordsearch' && wordsearch?.status === 'playing') { wordsearch.elapsed++; $('#wordsearch-time').textContent=formatTime(wordsearch.elapsed); if(wordsearch.elapsed%5===0)save('wordsearch',wordsearch); }
   if (route === 'crossword' && crossword?.status === 'playing') { crossword.elapsed++; $('#crossword-time').textContent=formatTime(crossword.elapsed); if(crossword.elapsed%5===0)save('crossword',crossword); }
   if (route === 'hanoi' && hanoi?.status === 'playing') { hanoi.elapsed++; $('#hanoi-time').textContent=formatTime(hanoi.elapsed); if(hanoi.elapsed%5===0) save('hanoi',hanoi); }
   if (route === 'sudoku' && sudoku?.status === 'playing') {
@@ -1926,6 +1977,7 @@ setInterval(() => {
   }
 }, 1000);
 window.addEventListener('pagehide', () => {
+  if (wordsearch) save('wordsearch', wordsearch);
   if (crossword) save('crossword', crossword);
   if (hanoi) save('hanoi', hanoi);
   if (sudoku) save('sudoku', sudoku);
