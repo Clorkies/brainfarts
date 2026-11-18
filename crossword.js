@@ -167,6 +167,6 @@ document.addEventListener('DOMContentLoaded',()=>{
  $('#crossword-keyboard').addEventListener('click',e=>{const b=e.target.closest('[data-crossword-key]');if(b)crosswordInput(b.dataset.crosswordKey);});
  $('#crossword-reveal').addEventListener('click',crosswordReveal);
  $('#crossword-reset').addEventListener('click',()=>{closeSettings();newCrossword(crossword.id);});
- $('#crossword-new').addEventListener('click',()=>{closeSettings();startCrossword();navigate('crossword');});
+ $('#crossword-new').addEventListener('click',()=>{const level=crosswordPuzzle().difficulty;closeSettings();startCrossword(level);navigate('crossword');});
  $('#crossword-clues').addEventListener('click',crosswordShowClues);
 });
